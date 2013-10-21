@@ -7,7 +7,8 @@ package s7_transmission_components is
 
 component ReceiversWrapper is
    GENERIC(
-   	LINKS_NUMBER : integer := 8
+   	LINKS_NUMBER : integer := 8;
+   	IOSTANDARD_CONF : string
    );
    PORT(
 	CLK_BIT_IN      : in std_logic;
@@ -19,6 +20,7 @@ component ReceiversWrapper is
 	DATA_VALID_OUT  : out std_logic_vector(LINKS_NUMBER-1 downto 0);
 	DATA_KCTRL_OUT  : out std_logic;
 	LINK_SYNCED_OUT : out std_logic_vector(LINKS_NUMBER-1 downto 0);
+	CRC_VALID_OUT   : out std_logic_vector(LINKS_NUMBER-1 downto 0);
 	
 	DATA_PIN_P_IN   : in std_logic_vector(LINKS_NUMBER -1 downto 0);
 	DATA_PIN_N_IN   : in std_logic_vector(LINKS_NUMBER -1 downto 0)
@@ -88,7 +90,7 @@ component ddr_aurora_buffer is
 	);
 end component;
 
-component buf_fifo IS
+component fifo_8kx9x18 IS
   PORT (
     rst : IN STD_LOGIC;
     wr_clk : IN STD_LOGIC;
@@ -132,16 +134,21 @@ port (
 end component;
 
 component ddr_enc_receiver is
+generic (
+	IOSTANDARD_CONF      : character := '0'
+);
 port (
 	CLK_BIT_IN      : in std_logic;
 	CLK_WORD_IN     : in std_logic;
 	CLK_DELAY_IN    : in std_logic;
+	DELAY_READY_IN  : in std_logic;
 	RESET_IN        : in std_logic;
 	
 	DATA_OUT        : out std_logic_vector(7 downto 0);
 	DATA_VALID_OUT  : out std_logic;
 	DATA_KCTRL_OUT  : out std_logic;
 	LINK_SYNCED_OUT : out std_logic;
+	CRC_VALID_OUT   : out std_logic;
 	
 	DATA_PIN_P_IN   : in std_logic;
 	DATA_PIN_N_IN   : in std_logic
@@ -219,16 +226,20 @@ component encode_8b10b_lut_base IS
 END component;
 
 component input_module is
+generic (
+	IOSTANDARD_CONF : character := '0'
+);
 port (
-	CLK_IN        : in std_logic;
-	CLK_DLY_IN    : in std_logic;
-	CLKX8_IN      : in std_logic;
-	RESET_IN      : in std_logic;
-	DATA_PIN_P_IN : in std_logic;
-	DATA_PIN_N_IN : in std_logic;
-	DATA_OUT      : out std_logic_vector(9 downto 0);
-	REC_CLK_OUT   : out std_logic;
-	SYNCED_OUT    : out std_logic
+	CLK_IN         : in std_logic;
+	CLK_DLY_IN     : in std_logic;
+	DELAY_READY_IN : in std_logic;
+	CLKX8_IN       : in std_logic;
+	RESET_IN       : in std_logic;
+	DATA_PIN_P_IN  : in std_logic;
+	DATA_PIN_N_IN  : in std_logic;
+	DATA_OUT       : out std_logic_vector(9 downto 0);
+	REC_CLK_OUT    : out std_logic;
+	SYNCED_OUT     : out std_logic
 );
 end component;
 
