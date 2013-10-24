@@ -5,6 +5,63 @@ use work.decode_8b10b_pkg.all;
 
 package s7_transmission_components is
 
+component ddr_stability_checker is
+	port (
+		CLK_IN : in std_logic;
+		RESET_IN : in std_logic;
+		
+		DATA_IN : in std_logic_vector(9 downto 0);
+		START_CHECK_IN : in std_logic;
+		CHECK_DONE_OUT : out std_logic;
+		REGISTERED_DATA_OUT : out std_logic_vector(9 downto 0)
+	);
+	end component;
+
+component aurora2_test_exdes is
+   generic(
+           USE_CHIPSCOPE          : integer :=   0;
+           SIM_GTRESET_SPEEDUP    : string  :=  "TRUE"     
+         );
+    port (
+
+    -- User I/O
+
+            RESET             : in std_logic;
+            HARD_ERR          : out std_logic;
+            SOFT_ERR          : out std_logic;
+            FRAME_ERR         : out std_logic;
+            ERR_COUNT         : out std_logic_vector(0 to 7);
+
+
+            LANE_UP           : out std_logic;
+            CHANNEL_UP        : out std_logic;
+
+           INIT_CLK_P         : in std_logic;
+           INIT_CLK_N         : in std_logic;
+           GT_RESET_IN        : in  std_logic;
+
+    -- Clocks
+
+           GTXQ2_P    : in  std_logic;
+           GTXQ2_N    : in  std_logic;
+
+		   TX_D            : in  std_logic_vector(0 to 15);
+		   TX_REM          : in  std_logic;    
+		   TX_SOF_N        : in  std_logic;
+		   TX_EOF_N        : in  std_logic;
+		   TX_SRC_RDY_N    : in  std_logic;
+		   TX_DST_RDY_N    : out   std_logic; 
+clk_out : out std_logic;
+   -- GT I/O
+
+            RXP               : in std_logic;
+            RXN               : in std_logic;
+            TXP               : out std_logic;
+            TXN               : out std_logic
+
+         );
+end component;
+
 component ReceiversWrapper is
    GENERIC(
    	LINKS_NUMBER : integer := 8;
