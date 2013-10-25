@@ -19,7 +19,6 @@ architecture RTL of ddr_stability_checker is
 type check_states is (IDLE, REGISTER_DATA, COMPARE, CLEANUP);
 signal check_current_state, check_next_state : check_states;
 signal samples_ctr : integer range 0 to 1023;
-signal difference_found : std_logic;
 signal registered_data : std_logic_vector(9 downto 0);
 
 	
@@ -72,9 +71,9 @@ begin
 		end if;
 		
 		if (check_current_state = IDLE) then
-			registered_data <= (others => '0');
+			registered_data <= (others => '1');
 		elsif (check_current_state = REGISTER_DATA) then
-			registered_data <= registered_data or DATA_IN;
+			registered_data <= registered_data and DATA_IN;
 		else
 			registered_data <= registered_data;
 		end if;
