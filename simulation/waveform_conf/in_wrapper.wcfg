@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="l1topo_rod_sim_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="decode_8b10b_pkg" />
+            <top_module name="encode_8b10b_pkg" />
+            <top_module name="glbl" />
+            <top_module name="ipbus" />
+            <top_module name="ipbus_trans_decl" />
+            <top_module name="l1topo_rod_sim" />
+            <top_module name="l1topodatatypes" />
+            <top_module name="l1topofunctions" />
+            <top_module name="rod_l1_topo_types_const" />
+            <top_module name="s7_transmission_components" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="30" />
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/GCLK_40_IN" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">GCLK_40_IN</obj_property>
+      <obj_property name="ObjectShortName">GCLK_40_IN</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/DELAY_CLK_IN" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">DELAY_CLK_IN</obj_property>
+      <obj_property name="ObjectShortName">DELAY_CLK_IN</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/EXT_DDR_CLK_IN" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">EXT_DDR_CLK_IN</obj_property>
+      <obj_property name="ObjectShortName">EXT_DDR_CLK_IN</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/EXT_DDR_CLK_X8_IN" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">EXT_DDR_CLK_X8_IN</obj_property>
+      <obj_property name="ObjectShortName">EXT_DDR_CLK_X8_IN</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/RESET_IN" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">RESET_IN</obj_property>
+      <obj_property name="ObjectShortName">RESET_IN</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/LVDS_IN_P" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">LVDS_IN_P[7:0]</obj_property>
+      <obj_property name="ObjectShortName">LVDS_IN_P[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/LVDS_IN_N" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">LVDS_IN_N[7:0]</obj_property>
+      <obj_property name="ObjectShortName">LVDS_IN_N[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/LINKS_SYNCED_OUT" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">LINKS_SYNCED_OUT[7:0]</obj_property>
+      <obj_property name="ObjectShortName">LINKS_SYNCED_OUT[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/RESET_TRANS_OUT" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">RESET_TRANS_OUT</obj_property>
+      <obj_property name="ObjectShortName">RESET_TRANS_OUT</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/DATA_OUT" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">DATA_OUT[63:0]</obj_property>
+      <obj_property name="ObjectShortName">DATA_OUT[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/DATA_VALID_OUT" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">DATA_VALID_OUT[7:0]</obj_property>
+      <obj_property name="ObjectShortName">DATA_VALID_OUT[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/DATA_KCTRL_OUT" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">DATA_KCTRL_OUT[7:0]</obj_property>
+      <obj_property name="ObjectShortName">DATA_KCTRL_OUT[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/clk_80" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk_80</obj_property>
+      <obj_property name="ObjectShortName">clk_80</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/clk_400" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk_400</obj_property>
+      <obj_property name="ObjectShortName">clk_400</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/clk_80_i" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk_80_i</obj_property>
+      <obj_property name="ObjectShortName">clk_80_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/clk_400_i" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk_400_i</obj_property>
+      <obj_property name="ObjectShortName">clk_400_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/local_data_lines" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">local_data_lines[7:0]</obj_property>
+      <obj_property name="ObjectShortName">local_data_lines[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/local_delay_inc" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">local_delay_inc[7:0]</obj_property>
+      <obj_property name="ObjectShortName">local_delay_inc[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/local_delay_ce" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">local_delay_ce[7:0]</obj_property>
+      <obj_property name="ObjectShortName">local_delay_ce[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/local_enc_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">local_enc_data[79:0]</obj_property>
+      <obj_property name="ObjectShortName">local_enc_data[79:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/local_ctrl_ready" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">local_ctrl_ready</obj_property>
+      <obj_property name="ObjectShortName">local_ctrl_ready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/internal_reset" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">internal_reset</obj_property>
+      <obj_property name="ObjectShortName">internal_reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/dcm_locked" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dcm_locked</obj_property>
+      <obj_property name="ObjectShortName">dcm_locked</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/local_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">local_data[63:0]</obj_property>
+      <obj_property name="ObjectShortName">local_data[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/local_valid" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">local_valid[7:0]</obj_property>
+      <obj_property name="ObjectShortName">local_valid[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/local_ktrl" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">local_ktrl[7:0]</obj_property>
+      <obj_property name="ObjectShortName">local_ktrl[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/local_synced" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">local_synced[7:0]</obj_property>
+      <obj_property name="ObjectShortName">local_synced[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/DELAY_GROUP_NAME" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">DELAY_GROUP_NAME[1:18]</obj_property>
+      <obj_property name="ObjectShortName">DELAY_GROUP_NAME[1:18]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/AVAILABLE_LVDS_LINES" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">AVAILABLE_LVDS_LINES</obj_property>
+      <obj_property name="ObjectShortName">AVAILABLE_LVDS_LINES</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/L1TOPO_KINTEX_TOP_INST/ddr_bank18/EXCLUDE_DCM_IDELAY_CTRL" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">EXCLUDE_DCM_IDELAY_CTRL</obj_property>
+      <obj_property name="ObjectShortName">EXCLUDE_DCM_IDELAY_CTRL</obj_property>
+   </wvobject>
+</wave_config>

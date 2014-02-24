@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="l1topo_rod_sim_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="decode_8b10b_pkg" />
+            <top_module name="encode_8b10b_pkg" />
+            <top_module name="glbl" />
+            <top_module name="ipbus" />
+            <top_module name="ipbus_trans_decl" />
+            <top_module name="l1topo_rod_sim" />
+            <top_module name="l1topodatatypes" />
+            <top_module name="l1topofunctions" />
+            <top_module name="rod_l1_topo_types_const" />
+            <top_module name="s7_transmission_components" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="30" />
+   <wvobject fp_name="divider52" type="divider">
+      <obj_property name="label">output</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/output/CLK_IN" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">CLK_IN</obj_property>
+      <obj_property name="ObjectShortName">CLK_IN</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/output/CLKX8_IN" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">CLKX8_IN</obj_property>
+      <obj_property name="ObjectShortName">CLKX8_IN</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/output/RESET_IN" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">RESET_IN</obj_property>
+      <obj_property name="ObjectShortName">RESET_IN</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/output/DATA_PIN_P_OUT" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">DATA_PIN_P_OUT</obj_property>
+      <obj_property name="ObjectShortName">DATA_PIN_P_OUT</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/output/DATA_PIN_N_OUT" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">DATA_PIN_N_OUT</obj_property>
+      <obj_property name="ObjectShortName">DATA_PIN_N_OUT</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/output/DATA_IN" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">DATA_IN[9:0]</obj_property>
+      <obj_property name="ObjectShortName">DATA_IN[9:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/output/REC_CLK_OUT" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">REC_CLK_OUT</obj_property>
+      <obj_property name="ObjectShortName">REC_CLK_OUT</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/output/SYNCED_OUT" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">SYNCED_OUT</obj_property>
+      <obj_property name="ObjectShortName">SYNCED_OUT</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/output/data_out_to_pins_int" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">data_out_to_pins_int</obj_property>
+      <obj_property name="ObjectShortName">data_out_to_pins_int</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/output/data_out_to_pins_predelay" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">data_out_to_pins_predelay</obj_property>
+      <obj_property name="ObjectShortName">data_out_to_pins_predelay</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/output/oserdes_d" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">oserdes_d[9:0]</obj_property>
+      <obj_property name="ObjectShortName">oserdes_d[9:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/output/shift1" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">shift1</obj_property>
+      <obj_property name="ObjectShortName">shift1</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/output/shift2" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">shift2</obj_property>
+      <obj_property name="ObjectShortName">shift2</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider66" type="divider">
+      <obj_property name="label">ddr_enc</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/RESET" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">RESET</obj_property>
+      <obj_property name="ObjectShortName">RESET</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/CLK_BIT_IN" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">CLK_BIT_IN</obj_property>
+      <obj_property name="ObjectShortName">CLK_BIT_IN</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/CLK_WORD_IN" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">CLK_WORD_IN</obj_property>
+      <obj_property name="ObjectShortName">CLK_WORD_IN</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/RESET_IN" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">RESET_IN</obj_property>
+      <obj_property name="ObjectShortName">RESET_IN</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/DATA_IN" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">DATA_IN[7:0]</obj_property>
+      <obj_property name="ObjectShortName">DATA_IN[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/DATA_VALID_IN" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">DATA_VALID_IN</obj_property>
+      <obj_property name="ObjectShortName">DATA_VALID_IN</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/DATA_KCTRL_IN" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">DATA_KCTRL_IN</obj_property>
+      <obj_property name="ObjectShortName">DATA_KCTRL_IN</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/DATA_PIN_P_OUT" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">DATA_PIN_P_OUT</obj_property>
+      <obj_property name="ObjectShortName">DATA_PIN_P_OUT</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/DATA_PIN_N_OUT" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">DATA_PIN_N_OUT</obj_property>
+      <obj_property name="ObjectShortName">DATA_PIN_N_OUT</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/data_in_local" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">data_in_local[7:0]</obj_property>
+      <obj_property name="ObjectShortName">data_in_local[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/d_out_crc" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">d_out_crc[7:0]</obj_property>
+      <obj_property name="ObjectShortName">d_out_crc[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/d_out_enc" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">d_out_enc[9:0]</obj_property>
+      <obj_property name="ObjectShortName">d_out_enc[9:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/crc_in_en_local" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">crc_in_en_local</obj_property>
+      <obj_property name="ObjectShortName">crc_in_en_local</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/crc_out_en" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">crc_out_en</obj_property>
+      <obj_property name="ObjectShortName">crc_out_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/l1topo_rod_sim/VIRTEX_TOP_TEST_A/TransmittersWrapper_INST/\GenerateInst(0)\/ddr_enc_transmitterInst/enc_810_kin" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">enc_810_kin</obj_property>
+      <obj_property name="ObjectShortName">enc_810_kin</obj_property>
+   </wvobject>
+</wave_config>
