@@ -1,0 +1,26 @@
+NET "GCK2_IN_P" TNM_NET = "global_clock";
+NET "GCK2_IN_P" LOC = U27;
+NET "GCK2_IN_P" IOSTANDARD = LVDS_25;
+NET "GCK2_IN_N" LOC = U28;
+NET "GCK2_IN_N" IOSTANDARD = LVDS_25;
+
+TIMESPEC TS_global_clock = PERIOD "global_clock" 24.95 ns;
+
+
+NET "eth/txoutclk" TNM_NET = "txoutclk";
+TIMESPEC TS_txoutclk = PERIOD "txoutclk" 16 ns;
+
+NET "gt_clkp" TNM_NET = "gt_clk";
+NET "gt_clkp" LOC = C8;
+NET "gt_clkp" DIFF_TERM = "TRUE";
+NET "gt_clkn" LOC = C7;
+NET "gt_clkn" DIFF_TERM = "TRUE";
+
+TIMESPEC TS_gt_clk = PERIOD "gt_clk" 8 ns;
+
+NET "clocks/rst" TIG;
+NET "clocks/nuke_i" TIG;
+
+
+
+
