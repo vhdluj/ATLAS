@@ -30,7 +30,11 @@ use work.ipbus.all;
 
 
 
-entity ctrlbus_in is port(
+entity ctrlbus_in is 
+	generic (
+		DELAY_GROUP_NAME : string := "delay_group"
+		);
+	port(
 		gck2_clk40_in: in std_logic;
 		gck2_clk80_in: in std_logic;
 		serdes_serialclk400_in: in std_logic;
@@ -111,7 +115,7 @@ architecture Behavioral of ctrlbus_in is
 	attribute s of ctrlbus_in_state: signal is "true";
 
 	attribute IODELAY_GROUP : string;
-	attribute IODELAY_GROUP of ctrlbus_in_idelayctrl : label is "ctrlbus_in_group";
+	attribute IODELAY_GROUP of ctrlbus_in_idelayctrl : label is DELAY_GROUP_NAME; --"ctrlbus_in_group";
 
 begin
 
@@ -146,7 +150,7 @@ ctrlbus_in_idelayctrl : IDELAYCTRL
 
 
 ctrlbus_in_pin_generator: for pin in ctrlbus_in_width-1 downto 0 generate 
-		attribute IODELAY_GROUP of ctrlbus_in_idelay: label is "ctrlbus_in_group";
+		attribute IODELAY_GROUP of ctrlbus_in_idelay: label is DELAY_GROUP_NAME; --"ctrlbus_in_group";
 	begin
 
 		ctrlbus_in_ibufds: IBUFDS
