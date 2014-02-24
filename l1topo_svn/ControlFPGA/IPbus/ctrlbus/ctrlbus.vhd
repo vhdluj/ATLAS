@@ -32,7 +32,8 @@ use UNISIM.VComponents.all;
 use work.ipbus.all;
 
 
-entity ctrlbus is port(
+entity ctrlbus is
+	port(
 		gck2_clk40_in: in std_logic;
 		gck2_clk80_in: in std_logic;
 		idelayctrl_refclk300_in: in std_logic;
@@ -51,7 +52,10 @@ entity ctrlbus is port(
 		ipb_read_U2_out: out ipb_rbus;
 		
 		idelay_value_in: in std_logic_vector(29 downto 0);
-		idelay_load_in: in std_logic_vector(5 downto 0)
+		idelay_load_in: in std_logic_vector(5 downto 0);
+		
+		mmcm_clk_80_u1_out, mmcm_clk_400_u1_out : out std_logic;
+		mmcm_clk_80_u2_out, mmcm_clk_400_u2_out : out std_logic
 	);
 end ctrlbus;
 
@@ -146,6 +150,9 @@ ctrlbus_u1_serdes_parallelclk80_bufr: BUFR
 
 
 ctrlbus_from_U1_in: entity work.ctrlbus_in
+	generic map(
+		DELAY_GROUP_NAME => "bank32_delay_group"
+		)
 	port map(
 		gck2_clk40_in => gck2_clk40_in,
 		gck2_clk80_in => gck2_clk80_in,
@@ -259,6 +266,9 @@ ctrlbus_u2_serdes_parallelclk80_bufr: BUFR
 		
 		
 ctrlbus_from_U2_in: entity work.ctrlbus_in
+	generic map(
+		DELAY_GROUP_NAME => "bank17_delay_group"
+		)
 	port map(
 		gck2_clk40_in => gck2_clk40_in,
 		gck2_clk80_in => gck2_clk80_in,
@@ -292,7 +302,11 @@ ctrlbus_to_U2_out: entity work.ctrlbus_out
 	
 	
 		
+mmcm_clk_80_u1_out <= ctrlbus_u1_serdes_parallelclk80;
+mmcm_clk_400_u1_out <= ctrlbus_u1_serdes_serialclk400;
 
+mmcm_clk_80_u2_out <= ctrlbus_u2_serdes_parallelclk80;
+mmcm_clk_400_u2_out <= ctrlbus_u2_serdes_serialclk400;
 
 end Behavioral;
 
