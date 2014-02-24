@@ -87,9 +87,9 @@ architecture l1topo_to_ddr of l1topo_to_ddr is
   type   SEND_DATA_AND_CONF_FSM is (IDLE, PREPARE_DATA_A, PREPARE_DATA_B, SEND_DATA, SEND_CONF, WAIT_FOR_READOUT_FIFO_A, WAIT_FOR_READOUT_FIFO_B);
   signal SEND_DATA_AND_CONF_FSM_CURRENT, SEND_DATA_AND_CONF_FSM_NEXT                           : SEND_DATA_AND_CONF_FSM;
   signal time_slice_cntr                                                                       : unsigned(10 downto 0)                          := (others => '0');
-  signal bus_cntr                                                                              : unsigned(memory_selector_range)                := (others => '0');
+  signal bus_cntr                                                                              : unsigned(5 downto 0)                := (others => '0');
   signal memory_base_addr_cntr, memory_base_addr_cntr_saved, actual_memory_address             : unsigned(in_memory_address_range)              := (others => '0');
-  signal individual_bus_cntr                                                                   : unsigned(NUMBER_OF_SLICES(0)'range)            := (others => '0');
+  signal individual_bus_cntr                                                                   : unsigned(3 downto 0)            := (others => '0');
   signal send_slice_configuration, l0_trigger_read, l0_trigger_read_fsm, data_valid            : std_logic                                      := '0';
   signal l0_fifo_empty, l0_fifo_full, data_valid_fsm, data_valid_delay, data_valid_delay_end   : std_logic                                      := '0';
   signal special_character_fsm, special_character, special_character_delay                     : std_logic                                      := '0';
