@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_unsigned.ALL;
 use ieee.numeric_std.all;
 
-entity from_parsers_to_ipbus is
+entity from_rod_to_ipbus is
 	port(
 		clk: in STD_LOGIC;
 		reset: in STD_LOGIC;
@@ -18,9 +18,9 @@ entity from_parsers_to_ipbus is
 		ram_data_out : out std_logic_vector(31 downto 0)
 	);
 	
-end from_parsers_to_ipbus;
+end from_rod_to_ipbus;
 
-architecture rtl of from_parsers_to_ipbus is
+architecture rtl of from_rod_to_ipbus is
 	
 signal parsers_rd : std_logic;
 signal addr : std_logic_vector(9 downto 0);
@@ -47,7 +47,7 @@ end process;
 process(clk)
 begin
 	if rising_edge(clk) then
-		if (parsers_rdy_in = '0') then
+		if (parsers_rd = '0') then
 			addr <= (others => '0');
 		else
 			addr <= addr + x"1";

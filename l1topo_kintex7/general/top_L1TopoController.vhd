@@ -120,7 +120,9 @@ signal ddr_kctrl_from_bank18 : std_logic_vector(ddr_lines_on_bank18 - 1 downto 0
 	signal ones : std_logic_vector(LINKS_NUMBER-1 downto 0);
 	signal ddr_kctrl : std_logic_vector(NUMBER_OF_ROS_OUTPUT_BUSES-1 downto 0);
 	
-	signal parser_d_rdy : std_logic;
+	signal rod_rdy, rod_re, ram_we : std_logic;
+	signal ram_addr : std_logic_vector(9 downto 0);
+	signal rod_data, ram_data : std_logic_vector(31 downto 0);
 
 begin
  ones <= (others => '1');
@@ -186,9 +188,9 @@ GENERATE_OUTPUT_PARSERS: for i in 0 to 0 generate--NUMBER_OF_OUTPUT_LINKS - 1 ge
       BC_QTY_IN          => std_logic_vector(to_unsigned(5,6)),
       DATA_IN            => data_out_l(i),
       ROS_ROI_BUS_NUMBER => std_logic_vector(actual_bus_number_out_l(i)),
-      DATA_OUT           => open,
-      DATA_RE_IN         => '0',
-      DATA_RDY_OUT       => parser_d_rdy,
+      DATA_OUT           => rod_data,
+      DATA_RE_IN         => rod_re,
+      DATA_RDY_OUT       => rod_rdy,
       DATA_VALID_IN      => data_valid_in_l(i));
   
 end generate GENERATE_OUTPUT_PARSERS;
@@ -401,7 +403,7 @@ vrst_u2_buf : obufds port map( I =>  v_reset, O => DATA_U2_CTRL_OUT_P, OB => DAT
 	LED_OUT(11) <= '0';
 	   LED_OUT(12) <= '0';
 	   LED_OUT(13) <= '0';
-	LED_OUT(14) <= parser_d_rdy;
+	LED_OUT(14) <= rod_rdy;
 	LED_OUT(15) <= hola_ldown_n;
 
 ------ Ethernet MAC core and PHY interface
@@ -486,10 +488,25 @@ vrst_u2_buf : obufds port map( I =>  v_reset, O => DATA_U2_CTRL_OUT_P, OB => DAT
 		ctrlbus_idelay_value_out => ctrlbus_idelay_value,
 		ctrlbus_idelay_load_out => ctrlbus_idelay_load,
 		
-		ROD_RAM_CLK_IN => gck2_clk40,
-		ROD_RAM_WE_IN => '0',
-		ROD_RAM_ADDR_IN => (others => '0'),
-		ROD_RAM_DATA_IN => (others => '0')
+		ROD_RAM_CLK_IN => gck2_clk80,
+		ROD_RAM_WE_IN => ram_we,
+		ROD_RAM_ADDR_IN => ram_addr,
+		ROD_RAM_DATA_IN => ram_data
+	);
+	
+	
+	move : entity work.from_rod_to_ipbus
+	port map(
+		clk => gck2_clk80,
+		reset => sys_rst,
+		
+		parsers_data_in => rod_data,
+		parsers_rd_out => rod_re,
+		parsers_rdy_in => rod_rdy,
+		
+		ram_we_out => ram_we,
+		ram_waddr_out => ram_addr,
+		ram_data_out => ram_data
 	);
 	
 	ctrlbus: entity work.ctrlbus
