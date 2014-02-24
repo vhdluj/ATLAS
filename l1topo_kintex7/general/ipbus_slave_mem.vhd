@@ -45,7 +45,7 @@ begin
     doutb => doutb
   );
   
-  we(0) <= ROD_RAM_WE_IN;
+  we(0) <= ram_we_in;
 
 	sel <= to_integer(ptr);
 
