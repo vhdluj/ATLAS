@@ -11,7 +11,7 @@ package rod_l1_topo_types_const is
   constant NUMBER_OF_ROS_OUTPUT_BUSES : integer := 8;
   constant ROS_OUTPUT_GRANURALITY     : integer := 8;
   constant OUTPUT_DATA_WIDTH          : integer := NUMBER_OF_ROS_OUTPUT_BUSES*ROS_OUTPUT_GRANURALITY;
-  constant NUMBER_OF_ROS_ROI_INPUT_BUSES : integer := 40;
+  constant NUMBER_OF_ROS_ROI_INPUT_BUSES : integer := 2;
   constant ROS_INPUT_GRANURALITY         : integer := 128;
   constant SIZE_OF_SLICE_VALUE           : integer := 4;
   constant MAX_NUMBER_OF_TOTAL_SLICES    : integer := NUMBER_OF_ROS_ROI_INPUT_BUSES*2**(SIZE_OF_SLICE_VALUE);
