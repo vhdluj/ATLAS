@@ -484,7 +484,11 @@ vrst_u2_buf : obufds port map( I =>  v_reset, O => DATA_U2_CTRL_OUT_P, OB => DAT
 		ipb_read_U2_in => ipb_read_U2,
 		
 		ctrlbus_idelay_value_out => ctrlbus_idelay_value,
-		ctrlbus_idelay_load_out => ctrlbus_idelay_load
+		ctrlbus_idelay_load_out => ctrlbus_idelay_load,
+		
+		ROD_RAM_WE_IN => '0',
+		ROD_RAM_ADDR_IN => (others => '0'),
+		ROD_RAM_DATA_IN => (others => '0')
 	);
 	
 	ctrlbus: entity work.ctrlbus
