@@ -70,61 +70,70 @@ begin
 
 -- Slave 1: register
 
-	slave1: entity work.ipbus_reg
-		generic map(addr_width => 0)
-		port map(
-			clk => ipb_clk,
-			reset => ipb_rst,
-			ipbus_in => ipbw(1),
-			ipbus_out => ipbr(1),
-			q => open
-		);
+--	slave1: entity work.ipbus_reg
+--		generic map(addr_width => 0)
+--		port map(
+--			clk => ipb_clk,
+--			reset => ipb_rst,
+--			ipbus_in => ipbw(1),
+--			ipbus_out => ipbr(1),
+--			q => open
+--		);
 			
 -- Slave 2: ethernet error injection
 
-	slave2: entity work.ipbus_ctrlreg
-		generic map(
-			ctrl_addr_width => 1,
-			stat_addr_width => 1
-		)
-		port map(
-			clk => ipb_clk,
-			reset => ipb_rst,
-			ipbus_in => ipbw(2),
-			ipbus_out => ipbr(2),
-			d => inj_stat,
-			q => inj_ctrl
-		);
+--	slave2: entity work.ipbus_ctrlreg
+--		generic map(
+--			ctrl_addr_width => 1,
+--			stat_addr_width => 1
+--		)
+--		port map(
+--			clk => ipb_clk,
+--			reset => ipb_rst,
+--			ipbus_in => ipbw(2),
+--			ipbus_out => ipbr(2),
+--			d => inj_stat,
+--			q => inj_ctrl
+--		);
 		
 	eth_err_ctrl <= inj_ctrl(49 downto 32) & inj_ctrl(17 downto 0);
 	inj_stat <= X"00" & eth_err_stat(47 downto 24) & X"00" & eth_err_stat(23 downto 0);
 	
 -- Slave 3: packet counters
 
-	slave3: entity work.ipbus_pkt_ctr
-		port map(
-			clk => ipb_clk,
-			reset => ipb_rst,
-			ipbus_in => ipbw(3),
-			ipbus_out => ipbr(3),
-			pkt_rx => pkt_rx,
-			pkt_tx => pkt_tx
-		);
+--	slave3: entity work.ipbus_pkt_ctr
+--		port map(
+--			clk => ipb_clk,
+--			reset => ipb_rst,
+--			ipbus_in => ipbw(3),
+--			ipbus_out => ipbr(3),
+--			pkt_rx => pkt_rx,
+--			pkt_tx => pkt_tx
+--		);
 
 -- Slave 4: 1kword RAM
 
-	slave4: entity work.ipbus_ram
-		generic map(addr_width => 10)
-		port map(
-			clk => ipb_clk,
-			reset => ipb_rst,
-			ipbus_in => ipbw(4),
-			ipbus_out => ipbr(4)
-		);
+--	slave4: entity work.ipbus_ram
+--		generic map(addr_width => 10)
+--		port map(
+--			clk => ipb_clk,
+--			reset => ipb_rst,
+--			ipbus_in => ipbw(4),
+--			ipbus_out => ipbr(4)
+--		);
 	
 -- Slave 5: peephole RAM
 
-	slave5: entity work.ipbus_peephole_ram
+--	slave5: entity work.ipbus_peephole_ram
+--		generic map(addr_width => 10)
+--		port map(
+--			clk => ipb_clk,
+--			reset => ipb_rst,
+--			ipbus_in => ipbw(5),
+--			ipbus_out => ipbr(5)
+--		);
+
+	slave5: entity work.ipbus_slave_mem
 		generic map(addr_width => 10)
 		port map(
 			clk => ipb_clk,
