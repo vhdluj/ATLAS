@@ -28,6 +28,7 @@ entity slaves is
 		ctrlbus_idelay_value_out: out std_logic_vector(29 downto 0);
 		ctrlbus_idelay_load_out: out std_logic_vector(5 downto 0);
 		
+		ROD_RAM_CLK_IN : in std_logic;
 		ROD_RAM_WE_IN : in std_logic;
 		ROD_RAM_ADDR_IN : in std_logic_vector(9 downto 0);
 		ROD_RAM_DATA_IN : in std_logic_vector(31 downto 0)
@@ -145,6 +146,7 @@ begin
 			ipbus_in => ipbw(5),
 			ipbus_out => ipbr(5),
 			
+			ram_clk_in => ROD_RAM_CLK_IN,
 			ram_we_in => ROD_RAM_WE_IN,
 			ram_waddr_in => ROD_RAM_ADDR_IN,
 			ram_data_in => ROD_RAM_DATA_IN

@@ -12,7 +12,8 @@ entity ipbus_slave_mem is
 		ipbus_in: in ipb_wbus;
 		ipbus_out: out ipb_rbus;
 		
-		ram_we_in : in std_logic_vector(0 downto 0);
+		ram_clk_in : in std_logic;
+		ram_we_in : in std_logic;
 		ram_waddr_in : in std_logic_vector(9 downto 0);
 		ram_data_in : in std_logic_vector(31 downto 0)
 	);
@@ -32,8 +33,8 @@ begin
 
 	ram_inst : entity work.rod_ipbus_ram
   PORT MAP (
-    clka => clk,
-    wea => ram_we_in,
+    clka => ram_clk_in,
+    wea => we,
     addra => ram_waddr_in,
     dina => ram_data_in,
     douta => open,
@@ -43,6 +44,8 @@ begin
     dinb => (others => '0'),
     doutb => doutb
   );
+  
+  we(0) <= ROD_RAM_WE_IN;
 
 	sel <= to_integer(ptr);
 

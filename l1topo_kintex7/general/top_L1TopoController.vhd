@@ -486,6 +486,7 @@ vrst_u2_buf : obufds port map( I =>  v_reset, O => DATA_U2_CTRL_OUT_P, OB => DAT
 		ctrlbus_idelay_value_out => ctrlbus_idelay_value,
 		ctrlbus_idelay_load_out => ctrlbus_idelay_load,
 		
+		ROD_RAM_CLK_IN => gck2_clk40,
 		ROD_RAM_WE_IN => '0',
 		ROD_RAM_ADDR_IN => (others => '0'),
 		ROD_RAM_DATA_IN => (others => '0')
