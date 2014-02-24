@@ -174,8 +174,8 @@ GENERATE_OUTPUT_PARSERS: for i in 0 to 0 generate--NUMBER_OF_OUTPUT_LINKS - 1 ge
 
   PARSER_WRAPPER_INST: entity work.parser_wrapper
     generic map (
-      LINK_NUMBER              => i)
-      --TOTAL_NUMBER_OF_IN_LINKS => tot_number_of_links(ros_roi_bus_assignment_sig,i),
+      LINK_NUMBER              => i,
+      TOTAL_NUMBER_OF_IN_LINKS => NUMBER_OF_ROS_ROI_INPUT_BUSES) --tot_number_of_links(ros_roi_bus_assignment_sig,i))
       --ACTIVE_LINKS             => set_active_links(ros_roi_bus_assignment_sig,i))
 
     port map (
