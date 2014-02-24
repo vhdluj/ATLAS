@@ -440,11 +440,11 @@ begin
           next_pointer(out_link_nr) <= (others => '0');
           scan(out_link_nr)         <= (others => '0');
           link_pointer(out_link_nr) <= (others => (to_unsigned(0, link_pointer(0)(0)'length)));--)link_pointer(out_link_nr);
-        elsif scan(out_link_nr) < 40 and ROS_ROI_BUS_ASSIGNMENT(to_integer(scan(out_link_nr))) = std_logic_vector(to_unsigned(out_link_nr, ROS_ROI_BUS_ASSIGNMENT(0)'length)) then
+        elsif scan(out_link_nr) < NUMBER_OF_ROS_ROI_INPUT_BUSES and ROS_ROI_BUS_ASSIGNMENT(to_integer(scan(out_link_nr))) = std_logic_vector(to_unsigned(out_link_nr, ROS_ROI_BUS_ASSIGNMENT(0)'length)) then
           next_pointer(out_link_nr)               <= next_pointer(out_link_nr) + 1;
           scan(out_link_nr)                       <= scan(out_link_nr) + 1;
           link_pointer(out_link_nr)(to_integer(next_pointer(out_link_nr))) <= scan(out_link_nr);
-        elsif scan(out_link_nr) < 40 then
+        elsif scan(out_link_nr) < NUMBER_OF_ROS_ROI_INPUT_BUSES then
           next_pointer(out_link_nr) <= next_pointer(out_link_nr);
           scan(out_link_nr)         <= scan(out_link_nr) + 1;
           link_pointer(out_link_nr) <= link_pointer(out_link_nr);
