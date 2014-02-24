@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/simulation
+END
+gth_quad_tb.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/simulation/gth_quad_tb.vhd
+END
+sim_reset_gt_model.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/simulation/sim_reset_gt_model.vhd
+END
+gth_quad_config_gtmodel.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/simulation/gth_quad_config_gtmodel.vhd
+END

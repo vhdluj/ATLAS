@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/implement
+END
+implement.bat
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/implement/implement.bat
+END
+planAhead_ise.bat
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/implement/planAhead_ise.bat
+END
+implement.sh
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/implement/implement.sh
+END
+xst.scr
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/implement/xst.scr
+END
+planAhead_ise.sh
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/implement/planAhead_ise.sh
+END
+xst.prj
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/implement/xst.prj
+END
+planAhead_ise.tcl
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/implement/planAhead_ise.tcl
+END

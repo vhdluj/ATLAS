@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/simulation/functional
+END
+gt_rom_init_rx.dat
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/simulation/functional/gt_rom_init_rx.dat
+END
+gt_rom_init_tx.dat
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/simulation/functional/gt_rom_init_tx.dat
+END

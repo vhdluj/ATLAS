@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/crc_distmem
+END
+crc_distmem.mif
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/crc_distmem/crc_distmem.mif
+END
+crc_distmem.vho
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/crc_distmem/crc_distmem.vho
+END
+crc_distmem_ex.tcl
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/crc_distmem/crc_distmem_ex.tcl
+END
+crc_distmem.xml
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/crc_distmem/crc_distmem.xml
+END
+disclaimer.txt
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/crc_distmem/disclaimer.txt
+END
+crc_distmem.xci
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/crc_distmem/crc_distmem.xci
+END

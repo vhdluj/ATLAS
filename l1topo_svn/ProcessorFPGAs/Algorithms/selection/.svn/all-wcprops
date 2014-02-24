@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/selection
+END
+cluster_select.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/selection/cluster_select.vhd
+END
+clusterSelect.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/selection/clusterSelect.vhd
+END
+jet_select.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/selection/jet_select.vhd
+END
+cluster_select_top.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/selection/cluster_select_top.vhd
+END
+jetSelect.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/selection/jetSelect.vhd
+END
+jet_select_top.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/selection/jet_select_top.vhd
+END
+TOBselect.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/selection/TOBselect.vhd
+END

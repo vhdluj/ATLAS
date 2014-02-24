@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/sorting
+END
+cluster_sort.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/sorting/cluster_sort.vhd
+END
+jet_sort.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/sorting/jet_sort.vhd
+END
+clusterTOB_register.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/sorting/clusterTOB_register.vhd
+END
+cluster_sort_top.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/sorting/cluster_sort_top.vhd
+END
+jetTOB_register.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/sorting/jetTOB_register.vhd
+END
+jet_sort_top.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Algorithms/sorting/jet_sort_top.vhd
+END

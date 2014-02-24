@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/crc_distmem/dist_mem_gen_v8_0
+END
+dist_mem_utils.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/crc_distmem/dist_mem_gen_v8_0/dist_mem_utils.vhd
+END
+dist_mem_comps.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/crc_distmem/dist_mem_gen_v8_0/dist_mem_comps.vhd
+END
+dist_mem_gen_v8_0.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/crc_distmem/dist_mem_gen_v8_0/dist_mem_gen_v8_0.vhd
+END
+dist_mem_gen_v8_0_synth.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/crc_distmem/dist_mem_gen_v8_0/dist_mem_gen_v8_0_synth.vhd
+END

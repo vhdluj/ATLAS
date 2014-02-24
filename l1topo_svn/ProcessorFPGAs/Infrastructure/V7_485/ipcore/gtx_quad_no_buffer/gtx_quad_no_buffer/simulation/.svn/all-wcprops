@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/simulation
+END
+gtx_quad_no_buffer_config_gtmodel.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 174
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/simulation/gtx_quad_no_buffer_config_gtmodel.vhd
+END
+sim_reset_gt_model.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 159
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/simulation/sim_reset_gt_model.vhd
+END
+gtx_quad_no_buffer_tb.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 162
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/simulation/gtx_quad_no_buffer_tb.vhd
+END

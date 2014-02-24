@@ -1,0 +1,11 @@
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/crc_distmem/crc_distmem
+END
+crc_distmem_ooc.xdc
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/crc_distmem/crc_distmem/crc_distmem_ooc.xdc
+END

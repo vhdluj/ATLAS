@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/library
+END
+ipbus_addr_decode.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/library/ipbus_addr_decode.vhd
+END
+ipbus_package.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/library/ipbus_package.vhd
+END

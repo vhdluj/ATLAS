@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<BillOfMaterials Version="1" Minor="2">
+	<IPInstance name="PlaybackSpy_BRAM">
+		<FileSets>
+			<FileSet generator="xmdf_to_bom">
+				<File name="PlaybackSpy_BRAM/blk_mem_gen_v7_3_readme.txt" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/doc/blk_mem_gen_v7_3_vinfo.html" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/doc/pg058-blk-mem-gen.pdf" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/example_design/PlaybackSpy_BRAM_exdes.ucf" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/example_design/PlaybackSpy_BRAM_exdes.vhd" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/example_design/PlaybackSpy_BRAM_exdes.xdc" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/example_design/PlaybackSpy_BRAM_prod.vhd" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/implement/implement.bat" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/implement/implement.sh" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/implement/planAhead_ise.bat" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/implement/planAhead_ise.sh" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/implement/planAhead_ise.tcl" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/implement/xst.prj" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/implement/xst.scr" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/PlaybackSpy_BRAM_synth.vhd" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/PlaybackSpy_BRAM_tb.vhd" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/addr_gen.vhd" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/bmg_stim_gen.vhd" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/bmg_tb_pkg.vhd" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/checker.vhd" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/data_gen.vhd" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/functional/simcmds.tcl" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/functional/simulate_isim.bat" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/functional/simulate_mti.bat" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/functional/simulate_mti.do" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/functional/simulate_mti.sh" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/functional/simulate_ncsim.sh" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/functional/simulate_vcs.sh" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/functional/ucli_commands.key" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/functional/vcs_session.tcl" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/functional/wave_mti.do" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/functional/wave_ncsim.sv" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/random.vhd" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/timing/simcmds.tcl" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/timing/simulate_isim.bat" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/timing/simulate_mti.bat" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/timing/simulate_mti.do" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/timing/simulate_mti.sh" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/timing/simulate_ncsim.sh" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/timing/simulate_vcs.sh" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/timing/ucli_commands.key" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/timing/vcs_session.tcl" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/timing/wave_mti.do" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM/simulation/timing/wave_ncsim.sv" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM.asy" type="asy" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM.ngc" type="ngc" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM.sym" type="asy" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM.vhd" type="vhdl" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM.vho" type="vho" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM.xco" type="xco" timestamp="0" checksum="0">
+				</File>
+				<File name="PlaybackSpy_BRAM_xmdf.tcl" type="ignore" timestamp="0" checksum="0">
+				</File>
+				<File name="summary.log" type="ignore" timestamp="0" checksum="0">
+				</File>
+			</FileSet>
+		</FileSets>
+	</IPInstance>
+</BillOfMaterials>
+

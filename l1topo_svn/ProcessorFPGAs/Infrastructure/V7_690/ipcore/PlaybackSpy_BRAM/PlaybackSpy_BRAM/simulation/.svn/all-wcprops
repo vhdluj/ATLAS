@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/simulation
+END
+random.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/simulation/random.vhd
+END
+data_gen.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/simulation/data_gen.vhd
+END
+addr_gen.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/simulation/addr_gen.vhd
+END
+checker.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/simulation/checker.vhd
+END
+PlaybackSpy_BRAM_synth.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 159
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/simulation/PlaybackSpy_BRAM_synth.vhd
+END
+PlaybackSpy_BRAM_tb.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 156
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/simulation/PlaybackSpy_BRAM_tb.vhd
+END
+bmg_stim_gen.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/simulation/bmg_stim_gen.vhd
+END
+bmg_tb_pkg.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/simulation/bmg_tb_pkg.vhd
+END

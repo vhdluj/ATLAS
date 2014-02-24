@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD
+END
+gth_quad_multi_gt.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/gth_quad_multi_gt.vhd
+END
+gth_quad_gt.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/gth_quad_gt.vhd
+END
+gth_quad.vho
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/gth_quad.vho
+END
+GTH_QUAD.xdc
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD.xdc
+END
+GTH_QUAD_ex.tcl
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD_ex.tcl
+END
+GTH_QUAD.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD.xml
+END
+gth_quad.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/gth_quad.vhd
+END
+GTH_QUAD.xci
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD.xci
+END

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/reps/atl1calo/!svn/ver/227/firmware/L1Topo/ProcessorFPGAs/constraints
+END
+L1TopoTopConstraints_690.xdc
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/reps/atl1calo/!svn/ver/227/firmware/L1Topo/ProcessorFPGAs/constraints/L1TopoTopConstraints_690.xdc
+END
+L1TopoTopConstraints.xdc
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/reps/atl1calo/!svn/ver/224/firmware/L1Topo/ProcessorFPGAs/constraints/L1TopoTopConstraints.xdc
+END
+L1TopoTopConstraints_485.xdc
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/reps/atl1calo/!svn/ver/227/firmware/L1Topo/ProcessorFPGAs/constraints/L1TopoTopConstraints_485.xdc
+END
+L1TopoTopConstraints_485_and_690.xdc
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/reps/atl1calo/!svn/ver/224/firmware/L1Topo/ProcessorFPGAs/constraints/L1TopoTopConstraints_485_and_690.xdc
+END

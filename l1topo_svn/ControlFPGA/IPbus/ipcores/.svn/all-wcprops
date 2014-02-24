@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/ipcores
+END
+tri_mode_eth_mac_v5_5.xco
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/ipcores/tri_mode_eth_mac_v5_5.xco
+END
+gig_eth_pcs_pma_v11_5.xco
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/ipcores/gig_eth_pcs_pma_v11_5.xco
+END

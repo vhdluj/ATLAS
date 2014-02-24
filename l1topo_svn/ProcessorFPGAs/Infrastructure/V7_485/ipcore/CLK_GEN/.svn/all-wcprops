@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/CLK_GEN
+END
+CLK_GEN.xdc
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/CLK_GEN/CLK_GEN.xdc
+END
+CLK_GEN_OOC.xdc
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/CLK_GEN/CLK_GEN_OOC.xdc
+END
+CLK_GEN_ex.tcl
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/CLK_GEN/CLK_GEN_ex.tcl
+END
+CLK_GEN.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/CLK_GEN/CLK_GEN.xml
+END
+CLK_GEN.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/CLK_GEN/CLK_GEN.vhd
+END
+CLK_GEN.xci
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/CLK_GEN/CLK_GEN.xci
+END
+CLK_GEN_clk_wiz.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/CLK_GEN/CLK_GEN_clk_wiz.vhd
+END
+CLK_GEN_board.xdc
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/CLK_GEN/CLK_GEN_board.xdc
+END
+CLK_GEN.vho
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/CLK_GEN/CLK_GEN.vho
+END

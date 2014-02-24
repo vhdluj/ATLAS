@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/src
+END
+Virtex7_690_80gth.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/src/Virtex7_690_80gth.vhd
+END
+L1TopoInfrastructure_690t.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/src/L1TopoInfrastructure_690t.vhd
+END
+startup_counter.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/src/startup_counter.vhd
+END
+CRC_CHECK_32b.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/src/CRC_CHECK_32b.vhd
+END
+DeserializerCrc.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/src/DeserializerCrc.vhd
+END
+PlaybackSpyMemory_BRAM.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/src/PlaybackSpyMemory_BRAM.vhd
+END

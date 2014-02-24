@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/constraints
+END
+ControlFPGA_pin_constraints.ucf
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/constraints/ControlFPGA_pin_constraints.ucf
+END
+ControlFPGA_clock_constraints.ucf
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/constraints/ControlFPGA_clock_constraints.ucf
+END

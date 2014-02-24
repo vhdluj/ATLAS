@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/example_design
+END
+PlaybackSpy_BRAM_exdes.ucf
+K 25
+svn:wc:ra_dav:version-url
+V 163
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/example_design/PlaybackSpy_BRAM_exdes.ucf
+END
+PlaybackSpy_BRAM_prod.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 162
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/example_design/PlaybackSpy_BRAM_prod.vhd
+END
+PlaybackSpy_BRAM_exdes.xdc
+K 25
+svn:wc:ra_dav:version-url
+V 163
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/example_design/PlaybackSpy_BRAM_exdes.xdc
+END
+PlaybackSpy_BRAM_exdes.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 163
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/PlaybackSpy_BRAM/PlaybackSpy_BRAM/example_design/PlaybackSpy_BRAM_exdes.vhd
+END

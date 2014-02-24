@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/simulation/functional
+END
+gt_rom_init_rx.dat
+K 25
+svn:wc:ra_dav:version-url
+V 166
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/simulation/functional/gt_rom_init_rx.dat
+END
+gt_rom_init_tx.dat
+K 25
+svn:wc:ra_dav:version-url
+V 166
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/simulation/functional/gt_rom_init_tx.dat
+END

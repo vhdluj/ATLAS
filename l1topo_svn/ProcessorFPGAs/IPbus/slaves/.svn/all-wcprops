@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/slaves
+END
+ipbus_reg.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/slaves/ipbus_reg.vhd
+END
+ipbus_slave_reg_readwrite.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/slaves/ipbus_slave_reg_readwrite.vhd
+END
+ipbus_ram.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/slaves/ipbus_ram.vhd
+END
+ipbus_slave_reg_pulse.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/slaves/ipbus_slave_reg_pulse.vhd
+END
+ipbus_peephole_ram.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/slaves/ipbus_peephole_ram.vhd
+END
+ipbus_ctrlreg.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/slaves/ipbus_ctrlreg.vhd
+END
+ipbus_slave_reg_readonly.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/slaves/ipbus_slave_reg_readonly.vhd
+END
+ipbus_fabric.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/slaves/ipbus_fabric.vhd
+END
+ipbus_pkt_ctr.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/slaves/ipbus_pkt_ctr.vhd
+END
+ipbus_slave_reg_counter.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/slaves/ipbus_slave_reg_counter.vhd
+END
+slaves.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/reps/atl1calo/!svn/ver/226/firmware/L1Topo/ProcessorFPGAs/IPbus/slaves/slaves.vhd
+END

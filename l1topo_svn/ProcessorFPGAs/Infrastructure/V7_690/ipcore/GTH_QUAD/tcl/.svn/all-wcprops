@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/tcl
+END
+v7ht.tcl
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/tcl/v7ht.tcl
+END
+set_top.tcl
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/tcl/set_top.tcl
+END

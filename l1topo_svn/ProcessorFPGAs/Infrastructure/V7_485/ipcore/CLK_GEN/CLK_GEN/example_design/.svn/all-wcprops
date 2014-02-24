@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/CLK_GEN/CLK_GEN/example_design
+END
+CLK_GEN_exdes.xdc
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/CLK_GEN/CLK_GEN/example_design/CLK_GEN_exdes.xdc
+END
+CLK_GEN_exdes.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/CLK_GEN/CLK_GEN/example_design/CLK_GEN_exdes.vhd
+END

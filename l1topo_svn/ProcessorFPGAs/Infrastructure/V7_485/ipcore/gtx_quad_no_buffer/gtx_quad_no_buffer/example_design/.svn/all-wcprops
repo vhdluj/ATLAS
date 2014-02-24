@@ -1,0 +1,107 @@
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design
+END
+gtx_quad_no_buffer_rx_startup_fsm.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 178
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_rx_startup_fsm.vhd
+END
+gtx_quad_no_buffer_rx_manual_phase_align.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 185
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_rx_manual_phase_align.vhd
+END
+gtx_quad_no_buffer_gt_frame_check.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 178
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_gt_frame_check.vhd
+END
+gtx_quad_no_buffer_tx_manual_phase_align.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 185
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_tx_manual_phase_align.vhd
+END
+gtx_quad_no_buffer_tx_startup_fsm.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 178
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_tx_startup_fsm.vhd
+END
+gtx_quad_no_buffer_sync_pulse.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 174
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_sync_pulse.vhd
+END
+gtx_quad_no_buffer_sync_block.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 174
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_sync_block.vhd
+END
+gt_rom_init_rx.dat
+K 25
+svn:wc:ra_dav:version-url
+V 159
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gt_rom_init_rx.dat
+END
+gt_rom_init_tx.dat
+K 25
+svn:wc:ra_dav:version-url
+V 159
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gt_rom_init_tx.dat
+END
+gtx_quad_no_buffer_clock_module.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 176
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_clock_module.vhd
+END
+gtx_quad_no_buffer_auto_phase_align.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 180
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_auto_phase_align.vhd
+END
+gtx_quad_no_buffer_init.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 168
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_init.vhd
+END
+gtx_quad_no_buffer_exdes.xdc
+K 25
+svn:wc:ra_dav:version-url
+V 169
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_exdes.xdc
+END
+gtx_quad_no_buffer_exdes.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 169
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_exdes.vhd
+END
+gtx_quad_no_buffer_recclk_monitor.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 178
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_recclk_monitor.vhd
+END
+gtx_quad_no_buffer_gt_usrclk_source.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 180
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_gt_usrclk_source.vhd
+END
+gtx_quad_no_buffer_gt_frame_gen.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 176
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer/example_design/gtx_quad_no_buffer_gt_frame_gen.vhd
+END

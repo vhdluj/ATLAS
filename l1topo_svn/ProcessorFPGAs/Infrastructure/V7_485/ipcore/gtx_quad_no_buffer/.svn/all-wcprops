@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer
+END
+gtx_quad_no_buffer.xml
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer.xml
+END
+gtx_quad_no_buffer.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer.vhd
+END
+gtx_quad_no_buffer.xci
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer.xci
+END
+gtx_quad_no_buffer_multi_gt.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer_multi_gt.vhd
+END
+gtx_quad_no_buffer_gt.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer_gt.vhd
+END
+gtx_quad_no_buffer.vho
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer.vho
+END
+gtx_quad_no_buffer.xdc
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer.xdc
+END
+gtx_quad_no_buffer_ex.tcl
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_485/ipcore/gtx_quad_no_buffer/gtx_quad_no_buffer_ex.tcl
+END

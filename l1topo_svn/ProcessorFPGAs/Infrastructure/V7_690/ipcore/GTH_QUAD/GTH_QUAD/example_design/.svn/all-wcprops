@@ -1,0 +1,125 @@
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design
+END
+gth_quad_sync_pulse.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_sync_pulse.vhd
+END
+gth_quad_sync_block.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_sync_block.vhd
+END
+gth_quad_rxpmarst_seq.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_rxpmarst_seq.vhd
+END
+gt_rom_init_rx.dat
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gt_rom_init_rx.dat
+END
+gth_quad_gtrxreset_seq.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_gtrxreset_seq.vhd
+END
+gth_quad_clock_module.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_clock_module.vhd
+END
+gt_rom_init_tx.dat
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gt_rom_init_tx.dat
+END
+gth_quad_auto_phase_align.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 150
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_auto_phase_align.vhd
+END
+gth_quad_init.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_init.vhd
+END
+GTH_QUAD_exdes.xdc
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/GTH_QUAD_exdes.xdc
+END
+gth_quad_exdes.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_exdes.vhd
+END
+gth_quad_recclk_monitor.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_recclk_monitor.vhd
+END
+gth_quad_rxrate_seq.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_rxrate_seq.vhd
+END
+gth_quad_gt_usrclk_source.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 150
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_gt_usrclk_source.vhd
+END
+gth_quad_gt_frame_gen.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_gt_frame_gen.vhd
+END
+gth_quad_rx_startup_fsm.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_rx_startup_fsm.vhd
+END
+gth_quad_rx_manual_phase_align.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 155
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_rx_manual_phase_align.vhd
+END
+gth_quad_gt_frame_check.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_gt_frame_check.vhd
+END
+gth_quad_tx_manual_phase_align.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 155
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_tx_manual_phase_align.vhd
+END
+gth_quad_tx_startup_fsm.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/reps/atl1calo/!svn/ver/223/firmware/L1Topo/ProcessorFPGAs/Infrastructure/V7_690/ipcore/GTH_QUAD/GTH_QUAD/example_design/gth_quad_tx_startup_fsm.vhd
+END

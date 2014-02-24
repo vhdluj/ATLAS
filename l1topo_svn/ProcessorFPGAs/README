@@ -1,0 +1,62 @@
+L1Topo - Firmware for the processor FPGAs - Readme
+==================================================
+
+This is the VHDL source code for the L1Topo Virtex 7 (VX485T/VX690T) FPGAs.
+It is writen for the Xilinx develpoment tool Vivado.
+
+Structure:
+----------
+* TOP MODULES location:
+    - for the VX485T: Infrastructure/V7_485/src/L1TopoInfrastructure_485t.vhd 
+    - for the VX690T: Infrastructure/V7_690/src/L1TopoInfrastructure_690t.vhd
+* CONSTRAINT FILES location:
+    - for the VX485T: constraints/L1TopoTopConstraints_485.xdc
+    - for the VX690T: constraints/L1TopoTopConstraints_690.xdc
+* Sample Vivado Projects (problem: absolute paths saved in project files):
+    - for the VX485T: VivadoProject_485/VivadoProject_485.xpr
+    - for the VX690T: VivadoProject_690/VivadoProject_690.xpr
+* Submodules:
+    The top modules depend on submodules. These can befound in the following subdirectories:
+    - Infrastructure/V7_XXX/src    - main infrastructure source code (XXX = 485 or 690)
+    - Infrastructure/V7_XXX/ipcore - source code of used ip cores (encrypted)
+                                     comment: crc_distmem.vhd lies in "ipcore/crc_distmem/sim"
+    - Algorithms                   - all L1Topo algorithms (+ input TOB selection/sorting algos)
+* IPbus subdirectory:
+    At the moment this is a standalone firmware, only providing ip bus functionalities.
+
+Algorithms:
+-----------
+Overview over all planned L1Topo algorithms and the status of their implementation in VHDL.
+
+Algorithm         | Description/Formula                                                       | in VHDL?
+------------------|---------------------------------------------------------------------------|----------
+d_Eta             | if {|Eta2-Eta1| < d_Eta_cut} fire trigger                                 |   
+d_Phi             | if {|Phi2-Phi1| < d_Phi_cut} fire trigger                                 |   
+d_R ("Box-Cut")   | if {(|Eta2-Eta1| < d_R_cut) & (|Phi2-Phi1| < d_R_cut)} fire trigger       |   yes
+H_T-SumPt(Jets)   | if {|H_T - (Jet1Pt + Jet2Pt + Jet3Pt + ...)| > H_T_cut} fire trigger      |   
+(M_CT)²           | if {(M_CT)² > (M_CT)²_cut} fire trigger, (M_CT)²=2*Et1*Et2*(1+cos(d_Phi)) |   
+(M_T)²            | if {(M_T)² > (M_T)²_cut} fire trigger, (M_T)²=2*Et1*MET*(1-cos(d_Phi))    |   
+M²                | if {M² > M²_cut} fire trigger, M²=2*Et1*Et2*(cosh(d_Eta)-cos(d_Phi))      |   
+M_eff-Sum(H_T,MET)| if {|M_eff - (H_T + MET)| > M_eff_cut} fire trigger                       |   
+------------------|----------------------------
+(TODO: lookup if </> and exact implementation in VHDL)
+
+Detailed descriptions:
+
+* d_R ("Box-Cut"): There are two implementations. One is comparing objects of the same type (e.g. jets 
+                   with jets) so only half of the "comparison matrix" of input objects has to be 
+                   evaluated. The second is comparing objects of different types and therefore requiring
+                   more resources as the whole "comparison matrix" has to be evaluated.
+                   -> Inputs:
+                   - a list of objects of one type
+                   - optional: a list of objects of another type
+                   - a threshold value "d_R_cut" (width = X bits)
+                   - 
+                   - 
+
+
+Parameters:
+-----------
+Description of all input and output parameters for all algorithms.
+
+-TODO: Christian

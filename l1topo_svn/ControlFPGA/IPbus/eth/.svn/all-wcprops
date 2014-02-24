@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/eth
+END
+eth_7s_sgmii.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/eth/eth_7s_sgmii.vhd
+END
+gig_eth_pcs_pma_v11_5_transceiver_kc705.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/eth/gig_eth_pcs_pma_v11_5_transceiver_kc705.vhd
+END
+fsm_phy_reset.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/eth/fsm_phy_reset.vhd
+END
+gig_eth_pcs_pma_v11_5_block.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/eth/gig_eth_pcs_pma_v11_5_block.vhd
+END

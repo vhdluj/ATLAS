@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/eth_orig
+END
+gig_eth_pcs_pma_v11_5_reset_sync.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/eth_orig/gig_eth_pcs_pma_v11_5_reset_sync.vhd
+END
+gtwizard_v2_7_gt.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/eth_orig/gtwizard_v2_7_gt.vhd
+END
+gtwizard_v2_7.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/eth_orig/gtwizard_v2_7.vhd
+END
+gtwizard_v2_7_rx_startup_fsm.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/eth_orig/gtwizard_v2_7_rx_startup_fsm.vhd
+END
+gig_eth_pcs_pma_v11_5_sync_block.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/eth_orig/gig_eth_pcs_pma_v11_5_sync_block.vhd
+END
+gtwizard_v2_7_tx_startup_fsm.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/eth_orig/gtwizard_v2_7_tx_startup_fsm.vhd
+END
+gtwizard_v2_7_init.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/eth_orig/gtwizard_v2_7_init.vhd
+END
+gtwizard_v2_7_sync_block.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/reps/atl1calo/!svn/ver/225/firmware/L1Topo/ControlFPGA/IPbus/eth_orig/gtwizard_v2_7_sync_block.vhd
+END
