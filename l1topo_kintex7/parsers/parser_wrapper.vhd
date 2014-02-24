@@ -13,8 +13,8 @@ entity parser_wrapper is
 
     LINK_NUMBER              : integer                  := 0;
     TOTAL_NUMBER_OF_IN_LINKS : integer                  := 4;
-    ACTIVE_LINKS             : pointers_array           := (0, 12, 24, 36, 0, 11, 23, 34, 0, 11, 23, 34, 0, 11, 23, 34, 0, 11, 23, 34, 0, 11, 23, 34, 0, 11, 23, 34, 0, 11, 23, 34, 0, 11, 23, 34, 0, 11, 23, 34);
-    TYPE_ASSIGNMENT_INS      : slice_parameters_array_u := (x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4")  --type of parser--assigned to links
+    ACTIVE_LINKS             : pointers_array           := (0, 1); --(0, 12, 24, 36, 0, 11, 23, 34, 0, 11, 23, 34, 0, 11, 23, 34, 0, 11, 23, 34, 0, 11, 23, 34, 0, 11, 23, 34, 0, 11, 23, 34, 0, 11, 23, 34, 0, 11, 23, 34);
+    TYPE_ASSIGNMENT_INS      : slice_parameters_array_u := (x"4", x"4") --(x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4", x"2", x"8", x"3", x"4")  --type of parser--assigned to links
     );
 
   port (
