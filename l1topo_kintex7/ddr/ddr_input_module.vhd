@@ -19,7 +19,7 @@ port(
 	CTRL_READY_IN     : in std_logic;
 	
 	DATA_OUT          : out std_logic_vector(9 downto 0);
-	SYNCED_OUT        : out std_logic
+	SYNCED_OUT        : out std_logic;
 	-- debug ports:
 	DBG_STATE_OUT     : out std_logic_vector(3 downto 0);
 	DBG_REG_DATA_OUT  : out std_logic_vector(9 downto 0);

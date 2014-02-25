@@ -27,7 +27,7 @@ port (
 	
 	DATA_OUT           : out std_logic_vector(AVAILABLE_LVDS_LINES * 8 - 1 downto 0);
 	DATA_VALID_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
-        DATA_KCTRL_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0)
+        DATA_KCTRL_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
         	-- debug ports:
 	DBG_STATE_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES * 4 - 1 downto 0);
 	DBG_REG_DATA_OUT  : out std_logic_vector(AVAILABLE_LVDS_LINES * 10 - 1 downto 0);
