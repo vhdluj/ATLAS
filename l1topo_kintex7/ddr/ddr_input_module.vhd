@@ -466,12 +466,12 @@ begin
 	
 	
 	-- debug ports:
-	DBG_STATE_OUT    <= state;
-	DBG_REG_DATA_OUT <= registered_data;
-	DBG_BITSLIP_OUT  <= std_logic_vector(to_unsigned(bitslips_ctr, 4));
-	DBG_INC_OUT      <= std_logic_vector(to_unsigned(inc_ctr, 8));
-	DBG_PAUSE_OUT    <= std_logic_vector(to_unsigned(pause_ctr, 8));
-	DBG_STEP_OUT     <= std_logic_vector(to_unsigned(step_ctr, 8));
+--	DBG_STATE_OUT    <= state;
+--	DBG_REG_DATA_OUT <= registered_data;
+--	DBG_BITSLIP_OUT  <= std_logic_vector(to_unsigned(bitslips_ctr, 4));
+--	DBG_INC_OUT      <= std_logic_vector(to_unsigned(inc_ctr, 8));
+--	DBG_PAUSE_OUT    <= std_logic_vector(to_unsigned(pause_ctr, 8));
+--	DBG_STEP_OUT     <= std_logic_vector(to_unsigned(step_ctr, 8));
 
 end Behavioral;
 

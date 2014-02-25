@@ -34,13 +34,18 @@ begin
  
 	out_gen : for i in 0 to lvds_lines - 1 generate
 		
-		reg(i)(3 downto 0)   <= DBG_STATE_IN((i + 1) * 4 - 1 downto i * 4);
-		reg(i)(7 downto 4)   <= DBG_BITSLIP_IN((i + 1) * 4 - 1 downto i * 4);
-		reg(i)(15 downto 8)  <= DBG_INC_IN((i + 1) * 8 - 1 downto i * 8);
-		reg(i)(23 downto 16) <= DBG_PAUSE_IN((i + 1) * 8 - 1 downto i * 8);
-		reg(i)(31 downto 24) <= DBG_STEP_IN((i + 1) * 8 - 1 downto i * 8);
-		
-		reg(lvds_lines + i)(9 downto 0)  <= DBG_REG_DATA_IN((i + 1) * 10 - 1 downto i * 10);
+		process(clk)
+		begin
+			if rising_edge(clk) then
+				reg(i)(3 downto 0)   <= DBG_STATE_IN((i + 1) * 4 - 1 downto i * 4);
+				reg(i)(7 downto 4)   <= DBG_BITSLIP_IN((i + 1) * 4 - 1 downto i * 4);
+				reg(i)(15 downto 8)  <= DBG_INC_IN((i + 1) * 8 - 1 downto i * 8);
+				reg(i)(23 downto 16) <= DBG_PAUSE_IN((i + 1) * 8 - 1 downto i * 8);
+				reg(i)(31 downto 24) <= DBG_STEP_IN((i + 1) * 8 - 1 downto i * 8);
+				
+				reg(lvds_lines + i)(9 downto 0)  <= DBG_REG_DATA_IN((i + 1) * 10 - 1 downto i * 10);
+			end if;
+		end process;
 	
 	end generate out_gen;
 
