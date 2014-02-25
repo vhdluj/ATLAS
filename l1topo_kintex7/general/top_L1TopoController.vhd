@@ -155,7 +155,8 @@ begin
 --##################   ROD
 
 SET_DUMMY_ASSIGNMENTS: for i in 0 to ros_roi_bus_assignment_sig'high generate
-  ros_roi_bus_assignment_sig(i) <= std_logic_vector(to_unsigned(i mod 12,ros_roi_bus_assignment_sig(0)'length));
+  ros_roi_bus_assignment_sig(i) <= std_logic_vector(to_unsigned(0,ros_roi_bus_assignment_sig(0)'length));--
+  --i, mod 12,ros_roi_bus_assignment_sig(0)'length));
 end generate SET_DUMMY_ASSIGNMENTS;
 
 GENERATE_V1_V2_DDR_TO_ROD: for i in 0 to 0 generate
@@ -175,7 +176,7 @@ GENERATE_V1_V2_DDR_TO_ROD: for i in 0 to 0 generate
     NUMBER_OF_SLICES_OUT        => number_of_slices_out_l,
     LVL0_OFFSET_OUT             => lvl0_offset_out_l,
     ROS_ROI_BUS_ASSIGNMENT      => ros_roi_bus_assignment_sig,
-    ROS_ROI_BUS_ASSIGNMENT_DONE => not sys_rst,--ROS_ROI_BUS_ASSIGNMENT_DONE,
+    ROS_ROI_BUS_ASSIGNMENT_DONE => ddr_synced,--ROS_ROI_BUS_ASSIGNMENT_DONE,
     ROS_ROI_OUT_DATA_CNTR       => open,--ROS_ROI_OUT_DATA_CNTR,
     START_OF_FRAME              => open,
     END_OF_FRAME                => open);
@@ -391,8 +392,17 @@ SIM_CLOCK: if SIMULATION generate
     idelayctrl_refclk300 <= '0';
     wait for 1.666 ns;
   end process DELAY_CLK;
+
+  process
+  begin  -- process
+    gck2_clk80 <= '1'; 
+    wait for 6.25 ns;
+    gck2_clk80 <= '0';
+    wait for 6.25 ns;
+  end process;
   rst_ipb <= '0';
   gck2_mmcm_locked <= not rst_from_bank18;
+  soft_rst <= '0';
 end generate SIM_CLOCK;
         -----------------------------------------------------------------------
         -- comment for sim
@@ -442,9 +452,9 @@ end generate SIM_CLOCK;
 -------------------------------------------------------------------------------
 -- comment for sim
 -------------------------------------------------------------------------------
------- Ethernet MAC core and PHY interface
-----
-                         
+---- Ethernet MAC core and PHY interface
+--
+                       
 	eth: entity work.eth_7s_sgmii
 		port map(
 			gt_clkp => gt_clkp,
@@ -470,9 +480,9 @@ end generate SIM_CLOCK;
 			pcs_pma_status => pcs_pma_status,
 			ExternalPhyChip_reset_out => phy_reset
 		);
-      
+    
 	PHY_RESET_OUT_N <= not phy_reset;
-      
+    
 -- ipbus control logic
 
 	ipbus: entity work.ipbus_ctrl
@@ -499,7 +509,7 @@ end generate SIM_CLOCK;
 			pkt_rx_led => pkt_rx_led,
 			pkt_tx_led => pkt_tx_led
 		);
-      	
+    	
 
 	mac_addr <= X"000A3501F610";
 	--ip_addr <= X"865D828B"; --134.93.130.139
@@ -508,6 +518,7 @@ end generate SIM_CLOCK;
 
 -- ipbus slaves live in the entity below, and can expose top-level ports
 -- The ipbus fabric is instantiated within.
+
 
 
       slaves: entity work.slaves 
@@ -523,46 +534,46 @@ end generate SIM_CLOCK;
       	pkt_rx => pkt_rx,
       	pkt_tx => pkt_tx,
 
-      	
+    	
 		ipb_write_U1_out => ipb_write_U1,
 		ipb_read_U1_in => ipb_read_U1,
 		ipb_write_U2_out => ipb_write_U2,
 		ipb_read_U2_in => ipb_read_U2,
-      	
+    	
 		ctrlbus_idelay_value_out => ctrlbus_idelay_value,
 		ctrlbus_idelay_load_out => ctrlbus_idelay_load,
-      	
-      	
+    	
+    	
 			soft_rst_out => soft_rst,
-      		
+    		
 		DBG_STATE_IN     => dbg_ddr_state,
 		DBG_REG_DATA_IN  => dbg_ddr_reg,
 		DBG_BITSLIP_IN   => dbg_ddr_bitslip,
 		DBG_INC_IN       => dbg_ddr_inc,
 		DBG_PAUSE_IN     => dbg_ddr_pause,
 		DBG_STEP_IN      => dbg_ddr_step,
-      	
+    	
 		ROD_RAM_CLK_IN => gck2_clk80,
 		ROD_RAM_WE_IN => ram_we,
 		ROD_RAM_ADDR_IN => ram_addr,
 		ROD_RAM_DATA_IN => ram_data
 	);
-      
-      
+    
+    
 	move : entity work.from_rod_to_ipbus
 	port map(
 		clk => gck2_clk80,
 		reset => rst_ipb,
-      	
+    	
 		parsers_data_in => rod_data,
 		parsers_rd_out => rod_re,
 		parsers_rdy_in => rod_rdy,
-      	
+    	
 		ram_we_out => ram_we,
 		ram_waddr_out => ram_addr,
 		ram_data_out => ram_data
 	);
-      
+    
 	ctrlbus: entity work.ctrlbus
 		port map(
 			gck2_clk40_in => gck2_clk40,
@@ -583,10 +594,10 @@ end generate SIM_CLOCK;
 			ipb_read_U2_out => ipb_read_U2,
 			idelay_value_in => ctrlbus_idelay_value,
 			idelay_load_in => ctrlbus_idelay_load,
-      		
+    		
 			mmcm_clk_80_u1_out => ctrlbus_32_clk,
 			mmcm_clk_400_u1_out => ctrlbus_32_clkx8,
-      		
+    		
 			mmcm_clk_80_u2_out => ctrlbus_17_clk,
 			mmcm_clk_400_u2_out => ctrlbus_17_clkx8
 		);

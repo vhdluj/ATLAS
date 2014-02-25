@@ -13,8 +13,8 @@ use work.rod_l1_topo_types_const.all;
 
 entity top_TopoVirtex is 
 GENERIC(
-	LINES_NUMBER : integer  := 8;
-        SIMULATION : boolean :=true
+	LINES_NUMBER : integer  := NUMBER_OF_ROS_OUTPUT_BUSES;
+        SIMULATION : boolean :=false
 );
 port(
 		GCK2_IN_P, GCK2_IN_N: in std_logic;
@@ -28,9 +28,9 @@ port(
         CTRLBUS_N_IN : in std_logic;     --LINES TO ISSUE DDR RESET
         
         ROD_CONTROL_P_IN : in std_logic;
-        ROD_CONTROL_N_IN : in std_logic;
+        ROD_CONTROL_N_IN : in std_logic
         
-        MMCX_U30_PIN : in std_logic --trigger source (pulser)
+       -- MMCX_U30_PIN : in std_logic --trigger source (pulser)
 	);
 end top_TopoVirtex;
 
@@ -117,7 +117,11 @@ component l1topo_to_ddr
     signal mmcx_u30_synch_a, mmcx_u30_synch_b  : std_logic;
     signal MMCX_U30 : std_logic := '0'; --it used to be external pulse for trigger creation. Now we put here ipbus register.
     signal kintex_reset_pulse : std_logic := '0';
-
+    --Virtex ROD registers nie potrzebne
+--    signal OUT_DATA_reg              : std_logic_vector(OUTPUT_DATA_WIDTH-1 downto 0) := (others => '0');
+--    signal DATA_VALID_OUT_reg        : std_logic_vector(NUMBER_OF_ROS_OUTPUT_BUSES-1 downto 0) := (others => '0');
+--    signal SPECIAL_CHARACTER_OUT_reg : std_logic_vector(NUMBER_OF_ROS_OUTPUT_BUSES-1 downto 0) := (others => '0');
+--    signal RESET_reg                 : std_logic_vector(1 downto 0):= (others=>'0');
     
 begin
 	clocks: entity work.clocks_TopoVirtex
@@ -139,40 +143,52 @@ begin
             wait for 1.25 ns;
           end process CLK400_PROC;
         end generate SIMULATION_ON;
-        --SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION)  generate
-	--ctrlbus: entity work.ctrlbus
-	--	port map(
-	--		gck2_clk40_in => gck2_clk40,
-	--		gck2_clk80_in => gck2_clk80,
-	--		idelayctrl_refclk300_in => idelayctrl_refclk300,
-	--		CTRLBUS_OUT_P => CTRLIPBUS_P_OUT,
-	--		CTRLBUS_OUT_N => CTRLIPBUS_N_OUT,
-	--		CTRLBUS_IN_P => CTRLIPBUS_P_IN,
-	--		CTRLBUS_IN_N => CTRLIPBUS_N_IN,
-	--		ipb_read_in => ipb_master_read,
-	--		ipb_write_out => ipb_master_write,
-	--		idelay_value_in => ctrlbus_idelay_value,
-	--		idelay_load_in => ctrlbus_idelay_load,
-	--		ctrlbus_locked_out => ctrlbus_locked,
-			
-	--		clk400=>clk400
-	--	);
+        -----------------------------------------------------------------------
+        -- sim comment
+        -----------------------------------------------------------------------
 
-	--slaves: entity work.slaves port map(
-	--	ipb_clk => gck2_clk40, --ipb_clk
-	--	ipb_rst => rst_ipb,
-	--	ipb_in => ipb_master_write,
-	--	ipb_out => ipb_master_read,
+    	ctrlbus: entity work.ctrlbus
+		port map(
+			gck2_clk40_in => gck2_clk40,
+			gck2_clk80_in => gck2_clk80,
+			idelayctrl_refclk300_in => idelayctrl_refclk300,
+			CTRLBUS_OUT_P => CTRLIPBUS_P_OUT,
+			CTRLBUS_OUT_N => CTRLIPBUS_N_OUT,
+			CTRLBUS_IN_P => CTRLIPBUS_P_IN,
+			CTRLBUS_IN_N => CTRLIPBUS_N_IN,
+			ipb_read_in => ipb_master_read,
+			ipb_write_out => ipb_master_write,
+			idelay_value_in => ctrlbus_idelay_value,
+			idelay_load_in => ctrlbus_idelay_load,
+			ctrlbus_locked_out => ctrlbus_locked,
+	      	
+			clk400=>clk400
+		);
+
+	slaves: entity work.slaves port map(
+		ipb_clk => gck2_clk40, --ipb_clk
+		ipb_rst => rst_ipb,
+		ipb_in => ipb_master_write,
+		ipb_out => ipb_master_read,
 	
-	--	ctrlbus_idelay_value_out => ctrlbus_idelay_value,
-	--	ctrlbus_idelay_load_out => ctrlbus_idelay_load,
+		ctrlbus_idelay_value_out => ctrlbus_idelay_value,
+		ctrlbus_idelay_load_out => ctrlbus_idelay_load,
 
-	--	ctrlbus_locked_in => ctrlbus_locked,
-		
-	--	ROD_rewi_reg => ROD_rewi_reg,
-	--	triggerReg =>triggerReg
-	--);
-        --end generate SWITCH_OFF_IPBUS_FOR_SIM;
+
+		ctrlbus_locked_in => ctrlbus_locked,
+		--register signal sction:
+		ROD_rewi_reg => ROD_rewi_reg,
+		triggerReg =>triggerReg,
+				
+        OUT_DATA_reg              => out_data, --data going from rod to ddr component
+        DATA_VALID_OUT_reg        => data_valid_out, --data valid coming out from l1_topo rod component
+        SPECIAL_CHARACTER_OUT_reg => special_character_out,
+        RESET_reg                 => (reset & KINTEX_READY) --reset line status
+	);
+        -----------------------------------------------------------------------
+        -- end sim comment
+        -----------------------------------------------------------------------
+
 	--Wrapper initialization______________________________________
     TransmittersWrapperInst :  entity work.TransmittersWrapper
     	generic map(
@@ -189,9 +205,9 @@ begin
 	
 
  
- 	ASSIGN_NUMBER_OF_SLICES : for i in 0 to NUMBER_OF_SLICES'length-1 generate
-      NUMBER_OF_SLICES(i) <= to_unsigned(5, NUMBER_OF_SLICES(0)'length);--to_unsigned(((i mod 16)+1), NUMBER_OF_SLICES(0)'length);
-      LVL0_OFFSET(i)      <= to_unsigned(i mod 2, LVL0_OFFSET(0)'length); --to_unsigned(i mod 8, LVL0_OFFSET(0)'length);
+        ASSIGN_NUMBER_OF_SLICES : for i in 0 to NUMBER_OF_SLICES'length-1 generate
+          NUMBER_OF_SLICES(i) <= to_unsigned(3, NUMBER_OF_SLICES(0)'length);--to_unsigned(((i mod 16)+1), NUMBER_OF_SLICES(0)'length);
+          LVL0_OFFSET(i)      <= to_unsigned(i mod 2, LVL0_OFFSET(0)'length); --to_unsigned(i mod 8, LVL0_OFFSET(0)'length);
     end generate ASSIGN_NUMBER_OF_SLICES;   
     
 	l1topo_to_ddr_1: l1topo_to_ddr
@@ -246,14 +262,16 @@ begin
     rod_reset <= not KINTEX_READY;    
     LED_OUT <= ctrlbus_locked;
     rst_ipb <= not gck2_mmcm_locked;
-    MMCX_U30 <= triggerReg(0) or MMCX_U30_PIN;
+    MMCX_U30 <= triggerReg(0);-- or MMCX_U30_PIN;
+
 	
 	----------------------------------------------------------------------------------------------
 	----------------------------------------------------------------------------------------------
 	--Processes:
 	----------------------------------------------------------------------------------------------
 	----------------------------------------------------------------------------------------------
-   --l1topo ROD processes:    
+   --l1topo ROD processes:
+   slice_changes_aproved <= KINTEX_READY;
    DETECT_RISING_EDGE : process (gck2_clk40)
    begin
      if rising_edge(gck2_clk40) then
@@ -287,22 +305,22 @@ begin
          global_reset_cnt <= (others => '0');
          local_reset <= '1';
          local_reset_sync <= '1';
-         slice_changes_aproved <= '0';
+         --slice_changes_aproved <= '0';
        elsif global_reset_cnt < x"000e" then
          global_reset_cnt <= global_reset_cnt + 1;
          local_reset <= '1';-- or kintex_ready_pulse;
          local_reset_sync <= '1';
-         slice_changes_aproved <= '0';
+         --slice_changes_aproved <= '0';
        elsif global_reset_cnt = x"000e" and kintex_ready_synch_b = '1' then
          local_reset <= '0';
          local_reset_sync <= local_reset;
          global_reset_cnt <= x"000e";
-         slice_changes_aproved <= '1';
+         --slice_changes_aproved <= '1';
        else
          local_reset <= local_reset;-- or kintex_ready_pulse;
          local_reset_sync <= '0';
          global_reset_cnt <= global_reset_cnt;
-         slice_changes_aproved <= slice_changes_aproved;
+         --slice_changes_aproved <= slice_changes_aproved;
        end if;
      end if;
    end process GLOBAL_RESET;
@@ -343,8 +361,9 @@ begin
     begin
       if rising_edge(gck2_clk40) then
         --For time being  we put as data some constant values. Counter will be used later 
+        cntr_for_ros_roi_bus(i) <= std_logic_vector(unsigned(cntr_for_ros_roi_bus(i)) + 1);
+        --cntr_for_ros_roi_bus(i) <= std_logic_vector(to_unsigned(i, cntr_for_ros_roi_bus(i)'length));
         --cntr_for_ros_roi_bus(i) <= std_logic_vector(unsigned(cntr_for_ros_roi_bus(i)) + 1);
-        cntr_for_ros_roi_bus(i) <= std_logic_vector(to_unsigned(i, cntr_for_ros_roi_bus(i)'length));
       end if;
     end process CNTR_FOR_ROS_ROI_BUS_PROC;
   end generate GENERATE_CNTRS_FOR_ROS_ROI_DATA;

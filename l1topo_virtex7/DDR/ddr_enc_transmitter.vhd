@@ -45,7 +45,7 @@ begin
             data_in_local <= DATA_IN;
           elsif DATA_VALID_IN = '0' and reset = '1' then
             enc_810_kin   <= '1';
-            data_in_local <= x"BC";
+            data_in_local <= x"1C";
           elsif DATA_VALID_IN = '0' and reset = '0' then
             enc_810_kin   <= '1';
             data_in_local <= x"1c";
