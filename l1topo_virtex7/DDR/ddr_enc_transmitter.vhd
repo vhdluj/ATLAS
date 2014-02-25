@@ -6,6 +6,7 @@ use work.s7_transmission_components.all;
 
 entity ddr_enc_transmitter is
 port (
+        RESET          : in std_logic;
 	CLK_BIT_IN     : in std_logic;
 	CLK_WORD_IN    : in std_logic;
 	RESET_IN       : in std_logic;
@@ -32,47 +33,46 @@ process(CLK_WORD_IN)
 begin
 	if rising_edge(CLK_WORD_IN) then
 		--data_in_local   <= DATA_IN;
-		if (DATA_VALID_IN = '1') then
-			if (DATA_KCTRL_IN = '1') then
-				data_in_local <= x"50";
-				crc_in_en_local <= '0';
-			else
-				data_in_local <= DATA_IN;
-				crc_in_en_local <= '1';
-			end if;
-		else
-			data_in_local <= x"1c";
-			crc_in_en_local <= '0';
-		end if;
-		
---		if (DATA_KCTRL_IN = '1' and DATA_VALID_IN = '1') then
---			data_in_local   <= x"50";
---			crc_in_en_local <= '0';
---		elsif (DATA_VALID_IN = '0') then
---			data_in_local   <= X"1c";--DATA_IN;
---			crc_in_en_local <= DATA_VALID_IN;
---		else
---			data_in_local <= data_in;
---			crc_in_en_local <= DATA_VALID_IN;
---		end if;
+		--if (DATA_KCTRL_IN = '1' and DATA_VALID_IN = '1') then
+		--	data_in_local   <= DATA_IN;--x"";
+		--	crc_in_en_local <= '0';
+		--else
+		--	data_in_local   <= DATA_IN;
+		--	crc_in_en_local <= DATA_VALID_IN;
+		--end if;
+          if DATA_KCTRL_IN = '1' then
+            enc_810_kin   <= '1';
+            data_in_local <= DATA_IN;
+          elsif DATA_VALID_IN = '0' and reset = '1' then
+            enc_810_kin   <= '1';
+            data_in_local <= x"BC";
+          elsif DATA_VALID_IN = '0' and reset = '0' then
+            enc_810_kin   <= '1';
+            data_in_local <= x"1c";
+          else
+            enc_810_kin   <= '0';
+            data_in_local <= DATA_IN;
+          end if;
 	end if;
 end process;
 
-enc_crc : crc
-port map(
-	data_in    => data_in_local,
-	crc_en     => crc_in_en_local,
-	rst        => RESET_IN,
-	clk        => CLK_WORD_IN,
-	data_out   => d_out_crc,
-	enable_out => crc_out_en
-);
 
-enc_810_kin <= not crc_out_en;
+
+--enc_crc : crc
+--port map(
+--	data_in    => data_in_local,
+--	crc_en     => crc_in_en_local,
+--	rst        => RESET_IN,
+--	clk        => CLK_WORD_IN,
+--	data_out   => d_out_crc,
+--	enable_out => crc_out_en
+--);
+
+--enc_810_kin --<= not crc_in_en_local; --crc_out_en;
 
 enc_810 : encode_8b10b_lut_base
 port map(
-	DIN               => d_out_crc,
+	DIN               => data_in_local, --d_out_crc,
 	KIN               => enc_810_kin,
 	CLK               => CLK_WORD_IN,
 	DOUT              => d_out_enc,
