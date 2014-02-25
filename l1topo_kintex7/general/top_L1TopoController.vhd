@@ -32,6 +32,7 @@ port(
 	
 	DATA_U1_CTRL_OUT_P, DATA_U1_CTRL_OUT_N : out std_logic;
 	DATA_U2_CTRL_OUT_P, DATA_U2_CTRL_OUT_N : out std_logic;
+	DATA_U2_SYNC_OUT_P, DATA_U2_SYNC_OUT_N : out std_logic;
 --	DATA_BANK17_IN_P, DATA_BANK17_IN_N : in std_logic_vector(1 downto 0);
 --	DATA_BANK32_IN_P, DATA_BANK32_IN_N : in std_logic_vector(4 downto 0);
 	DATA_BANK18_IN_P, DATA_BANK18_IN_N : in std_logic_vector(7 downto 0);
@@ -123,6 +124,7 @@ signal ddr_kctrl_from_bank18 : std_logic_vector(ddr_lines_on_bank18 - 1 downto 0
 	signal rod_rdy, rod_re, ram_we : std_logic;
 	signal ram_addr : std_logic_vector(9 downto 0);
 	signal rod_data, ram_data : std_logic_vector(31 downto 0);
+	signal rst_from_bank18, rst_from_bank16 : std_logic;
 
 begin
  ones <= (others => '1');
@@ -136,7 +138,7 @@ end generate SET_DUMMY_ASSIGNMENTS;
 GENERATE_V1_V2_DDR_TO_ROD: for i in 0 to 0 generate
   DDR_TO_ROD_INST: entity work.ddr_to_rod
   port map (
-    RESET                       => sys_rst,
+    RESET                       => ddr_rst,
     DATA_IN_CLK                 => gck2_clk80, --clk_80,
     DATA_OUT_CLK                => gck2_clk80, --clk_80,
     LVL1_FULL_THR               => "11111110",
@@ -183,9 +185,9 @@ GENERATE_OUTPUT_PARSERS: for i in 0 to 0 generate--NUMBER_OF_OUTPUT_LINKS - 1 ge
     port map (
       CLK_WR_IN          => gck2_clk80, --clk_80,
       CLK_RD_IN          => gck2_clk80, --clk_80,
-      RESET_IN           => sys_rst,
+      RESET_IN           => ddr_rst,
       BC_OFFSET_IN       => std_logic_vector(to_unsigned(3,6)),
-      BC_QTY_IN          => std_logic_vector(to_unsigned(5,6)),
+      BC_QTY_IN          => std_logic_vector(to_unsigned(3,6)),
       DATA_IN            => data_out_l(i),
       ROS_ROI_BUS_NUMBER => std_logic_vector(actual_bus_number_out_l(i)),
       DATA_OUT           => rod_data,
@@ -196,12 +198,13 @@ GENERATE_OUTPUT_PARSERS: for i in 0 to 0 generate--NUMBER_OF_OUTPUT_LINKS - 1 ge
 end generate GENERATE_OUTPUT_PARSERS;
 
 
-ddr_synced <= '1' when links_synced = ones else '0';
+ddr_synced <= '1' when (links_synced = ones and rst_ipb = '0') else '0';
 
 --##################################### END OF ROD
 
 
-ddr_rst <= not gck2_mmcm_locked or sys_rst;
+ddr_rst <= not gck2_mmcm_locked or rst_ipb;
+v_reset <= rst_from_bank18 or rst_from_bank16;
 
 ddr_bank18 : entity work.ddr_links_wrapper
 generic map(
@@ -214,12 +217,13 @@ port map(
                 DELAY_CLK_IN       => idelayctrl_refclk300,
                 EXT_DDR_CLK_IN     => '0',
                 EXT_DDR_CLK_X8_IN  => '0',
-                RESET_IN           => sys_rst,
+                RESET_IN           => ddr_rst,
                
                 LVDS_IN_P          => DATA_BANK18_IN_P,
                 LVDS_IN_N          => DATA_BANK18_IN_N,
                
                 LINKS_SYNCED_OUT   => ddr_receivers_synced_bank18,
+					 RESET_TRANS_OUT    => rst_from_bank18,
                                
                 DATA_OUT           => ddr_data_from_bank18,
                 DATA_VALID_OUT     => ddr_dv_from_bank18,
@@ -237,13 +241,14 @@ port map(
                 DELAY_CLK_IN       => idelayctrl_refclk300,
                 EXT_DDR_CLK_IN     => '0',
                 EXT_DDR_CLK_X8_IN  => '0',
-                RESET_IN           => sys_rst,
+                RESET_IN           => ddr_rst,
                
                 LVDS_IN_P          => DATA_BANK16_IN_P,
                 LVDS_IN_N          => DATA_BANK16_IN_N,
                
                 LINKS_SYNCED_OUT   => ddr_receivers_synced_bank16,
-                               
+					 RESET_TRANS_OUT    => rst_from_bank16,                               
+						
                 DATA_OUT           => ddr_data_from_bank16,
                 DATA_VALID_OUT     => ddr_dv_from_bank16,
                 DATA_KCTRL_OUT     => ddr_kctrl_from_bank16
@@ -364,6 +369,7 @@ links_synced(7) <= ddr_receivers_synced_bank18(7);
 
 vrst_u1_buf : obufds port map( I =>  v_reset, O => DATA_U1_CTRL_OUT_P, OB => DATA_U1_CTRL_OUT_N);
 vrst_u2_buf : obufds port map( I =>  v_reset, O => DATA_U2_CTRL_OUT_P, OB => DATA_U2_CTRL_OUT_N);
+vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => DATA_U2_SYNC_OUT_N);
 
 --	DCM clock generation for internal bus, ethernet
 
@@ -390,16 +396,16 @@ vrst_u2_buf : obufds port map( I =>  v_reset, O => DATA_U2_CTRL_OUT_P, OB => DAT
 	led_speedis1000 <= pcs_pma_status(11) and not pcs_pma_status(10);
 
 	   LED_OUT(0)  <= '0';
-	LED_OUT(1)  <= ddr_sync_from_u2(0);
-	LED_OUT(2)  <= ddr_sync_from_u2(1);
-	LED_OUT(3)  <= ddr_sync_from_u2(2);
+	LED_OUT(1)  <= links_synced(0);--ddr_sync_from_u2(0);
+	LED_OUT(2)  <= links_synced(1);--ddr_sync_from_u2(1);
+	LED_OUT(3)  <= links_synced(2);--ddr_sync_from_u2(2);
 	   LED_OUT(4)  <= '0';
-	LED_OUT(5)  <= ddr_sync_from_u2(3);
-	LED_OUT(6)  <= ddr_sync_from_u2(4);
-	LED_OUT(7)  <= ddr_sync_from_u2(5);
+	LED_OUT(5)  <= links_synced(3);--ddr_sync_from_u2(3);
+	LED_OUT(6)  <= links_synced(4);--ddr_sync_from_u2(4);
+	LED_OUT(7)  <= links_synced(5);--ddr_sync_from_u2(5);
 	   LED_OUT(8)  <= '0';
-	LED_OUT(9)  <= ddr_sync_from_u2(6);
-	LED_OUT(10) <= ddr_sync_from_u2(7);
+	LED_OUT(9)  <= links_synced(6);--ddr_sync_from_u2(6);
+	LED_OUT(10) <= links_synced(7);--ddr_sync_from_u2(7);
 	LED_OUT(11) <= '0';
 	   LED_OUT(12) <= '0';
 	   LED_OUT(13) <= '0';
