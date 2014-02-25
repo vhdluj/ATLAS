@@ -509,22 +509,6 @@ end generate SIM_CLOCK;
 -- ipbus slaves live in the entity below, and can expose top-level ports
 -- The ipbus fabric is instantiated within.
 
-	slaves: entity work.slaves port map(
-		ipb_clk => gck2_clk40, --ipb_clk
-		ipb_rst => rst_ipb,
-		ipb_in => ipb_master_out,
-		ipb_out => ipb_master_in,
-		rst_out => sys_rst,
-		pkt_rx => pkt_rx,
-		pkt_tx => pkt_tx,
-
-      mac_addr <= X"000A3501F610";
-      --ip_addr <= X"865D828B"; --134.93.130.139
-      ip_addr <= X"898A5114"; --137.138.81.20
-
-
--- ipbus slaves live in the entity below, and can expose top-level ports
--- The ipbus fabric is instantiated within.
 
       slaves: entity work.slaves 
       generic map(
