@@ -1,0 +1,197 @@
+//mzHAL - version: 1.0
+//author: Christian Kahra - Institute for Physics, Johannes Gutenberg University Mainz, Germany
+
+#include "IPBus.h"
+
+
+
+IPBus ipb;
+
+void recursiveDivisionsByTwo(unsigned int i, std::string* str){
+	if(i>1){recursiveDivisionsByTwo(i>>1, str);}
+	str->push_back('0'+i%2);
+}
+
+const char* formatToBinary(unsigned int i){
+	std::string str("0b");
+	recursiveDivisionsByTwo(i, &str);
+	return str.c_str();
+}
+
+
+void manualRead(){
+	unsigned int address;
+	unsigned char rxdata[12];
+	union BytesOfInteger{unsigned int i; unsigned char c[4];} BoI;
+	int returnvalue;
+	
+	printf("IPBus-address of register, which should be read (hex, e.g. 89ab): ");
+	returnvalue = scanf("%x", &address);
+	if(returnvalue!=1){printf("In function manualRead: Error in scanf. returnvalue=%i\n", returnvalue); return;}
+	
+	returnvalue = ipb.read(address, rxdata, 1);
+	if(returnvalue!=12){printf("In function manualRead: Error in IPBus::read. returnvalue=%i\n", returnvalue); return;}
+	
+	for(int b=0; b<4; ++b){BoI.c[b] = rxdata[8+3-b];}
+	printf("From IPBus-address %#x the value %u (=%#x, =%s) has been read.\n", address, BoI.i, BoI.i, formatToBinary(BoI.i));
+	
+	return;
+}
+
+void manualWriteAndReadBack(){
+	unsigned int address;
+	unsigned int dataToWrite;
+	unsigned char txdata[4];
+	unsigned char rxdata[12];
+	union BytesOfInteger{unsigned int i; unsigned char c[4];} BoI;
+	int returnvalue;
+
+	printf("IPBus-address of register, which should be written (hex, e.g. 89ab): ");
+	returnvalue = scanf("%x", &address);
+	if(returnvalue!=1){printf("In function manualWriteAndReadBack: Error in scanf(address). returnvalue=%i\n", returnvalue); return;}
+	
+	printf("Data value to write (dec): ");
+	returnvalue = scanf("%u", &dataToWrite);
+	if(returnvalue!=1){printf("In function manualWriteAndReadBack: Error in scanf(dataToWrite). returnvalue=%i\n", returnvalue); return;}
+	
+	BoI.i = dataToWrite;
+	for(int b=0; b<4; ++b){txdata[b]=BoI.c[3-b];}
+	
+	printf("Write data value %u on IPBus-address %#x...\n", dataToWrite, address);
+	returnvalue = ipb.write(address, txdata, 1);
+	if(returnvalue!=8){printf("In function manualWriteAndReadBack: Error in IPBus::write. returnvalue=%i\n", returnvalue); return;}
+	else{printf("Write-transaction successful.\n\n" );}
+	
+	printf("Now read back from this address...\n");
+	returnvalue = ipb.read(address, rxdata, 1);
+	if(returnvalue!=12){printf("In function manualRead: Error in IPBus::read. returnvalue=%i\n", returnvalue); return;}
+	
+	for(int b=0; b<4; ++b){BoI.c[b] = rxdata[8+3-b];}
+	printf("From IPBus-address %#x the value %u (=%#x, =%s) has been read.\n", address, BoI.i, BoI.i, formatToBinary(BoI.i));
+	
+	return;	
+}
+
+
+void status(){
+	ipb.status();
+}
+
+void writeMemBlock(){
+	unsigned int address;
+	unsigned int dataToWrite = 0;
+	unsigned char txdata[4];
+	unsigned char rxdata[12];
+	union BytesOfInteger{unsigned int i; unsigned char c[4];} BoI;
+	int returnvalue;
+
+	scanf("%x", &address);
+	
+	
+	dataToWrite = address;
+	BoI.i = dataToWrite;
+	for(int b=0; b<4; ++b){txdata[b]=BoI.c[3-b];}
+	returnvalue = ipb.write(address, txdata, 1);
+
+	address++;
+	
+	for (int kk = 0; kk < 25; kk++) {
+	
+	  dataToWrite = kk;
+	  BoI.i = dataToWrite;
+	  for(int b=0; b<4; ++b){txdata[b]=BoI.c[3-b];}
+	  returnvalue = ipb.write(address, txdata, 1);
+	}
+	return;	
+}
+
+void readMemBlock(){
+	unsigned int address;
+	unsigned int dataToWrite;
+	unsigned char txdata[4];
+	unsigned char rxdata[12];
+	union BytesOfInteger{unsigned int i; unsigned char c[4];} BoI;
+	int returnvalue;
+
+	scanf("%x", &address);
+	
+	dataToWrite = address;
+	BoI.i = dataToWrite;
+	for(int b=0; b<4; ++b){txdata[b]=BoI.c[3-b];}
+	returnvalue = ipb.write(address, txdata, 1);
+
+	address++;
+
+	for (int kk = 0; kk < 25; kk++) {
+	
+	  returnvalue = ipb.read(address, rxdata, 1);
+	  for(int b=0; b<4; ++b){BoI.c[b] = rxdata[8+3-b];}
+	  printf("%x : %#x\n", address, BoI.i);
+	}
+	return;	
+}
+
+void resetFpga() {
+  unsigned int address = 0;
+  unsigned int dataToWrite = 1;
+  unsigned char txdata[4];
+  unsigned char rxdata[12];
+  union BytesOfInteger{unsigned int i; unsigned char c[4];} BoI;
+  int returnvalue;
+  
+  BoI.i = dataToWrite;
+  for(int b=0; b<4; ++b){txdata[b]=BoI.c[3-b];}
+  returnvalue = ipb.write(address, txdata, 1);
+
+  return;	
+}
+
+void getDdrStatus() {
+	unsigned int address = 4096;
+	unsigned int dataToWrite;
+	unsigned char txdata[4];
+	unsigned char rxdata[12];
+	union BytesOfInteger{unsigned int i; unsigned char c[4];} BoI;
+	int returnvalue;
+
+	for (int kk = 0; kk < 16; kk++) {
+	  returnvalue = ipb.read(address, rxdata, 1);
+	  for(int b=0; b<4; ++b){BoI.c[b] = rxdata[8+3-b];}
+	  printf("%x : %#x\n", address, BoI.i);
+	  
+	  address++;
+	}
+	return;	
+}
+
+
+
+int main(){
+	
+	std::string command;
+	
+	while(true){
+		std::cout << "\nPlease enter one of the following commands or the corresponding number:" << std::endl;
+		std::cout << "0) quit" << std::endl;
+		std::cout << "1) manualRead" << std::endl;
+		std::cout << "2) manualWriteAndReadBack" << std::endl;
+		std::cout << "3) status" << std::endl;
+		std::cout << "4) readmemblock" << std::endl;
+		std::cout << "5) writememblock" << std::endl;
+		std::cout << "6) resetfpga" << std::endl;
+		std::cout << "7) getddrstatus" << std::endl;
+		std::cout << "> ";
+		std::cin >> command;
+		if(command.compare("quit")==0 || command.compare("0")==0){break;}
+		else if(command.compare("manualRead")==0 || command.compare("1")==0){manualRead();}
+		else if(command.compare("manualWriteAndReadBack")==0 || command.compare("2")==0){manualWriteAndReadBack();}
+		else if(command.compare("status")==0 || command.compare("3")==0){status();}
+		else if(command.compare("readmemblock")==0 || command.compare("4")==0){readMemBlock();}
+		else if(command.compare("writememblock")==0 || command.compare("5")==0){writeMemBlock();}
+		else if(command.compare("resetfpga")==0 || command.compare("6")==0){resetFpga();}
+		else if(command.compare("getddrstatus")==0 || command.compare("7")==0){getDdrStatus();}
+		else{std::cout << "Sorry. I haven't understood your input." << std::endl;}
+	}
+	
+	return 0;
+}

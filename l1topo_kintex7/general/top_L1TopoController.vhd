@@ -14,7 +14,7 @@ use work.ipbus.ALL;
 
 use work.rod_l1_topo_types_const.all;
 
-entity top is
+entity top_L1TopoController is
 generic (
 	LINKS_NUMBER : integer range 0 to 40 := 8;
         SIMULATION  : boolean := false
@@ -45,9 +45,9 @@ port(
 --	SFP3_TX_N, SFP3_TX_P : out std_logic
 	);
 
-end top;
+end top_L1TopoController;
 
-architecture rtl of top is
+architecture rtl of top_L1TopoController is
 
 	constant ddr_lines_on_bank16 : positive := 7;
 	constant ddr_lines_on_bank17 : positive := 2;
@@ -234,7 +234,8 @@ ddr_bank18 : entity work.ddr_links_wrapper
 generic map(
                 DELAY_GROUP_NAME     => "bank18_delay_group",
                 AVAILABLE_LVDS_LINES => ddr_lines_on_bank18,
-                EXCLUDE_DCM_IDELAY_CTRL => FALSE
+                EXCLUDE_DCM_IDELAY_CTRL => FALSE,
+                SIMULATION => SIMULATION
 )
 port map(
                 GCLK_40_IN         => gck2_clk40,
@@ -247,18 +248,26 @@ port map(
                 LVDS_IN_N          => DATA_BANK18_IN_N,
                
                 LINKS_SYNCED_OUT   => ddr_receivers_synced_bank18,
-					 RESET_TRANS_OUT    => rst_from_bank18,
+				RESET_TRANS_OUT    => rst_from_bank18,
                                
                 DATA_OUT           => ddr_data_from_bank18,
                 DATA_VALID_OUT     => ddr_dv_from_bank18,
-                DATA_KCTRL_OUT     => ddr_kctrl_from_bank18
+                DATA_KCTRL_OUT     => ddr_kctrl_from_bank18,
+                
+                DBG_STATE_OUT    => dbg_ddr_state_from18,
+				DBG_REG_DATA_OUT => dbg_ddr_reg_from18,
+				DBG_BITSLIP_OUT  => dbg_ddr_bitslip_from18,
+				DBG_INC_OUT      => dbg_ddr_inc_from18,
+				DBG_PAUSE_OUT    => dbg_ddr_pause_from18,
+				DBG_STEP_OUT     => dbg_ddr_step_from18
 );
  
 ddr_bank16 : entity work.ddr_links_wrapper
 generic map(
                 DELAY_GROUP_NAME     => "bank16_delay_group",
                 AVAILABLE_LVDS_LINES => ddr_lines_on_bank16,
-                EXCLUDE_DCM_IDELAY_CTRL => FALSE
+                EXCLUDE_DCM_IDELAY_CTRL => FALSE,
+                SIMULATION => SIMULATION
 )
 port map(
                 GCLK_40_IN         => gck2_clk40,
@@ -271,11 +280,18 @@ port map(
                 LVDS_IN_N          => DATA_BANK16_IN_N,
                
                 LINKS_SYNCED_OUT   => ddr_receivers_synced_bank16,
-					 RESET_TRANS_OUT    => rst_from_bank16,                               
+				RESET_TRANS_OUT    => rst_from_bank16,                               
 						
                 DATA_OUT           => ddr_data_from_bank16,
                 DATA_VALID_OUT     => ddr_dv_from_bank16,
-                DATA_KCTRL_OUT     => ddr_kctrl_from_bank16
+                DATA_KCTRL_OUT     => ddr_kctrl_from_bank16,
+                
+                DBG_STATE_OUT    => dbg_ddr_state_from16,
+				DBG_REG_DATA_OUT => dbg_ddr_reg_from16,
+				DBG_BITSLIP_OUT  => dbg_ddr_bitslip_from16,
+				DBG_INC_OUT      => dbg_ddr_inc_from16,
+				DBG_PAUSE_OUT    => dbg_ddr_pause_from16,
+				DBG_STEP_OUT     => dbg_ddr_step_from16
 );
 
 --ddr_bank32 : entity work.ddr_links_wrapper -- connected to ctrlbus U1
@@ -359,6 +375,28 @@ vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => 
 
 --	DCM clock generation for internal bus, ethernet
 
+SIM_CLOCK: if SIMULATION generate
+  GC_CLOCK: process
+  begin  -- process CLOCK
+    gck2_clk40 <= '1';
+    wait for 12.5 ns;
+    gck2_clk40 <= '0';
+    wait for 12.5 ns;
+  end process GC_CLOCK;
+
+  DELAY_CLK: process
+  begin  -- process
+    idelayctrl_refclk300 <= '1';
+    wait for 1.666 ns;
+    idelayctrl_refclk300 <= '0';
+    wait for 1.666 ns;
+  end process DELAY_CLK;
+  rst_ipb <= '0';
+  gck2_mmcm_locked <= not rst_from_bank18;
+end generate SIM_CLOCK;
+        -----------------------------------------------------------------------
+        -- comment for sim
+        -----------------------------------------------------------------------                 
 	clocks: entity work.clocks_7s_serdes
 		port map(
 			clki_fr => clk125_fr,
@@ -378,6 +416,10 @@ vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => 
 			gck2_clk80_out => gck2_clk80,
 			idelayctrl_refclk300_out => idelayctrl_refclk300
 		);
+        --------------------------------------------------------------------
+        -- end comment for sim
+        --------------------------------------------------------------------
+           
 	locked <= clk_locked and eth_locked;
 	led_speedis1000 <= pcs_pma_status(11) and not pcs_pma_status(10);
 
@@ -397,10 +439,11 @@ vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => 
 	   LED_OUT(13) <= '0';
 	LED_OUT(14) <= '0';
 	LED_OUT(15) <= '0';
-
+-------------------------------------------------------------------------------
+-- comment for sim
+-------------------------------------------------------------------------------
 ------ Ethernet MAC core and PHY interface
 ----
-SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
                          
 	eth: entity work.eth_7s_sgmii
 		port map(
@@ -427,9 +470,9 @@ SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
 			pcs_pma_status => pcs_pma_status,
 			ExternalPhyChip_reset_out => phy_reset
 		);
-	
+      
 	PHY_RESET_OUT_N <= not phy_reset;
-	
+      
 -- ipbus control logic
 
 	ipbus: entity work.ipbus_ctrl
@@ -456,7 +499,8 @@ SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
 			pkt_rx_led => pkt_rx_led,
 			pkt_tx_led => pkt_tx_led
 		);
-		
+      	
+
 	mac_addr <= X"000A3501F610";
 	--ip_addr <= X"865D828B"; --134.93.130.139
 	ip_addr <= X"898A5114"; --137.138.81.20
@@ -465,54 +509,60 @@ SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
 -- ipbus slaves live in the entity below, and can expose top-level ports
 -- The ipbus fabric is instantiated within.
 
-	slaves: entity work.slaves port map(
-		ipb_clk => gck2_clk40, --ipb_clk
-		ipb_rst => rst_ipb,
-		ipb_in => ipb_master_out,
-		ipb_out => ipb_master_in,
-		rst_out => sys_rst,
-		pkt_rx => pkt_rx,
-		pkt_tx => pkt_tx,
-		
+
+      slaves: entity work.slaves 
+      generic map(
+      	lvds_lines => LINKS_NUMBER
+      	)
+      port map(
+      	ipb_clk => gck2_clk40, --ipb_clk
+      	ipb_rst => rst_ipb,
+      	ipb_in => ipb_master_out,
+      	ipb_out => ipb_master_in,
+      	rst_out => sys_rst,
+      	pkt_rx => pkt_rx,
+      	pkt_tx => pkt_tx,
+
+      	
 		ipb_write_U1_out => ipb_write_U1,
 		ipb_read_U1_in => ipb_read_U1,
 		ipb_write_U2_out => ipb_write_U2,
 		ipb_read_U2_in => ipb_read_U2,
-		
+      	
 		ctrlbus_idelay_value_out => ctrlbus_idelay_value,
 		ctrlbus_idelay_load_out => ctrlbus_idelay_load,
-		
-		
+      	
+      	
 			soft_rst_out => soft_rst,
-			
+      		
 		DBG_STATE_IN     => dbg_ddr_state,
 		DBG_REG_DATA_IN  => dbg_ddr_reg,
 		DBG_BITSLIP_IN   => dbg_ddr_bitslip,
 		DBG_INC_IN       => dbg_ddr_inc,
 		DBG_PAUSE_IN     => dbg_ddr_pause,
 		DBG_STEP_IN      => dbg_ddr_step,
-		
+      	
 		ROD_RAM_CLK_IN => gck2_clk80,
 		ROD_RAM_WE_IN => ram_we,
 		ROD_RAM_ADDR_IN => ram_addr,
 		ROD_RAM_DATA_IN => ram_data
 	);
-	
-	
+      
+      
 	move : entity work.from_rod_to_ipbus
 	port map(
 		clk => gck2_clk80,
 		reset => rst_ipb,
-		
+      	
 		parsers_data_in => rod_data,
 		parsers_rd_out => rod_re,
 		parsers_rdy_in => rod_rdy,
-		
+      	
 		ram_we_out => ram_we,
 		ram_waddr_out => ram_addr,
 		ram_data_out => ram_data
 	);
-	
+      
 	ctrlbus: entity work.ctrlbus
 		port map(
 			gck2_clk40_in => gck2_clk40,
@@ -533,14 +583,17 @@ SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
 			ipb_read_U2_out => ipb_read_U2,
 			idelay_value_in => ctrlbus_idelay_value,
 			idelay_load_in => ctrlbus_idelay_load,
-			
+      		
 			mmcm_clk_80_u1_out => ctrlbus_32_clk,
 			mmcm_clk_400_u1_out => ctrlbus_32_clkx8,
-			
+      		
 			mmcm_clk_80_u2_out => ctrlbus_17_clk,
 			mmcm_clk_400_u2_out => ctrlbus_17_clkx8
 		);
-end generate SWITCH_OFF_IPBUS_FOR_SIM;	
+-------------------------------------------------------------------------------
+-- end comment for sim
+-------------------------------------------------------------------------------
+
 
 --################### LINKS MAPPING
 
@@ -638,3 +691,4 @@ dbg_ddr_step(7) <= dbg_ddr_step_from18(7);
 	
 end rtl;
 
+ 

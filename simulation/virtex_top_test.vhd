@@ -227,6 +227,10 @@ begin
   GLOBAL_RESET: process(clk_40)
   begin
     if rising_edge(clk_40) then
+      if kintex_reset_pulse = '1' then
+        global_reset_cnt <= (others => '0');
+        local_reset <= '1';
+        local_reset_synch <= '1';
       if global_reset_cnt < x"000e" then
         global_reset_cnt <= global_reset_cnt + 1;
         local_reset <= '1';-- or kintex_ready_pulse;
