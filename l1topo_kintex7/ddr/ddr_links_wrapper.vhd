@@ -8,7 +8,8 @@ entity ddr_links_wrapper is
 generic (
 	DELAY_GROUP_NAME : string := "delay_group";
 	AVAILABLE_LVDS_LINES : integer range 0 to 20 := 1;
-	EXCLUDE_DCM_IDELAY_CTRL : boolean 
+	EXCLUDE_DCM_IDELAY_CTRL : boolean;
+        SIMULATION : boolean := FALSE
 );
 port (
 	GCLK_40_IN         : in std_logic; -- global buffer input
@@ -95,8 +96,12 @@ begin
                         LINK_IS_SYNC      => local_synced(i)
                         
 		);
+
+                DATA_KCTRL_OUT <= local_ktrl;
 		
 		in_inst : entity work.ddr_input_module
+                  generic map (
+                    SIMULATION => SIMULATION)
 		port map(
 			RESET_IN          => internal_reset,
 			DCM_DDR_CLK_IN    => clk_80_i,
@@ -112,21 +117,19 @@ begin
 			SYNCED_OUT        => local_synced(i)
 		);
 		
---		process(clk_80_i)
---		begin
---			if rising_edge(clk_80_i) then
---				if (local_data((i + 1) * 8 - 1 downto i * 8) /= x"1c" and local_valid(i) = '0') then
---					LINKS_SYNCED_OUT(i) <= '0';
---				else
---					LINKS_SYNCED_OUT(i) <= local_synced(i);
---				end if;
---			end if;
---		end process;
-		LINKS_SYNCED_OUT(i) <= local_synced(i);
+		process(clk_80_i)
+		begin
+                  if rising_edge(clk_80_i) then
+                    if (local_data((i + 1) * 8 - 1 downto i * 8) /= x"1c" and local_valid(i) = '0') then
+                      LINKS_SYNCED_OUT(i) <= '0';
+                    else
+                      LINKS_SYNCED_OUT(i) <= local_synced(i);
+                    end if;
+                  end if;
+		end process;
 			
 		DATA_OUT((i + 1) * 8 - 1 downto i * 8) <= local_data((i + 1) * 8 - 1 downto i * 8);
 		DATA_VALID_OUT(i) <= local_valid(i);
-		DATA_KCTRL_OUT(i) <= local_ktrl(i);
 	
 	end generate lvds_gen;
 

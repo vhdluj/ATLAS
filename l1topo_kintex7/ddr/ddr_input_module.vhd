@@ -5,6 +5,8 @@ library UNISIM;
 use UNISIM.VComponents.all;
 
 entity ddr_input_module is
+generic (
+  SIMULATION : boolean := FALSE);
 port(
 	RESET_IN          : in std_logic;
 	DCM_DDR_CLK_IN    : in std_logic;
@@ -375,6 +377,8 @@ begin
 	end process;
 	
 	stability_checker_inst : entity work.ddr_stability_checker
+          generic map (
+            SIMULATION => SIMULATION)
 	port map(
 		CLK_IN              => DCM_DDR_CLK_IN,
 		RESET_IN            => RESET_IN,
