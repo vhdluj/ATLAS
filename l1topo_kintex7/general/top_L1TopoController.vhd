@@ -703,3 +703,4 @@ dbg_ddr_step(7) <= dbg_ddr_step_from18(7);
 	
 end rtl;
 
+ 

@@ -118,7 +118,7 @@ begin
       ROD_CONTROL_N_IN => DATA_U2_SYNC_OUT_N,
       MMCX_U30_PIN     => MMCX_U30_PIN);
 
-  KINTEX_TOP_INST : entity work.top 
+  KINTEX_TOP_INST : entity work.top_L1TopoController
     generic map(
       LINKS_NUMBER => LINKS_NUMBER,
       SIMULATION   => SIMULATION

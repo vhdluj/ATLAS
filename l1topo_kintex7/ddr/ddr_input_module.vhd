@@ -45,7 +45,7 @@ signal bitslips_ctr : integer range 0 to 10;
 signal step_ctr, inc_ctr, pause_ctr : integer range 0 to 31 := 10;
 signal previous_data, registered_data : std_logic_vector(9 downto 0);
 signal synced : std_logic;
-
+signal state : std_logic_vector(3 downto 0);
 begin
 
 	iserdese2_master : ISERDESE2
@@ -152,117 +152,133 @@ begin
 			end if;
 		end if;
 	end process ALIGN_MACHINE_PROC;
+ALIGN_MACHINE : process(registered_data, CTRL_READY_IN, inc_ctr, iserdes_q, step_ctr, pause_ctr, synced, check_done)
+      begin
+            case align_current_state is
+           
+                  when IDLE =>
+                        state <= x"0";
+                        if (CTRL_READY_IN = '1') then
+                             align_next_state <= PAUSE_A_WHILE; --PREPARE;
+                        else
+                             align_next_state <= IDLE;
+                        end if;
+                       
+                  when PAUSE_A_WHILE =>
+                        state <= x"1";
+                        if (pause_ctr = 0) then
+                             align_next_state <= PREPARE;
+                        else
+                             align_next_state <= PAUSE_A_WHILE;
+                        end if;
+                       
+                  when PREPARE =>
+                        state <= x"2";
+                        if (check_done = '1') then
+                             align_next_state <= INC_DELAY1;
+                        else
+                             align_next_state <= PREPARE;
+                        end if;
+                       
+                  when INC_DELAY1 =>
+                        state <= x"3";
+                        align_next_state <= WAIT_8CYCLES1;
+                       
+                  when WAIT_8CYCLES1 =>
+                        state <= x"4";
+                        if (pause_ctr = 0) then
+                             if (check_done = '1' and registered_data /= previous_data) then
+                                   align_next_state <= FOUND_1ST_TRANS;
+                             elsif (check_done = '1' and registered_data = previous_data) then
+                                   align_next_state <= INC_DELAY1;
+                             else
+                                   align_next_state <= WAIT_8CYCLES1;
+                             end if;
+                        else
+                             align_next_state <= WAIT_8CYCLES1;
+                        end if;
+                       
+                  when FOUND_1ST_TRANS =>
+                        state <= x"5";
+                        align_next_state <= INC_DELAY2;
+                       
+                  when INC_DELAY2 =>
+                        state <= x"6";
+                        align_next_state <= STABLE_REGION;--WAIT_8CYCLES2;
+                       
+                  when STABLE_REGION  =>
+                        state <= x"7";
+                        if (pause_ctr = 0) then
+                             if (check_done = '1' and registered_data = previous_data) then
+                                   align_next_state  <= FOUND_STABLE;
+                             elsif (check_done = '1' and registered_data /= previous_data) then
+                                   align_next_state <= INC_DELAY2;
+                             else
+                                   align_next_state <= STABLE_REGION;
+                             end if;
+                        else
+                             align_next_state <= STABLE_REGION;
+                        end if;
+                       
+                  when FOUND_STABLE  =>
+                        state <= x"8";
+                        align_next_state   <=  INC_DELAY3;
+                       
+                  when INC_DELAY3  =>
+                        state <= x"9";
+                        align_next_state  <= WAIT_8CYCLES2;
+                 
+                  when WAIT_8CYCLES2 =>
+                        state <= x"a";
+                        if (pause_ctr = 0) then
+                             if (check_done = '1' and registered_data /= previous_data) then
+                                   if (inc_ctr / 2 < 2) then
+                                         align_next_state <= IDLE;
+                                   else
+                                         align_next_state <= FOUND_2ND_TRANS;
+                                   end if;
+                             elsif (check_done = '1' and registered_data = previous_data) then
+                                   align_next_state <= INC_DELAY3;
+                             else
+                                   align_next_state <= WAIT_8CYCLES2;
+                             end if;
+                        else
+                             align_next_state <= WAIT_8CYCLES2;
+                        end if;
+                       
+                  when FOUND_2ND_TRANS =>
+                        state <= x"b";
+                        align_next_state <= RETURN_BY_HALF;
+                       
+                  when RETURN_BY_HALF =>
+                        state <= x"c";
+                        if (inc_ctr / 2 = step_ctr) then
+                             align_next_state <= ALIGNED;
+                        else
+                             align_next_state <= RETURN_BY_HALF;
+                        end if;
+                 
+                  when ALIGNED =>
+                        state <= x"d";
+                        align_next_state <= MATCH_WINDOW;
+                       
+                  when MATCH_WINDOW =>
+                        state <= x"e";
+                        if (synced = '1') then
+                             align_next_state <= LINK_READY;
+                        elsif (bitslips_ctr = 10) then
+                             align_next_state <= PREPARE;
+                        else
+                             align_next_state <= MATCH_WINDOW;
+                        end if;
+                       
+                  when LINK_READY =>
+                        state <= x"f";
+                        align_next_state <= LINK_READY;
+           
+            end case;
+      end process ALIGN_MACHINE;
 
-	ALIGN_MACHINE : process(registered_data, CTRL_READY_IN, inc_ctr, iserdes_q, step_ctr, pause_ctr, synced, check_done)
-	begin
-		case align_current_state is
-		
-			when IDLE =>
-				if (CTRL_READY_IN = '1') then
-					align_next_state <= PAUSE_A_WHILE; --PREPARE;
-				else
-					align_next_state <= IDLE;
-				end if;
-				
-			when PAUSE_A_WHILE =>
-				if (pause_ctr = 0) then
-					align_next_state <= PREPARE;
-				else
-					align_next_state <= PAUSE_A_WHILE;
-				end if;
-				
-			when PREPARE =>
-				if (check_done = '1') then
-					align_next_state <= INC_DELAY1;
-				else
-					align_next_state <= PREPARE;
-				end if;
-				
-			when INC_DELAY1 =>
-				align_next_state <= WAIT_8CYCLES1;
-				
-			when WAIT_8CYCLES1 =>
-				if (pause_ctr = 0) then
-					if (check_done = '1' and registered_data /= previous_data) then
-						align_next_state <= FOUND_1ST_TRANS;
-					elsif (check_done = '1' and registered_data = previous_data) then
-						align_next_state <= INC_DELAY1;
-					else
-						align_next_state <= WAIT_8CYCLES1;
-					end if;
-				else
-					align_next_state <= WAIT_8CYCLES1;
-				end if;
-				
-			when FOUND_1ST_TRANS =>
-				align_next_state <= INC_DELAY2;
-				
-			when INC_DELAY2 =>
-				align_next_state <= STABLE_REGION;--WAIT_8CYCLES2;
-				
-			when STABLE_REGION  => 
-				if (pause_ctr = 0) then
-					if (check_done = '1' and registered_data = previous_data) then
-						align_next_state  <= FOUND_STABLE;
-					elsif (check_done = '1' and registered_data /= previous_data) then
-						align_next_state <= INC_DELAY2;
-					else
-						align_next_state <= STABLE_REGION;
-					end if;
-				else
-					align_next_state <= STABLE_REGION;
-				end if;
-				
-			when FOUND_STABLE  =>
-				align_next_state   <=  INC_DELAY3;
-				
-			when INC_DELAY3  =>
-				align_next_state  <= WAIT_8CYCLES2;
-			
-			when WAIT_8CYCLES2 =>
-				if (pause_ctr = 0) then
-					if (check_done = '1' and registered_data /= previous_data) then
-						if (inc_ctr / 2 < 2) then
-							align_next_state <= IDLE;
-						else
-							align_next_state <= FOUND_2ND_TRANS;
-						end if;
-					elsif (check_done = '1' and registered_data = previous_data) then
-						align_next_state <= INC_DELAY3;
-					else
-						align_next_state <= WAIT_8CYCLES2;
-					end if;
-				else
-					align_next_state <= WAIT_8CYCLES2;
-				end if;
-				
-			when FOUND_2ND_TRANS =>
-				align_next_state <= RETURN_BY_HALF;
-				
-			when RETURN_BY_HALF =>
-				if (inc_ctr / 2 = step_ctr) then
-					align_next_state <= ALIGNED;
-				else
-					align_next_state <= RETURN_BY_HALF;
-				end if;
-			
-			when ALIGNED =>
-				align_next_state <= MATCH_WINDOW;
-				
-			when MATCH_WINDOW =>
-				if (synced = '1') then
-					align_next_state <= LINK_READY;
-				elsif (bitslips_ctr = 10) then
-					align_next_state <= PREPARE;
-				else
-					align_next_state <= MATCH_WINDOW;
-				end if;
-				
-			when LINK_READY =>
-				align_next_state <= LINK_READY;
-		
-		end case;
-	end process ALIGN_MACHINE;
 
 	process(DCM_DDR_CLK_IN)
 	begin
@@ -448,6 +464,7 @@ begin
 			end if;
 		end if;
 	end process;
+
 	SYNCED_OUT <= '1' when align_current_state = LINK_READY else '0'; --synced;
 
 	DBG_STATE_OUT    <= state;
