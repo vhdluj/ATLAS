@@ -7,7 +7,7 @@ NET "GCK2_IN_N" IOSTANDARD = LVDS_25;
 TIMESPEC TS_global_clock = PERIOD "global_clock" 24.95 ns;
 
 
-NET "eth/txoutclk" TNM_NET = "txoutclk";
+NET "SWITCH_OFF_IPBUS_FOR_SIM.eth/txoutclk" TNM_NET = "txoutclk";
 TIMESPEC TS_txoutclk = PERIOD "txoutclk" 16 ns;
 
 NET "gt_clkp" TNM_NET = "gt_clk";

@@ -247,11 +247,18 @@ port map(
                 LVDS_IN_N          => DATA_BANK18_IN_N,
                
                 LINKS_SYNCED_OUT   => ddr_receivers_synced_bank18,
-					 RESET_TRANS_OUT    => rst_from_bank18,
+				RESET_TRANS_OUT    => rst_from_bank18,
                                
                 DATA_OUT           => ddr_data_from_bank18,
                 DATA_VALID_OUT     => ddr_dv_from_bank18,
-                DATA_KCTRL_OUT     => ddr_kctrl_from_bank18
+                DATA_KCTRL_OUT     => ddr_kctrl_from_bank18,
+                
+                DBG_STATE_OUT    => dbg_ddr_state_from18,
+				DBG_REG_DATA_OUT => dbg_ddr_reg_from18,
+				DBG_BITSLIP_OUT  => dbg_ddr_bitslip_from18,
+				DBG_INC_OUT      => dbg_ddr_inc_from18,
+				DBG_PAUSE_OUT    => dbg_ddr_pause_from18,
+				DBG_STEP_OUT     => dbg_ddr_step_from18
 );
  
 ddr_bank16 : entity work.ddr_links_wrapper
@@ -271,11 +278,18 @@ port map(
                 LVDS_IN_N          => DATA_BANK16_IN_N,
                
                 LINKS_SYNCED_OUT   => ddr_receivers_synced_bank16,
-					 RESET_TRANS_OUT    => rst_from_bank16,                               
+				RESET_TRANS_OUT    => rst_from_bank16,                               
 						
                 DATA_OUT           => ddr_data_from_bank16,
                 DATA_VALID_OUT     => ddr_dv_from_bank16,
-                DATA_KCTRL_OUT     => ddr_kctrl_from_bank16
+                DATA_KCTRL_OUT     => ddr_kctrl_from_bank16,
+                
+                DBG_STATE_OUT    => dbg_ddr_state_from16,
+				DBG_REG_DATA_OUT => dbg_ddr_reg_from16,
+				DBG_BITSLIP_OUT  => dbg_ddr_bitslip_from16,
+				DBG_INC_OUT      => dbg_ddr_inc_from16,
+				DBG_PAUSE_OUT    => dbg_ddr_pause_from16,
+				DBG_STEP_OUT     => dbg_ddr_step_from16
 );
 
 --ddr_bank32 : entity work.ddr_links_wrapper -- connected to ctrlbus U1
