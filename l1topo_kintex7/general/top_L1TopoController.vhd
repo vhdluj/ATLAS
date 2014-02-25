@@ -14,7 +14,7 @@ use work.ipbus.ALL;
 
 use work.rod_l1_topo_types_const.all;
 
-entity top is
+entity top_L1TopoController is
 generic (
 	LINKS_NUMBER : integer range 0 to 40 := 8;
         SIMULATION : integer range 0 to 1 := 0
@@ -45,9 +45,9 @@ port(
 --	SFP3_TX_N, SFP3_TX_P : out std_logic
 	);
 
-end top;
+end top_L1TopoController;
 
-architecture rtl of top is
+architecture rtl of top_L1TopoController is
 
 	constant ddr_lines_on_bank16 : positive := 7;
 	constant ddr_lines_on_bank17 : positive := 2;
@@ -463,7 +463,11 @@ vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => 
 -- ipbus slaves live in the entity below, and can expose top-level ports
 -- The ipbus fabric is instantiated within.
 
-	slaves: entity work.slaves port map(
+	slaves: entity work.slaves 
+	generic map(
+		lvds_lines => LINKS_NUMBER
+		)
+	port map(
 		ipb_clk => gck2_clk40, --ipb_clk
 		ipb_rst => rst_ipb,
 		ipb_in => ipb_master_out,
