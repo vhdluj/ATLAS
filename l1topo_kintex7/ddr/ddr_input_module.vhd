@@ -449,7 +449,7 @@ begin
 		end if;
 	end process;
 	SYNCED_OUT <= '1' when align_current_state = LINK_READY else '0'; --synced;
-        	-- debug ports:
+
 	DBG_STATE_OUT    <= state;
 	DBG_REG_DATA_OUT <= registered_data;
 	DBG_BITSLIP_OUT  <= std_logic_vector(to_unsigned(bitslips_ctr, 4));

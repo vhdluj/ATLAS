@@ -248,11 +248,18 @@ port map(
                 LVDS_IN_N          => DATA_BANK18_IN_N,
                
                 LINKS_SYNCED_OUT   => ddr_receivers_synced_bank18,
-					 RESET_TRANS_OUT    => rst_from_bank18,
+				RESET_TRANS_OUT    => rst_from_bank18,
                                
                 DATA_OUT           => ddr_data_from_bank18,
                 DATA_VALID_OUT     => ddr_dv_from_bank18,
-                DATA_KCTRL_OUT     => ddr_kctrl_from_bank18
+                DATA_KCTRL_OUT     => ddr_kctrl_from_bank18,
+                
+                DBG_STATE_OUT    => dbg_ddr_state_from18,
+				DBG_REG_DATA_OUT => dbg_ddr_reg_from18,
+				DBG_BITSLIP_OUT  => dbg_ddr_bitslip_from18,
+				DBG_INC_OUT      => dbg_ddr_inc_from18,
+				DBG_PAUSE_OUT    => dbg_ddr_pause_from18,
+				DBG_STEP_OUT     => dbg_ddr_step_from18
 );
  
 ddr_bank16 : entity work.ddr_links_wrapper
@@ -273,11 +280,18 @@ port map(
                 LVDS_IN_N          => DATA_BANK16_IN_N,
                
                 LINKS_SYNCED_OUT   => ddr_receivers_synced_bank16,
-					 RESET_TRANS_OUT    => rst_from_bank16,                               
+				RESET_TRANS_OUT    => rst_from_bank16,                               
 						
                 DATA_OUT           => ddr_data_from_bank16,
                 DATA_VALID_OUT     => ddr_dv_from_bank16,
-                DATA_KCTRL_OUT     => ddr_kctrl_from_bank16
+                DATA_KCTRL_OUT     => ddr_kctrl_from_bank16,
+                
+                DBG_STATE_OUT    => dbg_ddr_state_from16,
+				DBG_REG_DATA_OUT => dbg_ddr_reg_from16,
+				DBG_BITSLIP_OUT  => dbg_ddr_bitslip_from16,
+				DBG_INC_OUT      => dbg_ddr_inc_from16,
+				DBG_PAUSE_OUT    => dbg_ddr_pause_from16,
+				DBG_STEP_OUT     => dbg_ddr_step_from16
 );
 
 --ddr_bank32 : entity work.ddr_links_wrapper -- connected to ctrlbus U1
@@ -485,7 +499,7 @@ SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
 --			pkt_tx_led => pkt_tx_led
 --		);
 		
-<<<<<<< HEAD
+
 --	mac_addr <= X"000A3501F610";
 --	--ip_addr <= X"865D828B"; --134.93.130.139
 --	ip_addr <= X"898A5114"; --137.138.81.20
@@ -502,7 +516,7 @@ SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
 --		rst_out => sys_rst,
 --		pkt_rx => pkt_rx,
 --		pkt_tx => pkt_tx,
-=======
+
 	mac_addr <= X"000A3501F610";
 	--ip_addr <= X"865D828B"; --134.93.130.139
 	ip_addr <= X"898A5114"; --137.138.81.20
@@ -511,19 +525,19 @@ SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
 -- ipbus slaves live in the entity below, and can expose top-level ports
 -- The ipbus fabric is instantiated within.
 
-	slaves: entity work.slaves 
-	generic map(
-		lvds_lines => LINKS_NUMBER
-		)
-	port map(
-		ipb_clk => gck2_clk40, --ipb_clk
-		ipb_rst => rst_ipb,
-		ipb_in => ipb_master_out,
-		ipb_out => ipb_master_in,
-		rst_out => sys_rst,
-		pkt_rx => pkt_rx,
-		pkt_tx => pkt_tx,
->>>>>>> e9a1f1398f66a9e7ed7ea72a66a0699bbd28794a
+	--slaves: entity work.slaves 
+	--generic map(
+	--	lvds_lines => LINKS_NUMBER
+	--	)
+	--port map(
+	--	ipb_clk => gck2_clk40, --ipb_clk
+	--	ipb_rst => rst_ipb,
+	--	ipb_in => ipb_master_out,
+	--	ipb_out => ipb_master_in,
+	--	rst_out => sys_rst,
+	--	pkt_rx => pkt_rx,
+	--	pkt_tx => pkt_tx,
+
 		
 --		ipb_write_U1_out => ipb_write_U1,
 --		ipb_read_U1_in => ipb_read_U1,
