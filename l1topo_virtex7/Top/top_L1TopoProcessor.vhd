@@ -21,10 +21,13 @@ port(
 		CTRLIPBUS_P_OUT, CTRLIPBUS_N_OUT: out std_logic_vector(2 downto 0);
 		LED_OUT: out std_logic;
         
-        CTRLBUS_P : out std_logic_vector(LINES_NUMBER-1 downto 0);	
-        CTRLBUS_N : out std_logic_vector(LINES_NUMBER-1 downto 0);
-        CTRLBUS_P_IN : in std_logic;	
-        CTRLBUS_N_IN : in std_logic
+        CTRLBUS_P : out std_logic_vector(LINES_NUMBER-1 downto 0);	--DATA_LINES
+        CTRLBUS_N : out std_logic_vector(LINES_NUMBER-1 downto 0);  --DATA_LINES
+        CTRLBUS_P_IN : in std_logic;	--LINES TO ISSUE DDR RESET
+        CTRLBUS_N_IN : in std_logic;     --LINES TO ISSUE DDR RESET
+        
+        ROD_CONTROL_P_IN : in std_logic;
+        ROD_CONTROL_N_IN : in std_logic
         
         --MMCX_U30 : in std_logic --trigger source
 	);
@@ -55,27 +58,6 @@ component l1topo_to_ddr
     SPECIAL_CHARACTER_OUT : out std_logic_vector(NUMBER_OF_ROS_OUTPUT_BUSES-1 downto 0));
   end component;
 
-  component simple_top
-    port (
-      CLK_IN_40 : in  std_logic;
-      RESET     : in  std_logic;
-      OUT_DATA  : out in_data_array);
-  end component;
-  
-  component DCM
-    port (
-      clk_in1_p : in  std_logic;
-      clk_in1_n : in  std_logic;
-      clk_40    : out std_logic;
-      clk_90    : out std_logic;
-      clk_450   : out std_logic;
-      reset     : in  std_logic;
-      locked    : out std_logic);
-  end component;
-  
-
-
-
     --IPBus signals:
 	signal gck2_clk40: std_logic;
 	signal gck2_clk80: std_logic;
@@ -95,6 +77,9 @@ component l1topo_to_ddr
 	--Transmission signals:
 	signal reset : std_logic  := '0';
     signal reset_line : std_logic  := '0';
+    signal ddr_reset : std_logic := '0';
+    signal rod_reset : std_logic := '0';
+    
     signal dataValidIn : std_logic_vector(LINES_NUMBER-1 downto 0)  := (others  => '0');
     signal dataKctrlIn : std_logic := '0';
     signal counter : std_logic_vector(23 downto 0)  := (others => '0');
@@ -126,11 +111,13 @@ component l1topo_to_ddr
     signal l0_busy               : std_logic:='0';
     signal special_character_out : std_logic_vector(NUMBER_OF_ROS_OUTPUT_BUSES-1 downto 0) := (others => '0');
     signal global_reset_cnt      : unsigned(15 downto 0):=(others => '0');
-    signal local_reset,local_reset_synch : std_logic := '0';
+    signal local_reset,local_reset_sync : std_logic := '0';
     signal kintex_ready, kintex_ready_synch_a, kintex_ready_synch_b, kintex_ready_pulse : std_logic:='0';    
     signal mmcx_u30_synch_a, mmcx_u30_synch_b  : std_logic;
     signal MMCX_U30 : std_logic := '0'; --it used to be external pulse for trigger creation. Now we put here ipbus register.
+    signal kintex_reset_pulse : std_logic := '0';
 
+    
 begin
 	clocks: entity work.clocks_TopoVirtex
 		port map(
@@ -160,10 +147,6 @@ begin
 			clk400=>clk400
 		);
 
-	LED_OUT <= ctrlbus_locked;
-
-	rst_ipb <= not gck2_mmcm_locked;
-
 	slaves: entity work.slaves port map(
 		ipb_clk => gck2_clk40, --ipb_clk
 		ipb_rst => rst_ipb,
@@ -183,12 +166,12 @@ begin
     	generic map(
     			LINKS_NUMBER  => LINES_NUMBER
     	)
-    	port map(RESET          => rst_ipb,--reset
+    	port map(RESET          => ddr_reset,--,local_reset_sync,--rst_ipb,--reset
     		     CLK_BIT_IN     => clk400,
     		     CLK_WORD_IN    => gck2_clk80,--clk80
     		     DATA_IN        => out_data,--dataIn,             --out_data vector comming out form 'l1topo_to_ddr'
     		     DATA_VALID_IN  => data_valid_out,--dataValidIn,  --data_valid_out sgn comming out from 'l1topo_to_ddr'
-    		     DATA_KCTRL_IN  => special_character_out(0),--dataKctrlIn,
+    		     DATA_KCTRL_IN  => special_character_out,--dataKctrlIn,
     		     DATA_PIN_P_OUT => CTRLBUS_P,
     		     DATA_PIN_N_OUT => CTRLBUS_N);
 	
@@ -203,7 +186,7 @@ begin
       generic map (
         MAKE_SYNCH_INPUT => 0)
       port map (
-        RESET                 => rst_ipb,
+        RESET                 => local_reset,--rst_ipb,
         DATA_IN_CLK           => gck2_clk40,
         DATA_OUT_CLK          => gck2_clk80,
         NUMBER_OF_SLICES      => NUMBER_OF_SLICES,
@@ -219,13 +202,38 @@ begin
         L0_BUSY               => l0_busy,
         SPECIAL_CHARACTER_OUT => special_character_out
         );
+
+  --SETTING UP RESET LINES - this components take differential input lines and make signal out of them      
+      IBUFDS_inst_0 : IBUFDS --
+        generic map (
+          DIFF_TERM    => true,            -- Differential Termination 
+          IBUF_LOW_PWR => false,  -- Low power (TRUE) vs. performance (FALSE) setting for referenced I/O standards
+          IOSTANDARD   => "DEFAULT")
+        port map (
+          O  => KINTEX_READY,               -- Buffer output
+          I  => ROD_CONTROL_P_IN,  -- Diff_p buffer input (connect directly to top-level port)
+          IB => ROD_CONTROL_N_IN  -- Diff_n buffer input (connect directly to top-level port)
+          );
+      IBUFDS_inst_1 : IBUFDS --this component takes differential input lines and make signal out of them
+        generic map (
+          DIFF_TERM    => true,      -- Differential Termination 
+          IBUF_LOW_PWR => false,     -- Low power (TRUE) vs. performance (FALSE) setting for referenced I/O standards
+          IOSTANDARD   => "DEFAULT")
+        port map (
+          O  => ddr_reset,          -- Buffer output
+          I  => CTRLBUS_P_IN,  -- Diff_p buffer input (connect directly to top-level port)
+          IB => CTRLBUS_N_IN  -- Diff_n buffer input (connect directly to top-level port)
+          );
+          
     ----------------------------------------------------------------------------------------------
-    --Signal redirection
+    --Signal assigments
     ---------------------------------------------------------------------------------------------\
     --local_reset <= rst_ipb;
-    reset <= not clockLock;
-    reset_ctr : IBUFDS port map (I => CTRLBUS_P_IN ,IB => CTRLBUS_N_IN, O => reset_line );
-
+    reset <= not gck2_mmcm_locked;--clockLock;
+    --reset_ctr : IBUFDS port map (I => CTRLBUS_P_IN ,IB => CTRLBUS_N_IN, O => reset_line );
+    rod_reset <= not KINTEX_READY;    
+    LED_OUT <= ctrlbus_locked;
+    rst_ipb <= not gck2_mmcm_locked;
     MMCX_U30 <= triggerReg(0);
 	
 	----------------------------------------------------------------------------------------------
@@ -233,23 +241,54 @@ begin
 	--Processes:
 	----------------------------------------------------------------------------------------------
 	----------------------------------------------------------------------------------------------
-   --l1topo ROD processes:
+   --l1topo ROD processes:    
+   DETECT_RISING_EDGE : process (gck2_clk40)
+   begin
+     if rising_edge(gck2_clk40) then
+       if kintex_ready_synch_a = '1' and kintex_ready_synch_b = '0'  then
+         kintex_ready_pulse <= '1';
+         kintex_ready_synch_a <= KINTEX_READY;
+         kintex_ready_synch_b <= kintex_ready_synch_a; 
+       else
+         kintex_ready_pulse <= '0';
+         kintex_ready_synch_a <= KINTEX_READY;
+         kintex_ready_synch_b <= kintex_ready_synch_a; 
+       end if;
+     end if;
+   end process DETECT_RISING_EDGE;
+  
+  DETECT_FALLING_EDGE : process (gck2_clk40)
+  begin 
+    if rising_edge(gck2_clk40) then
+      if kintex_ready_synch_a = '1' and kintex_ready_synch_b = '0' then
+        kintex_reset_pulse <= '1';
+      else 
+        kintex_reset_pulse <= '0';
+      end if;
+    end if;
+  end process DETECT_FALLING_EDGE;
+
   GLOBAL_RESET: process(gck2_clk40)
    begin
      if rising_edge(gck2_clk40) then
-       if global_reset_cnt < x"000e" then
+       if kintex_reset_pulse = '1' then
+         global_reset_cnt <= (others => '0');
+         local_reset <= '1';
+         local_reset_sync <= '1';
+         slice_changes_aproved <= '0';
+       elsif global_reset_cnt < x"000e" then
          global_reset_cnt <= global_reset_cnt + 1;
          local_reset <= '1';-- or kintex_ready_pulse;
-         local_reset_synch <= '1';
+         local_reset_sync <= '1';
          slice_changes_aproved <= '0';
        elsif global_reset_cnt = x"000e" and kintex_ready_synch_b = '1' then
          local_reset <= '0';
-         local_reset_synch <= local_reset;
+         local_reset_sync <= local_reset;
          global_reset_cnt <= x"000e";
          slice_changes_aproved <= '1';
        else
          local_reset <= local_reset;-- or kintex_ready_pulse;
-         local_reset_synch <= '0';
+         local_reset_sync <= '0';
          global_reset_cnt <= global_reset_cnt;
          slice_changes_aproved <= slice_changes_aproved;
        end if;

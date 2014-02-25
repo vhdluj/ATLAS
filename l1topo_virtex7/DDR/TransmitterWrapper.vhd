@@ -24,7 +24,7 @@ entity TransmittersWrapper is
 	
 	DATA_IN        : in std_logic_vector(8*LINKS_NUMBER-1 downto 0);
 	DATA_VALID_IN  : in std_logic_vector(LINKS_NUMBER-1 downto 0);
-	DATA_KCTRL_IN  : in std_logic;
+	DATA_KCTRL_IN  : in std_logic_vector(LINKS_NUMBER-1 downto 0);
 	
 	DATA_PIN_P_OUT : out std_logic_vector(LINKS_NUMBER-1 downto 0);
 	DATA_PIN_N_OUT : out std_logic_vector(LINKS_NUMBER-1 downto 0)
@@ -35,6 +35,7 @@ architecture Behavioral of TransmittersWrapper is
 --____________MAIN COMPONENT representing one optical fully chained transmitter
 COMPONENT ddr_enc_transmitter is
 port (
+        RESET          : in std_logic;
 	CLK_BIT_IN     : in std_logic;
 	CLK_WORD_IN    : in std_logic;--10 times lower frequnecy than CLK_BIT_IN
 	RESET_IN       : in std_logic;
@@ -53,39 +54,21 @@ end COMPONENT ddr_enc_transmitter;
 begin
 
 GenerateInst: for i in 0 to (LINKS_NUMBER-1) generate
-	
-	GenerateKCtrl : if i = 0 generate
-		ddr_enc_transmitterInst : ddr_enc_transmitter
-		port map (
-			CLK_BIT_IN      => CLK_BIT_IN,   
-			CLK_WORD_IN     => CLK_WORD_IN,   
-			RESET_IN        => RESET,   
-			               
-			DATA_IN         => DATA_IN(7+i*8 downto 8*i),
-			DATA_VALID_IN   => DATA_VALID_IN(i),
-			DATA_KCTRL_IN   => DATA_KCTRL_IN,
-			               
-			DATA_PIN_P_OUT  => DATA_PIN_P_OUT(i),
-			DATA_PIN_N_OUT  => DATA_PIN_N_OUT(i)
-		);
-	end generate GenerateKCtrl;
-	
-	GenerateData : if i /= 0 generate
-		ddr_enc_transmitterInst : ddr_enc_transmitter
-		port map (
-			CLK_BIT_IN      => CLK_BIT_IN,   
-			CLK_WORD_IN     => CLK_WORD_IN,   
-			RESET_IN        => RESET,   
-			               
-			DATA_IN         => DATA_IN(7+i*8 downto 8*i),
-			DATA_VALID_IN   => DATA_VALID_IN(i),
-			DATA_KCTRL_IN   => '0',
-			               
-			DATA_PIN_P_OUT  => DATA_PIN_P_OUT(i),
-			DATA_PIN_N_OUT  => DATA_PIN_N_OUT(i)
-		);
-	end generate GenerateData;
-	
+  ddr_enc_transmitterInst : ddr_enc_transmitter
+    port map (
+      RESET           => RESET,
+      CLK_BIT_IN      => CLK_BIT_IN,   
+      CLK_WORD_IN     => CLK_WORD_IN,   
+      RESET_IN        => RESET,   
+      
+      DATA_IN         => DATA_IN(7+i*8 downto 8*i),
+      DATA_VALID_IN   => DATA_VALID_IN(i),
+      DATA_KCTRL_IN   => DATA_KCTRL_IN(i),
+      
+      DATA_PIN_P_OUT  => DATA_PIN_P_OUT(i),
+      DATA_PIN_N_OUT  => DATA_PIN_N_OUT(i)
+    );
+
 end generate GenerateInst;
 
 end Behavioral;

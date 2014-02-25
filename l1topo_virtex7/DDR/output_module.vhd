@@ -32,7 +32,7 @@ begin
 
 obufds_inst : OBUFDS
 generic map (
-	IOSTANDARD => "LVDS")
+	IOSTANDARD => "LVDS_25")
 port map (
 	O          => DATA_PIN_P_OUT,
 	OB         => DATA_PIN_N_OUT,
@@ -44,7 +44,7 @@ data_out_to_pins_int    <= data_out_to_pins_predelay;
 -- declare the oserdes
 oserdese2_master : OSERDESE2
 generic map (
-	DATA_RATE_OQ   => "DDR",--DDR
+	DATA_RATE_OQ   => "DDR",
 	DATA_RATE_TQ   => "SDR",
 	DATA_WIDTH     => 10,
 
@@ -83,7 +83,7 @@ port map (
 
 oserdese2_slave : OSERDESE2
 generic map (
-	DATA_RATE_OQ   => "DDR",--DDR
+	DATA_RATE_OQ   => "DDR",
 	DATA_RATE_TQ   => "SDR",
 	DATA_WIDTH     => 10,
 
