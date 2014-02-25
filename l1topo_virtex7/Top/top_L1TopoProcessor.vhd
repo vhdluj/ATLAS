@@ -13,7 +13,7 @@ use work.rod_l1_topo_types_const.all;
 
 entity top_TopoVirtex is 
 GENERIC(
-	LINES_NUMBER : integer  := LINKS_NUMBER;
+	LINES_NUMBER : integer  := NUMBER_OF_ROS_OUTPUT_BUSES;
         SIMULATION : boolean :=false
 );
 port(
@@ -143,33 +143,36 @@ begin
             wait for 1.25 ns;
           end process CLK400_PROC;
         end generate SIMULATION_ON;
-    --SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION)  generate
-	--ctrlbus: entity work.ctrlbus
-	--	port map(
-	--		gck2_clk40_in => gck2_clk40,
-	--		gck2_clk80_in => gck2_clk80,
-	--		idelayctrl_refclk300_in => idelayctrl_refclk300,
-	--		CTRLBUS_OUT_P => CTRLIPBUS_P_OUT,
-	--		CTRLBUS_OUT_N => CTRLIPBUS_N_OUT,
-	--		CTRLBUS_IN_P => CTRLIPBUS_P_IN,
-	--		CTRLBUS_IN_N => CTRLIPBUS_N_IN,
-	--		ipb_read_in => ipb_master_read,
-	--		ipb_write_out => ipb_master_write,
-	--		idelay_value_in => ctrlbus_idelay_value,
-	--		idelay_load_in => ctrlbus_idelay_load,
-	--		ctrlbus_locked_out => ctrlbus_locked,
-			
-	--		clk400=>clk400
-	--	);
+        -----------------------------------------------------------------------
+        -- sim comment
+        -----------------------------------------------------------------------
 
-	--slaves: entity work.slaves port map(
-	--	ipb_clk => gck2_clk40, --ipb_clk
-	--	ipb_rst => rst_ipb,
-	--	ipb_in => ipb_master_write,
-	--	ipb_out => ipb_master_read,
+    	ctrlbus: entity work.ctrlbus
+		port map(
+			gck2_clk40_in => gck2_clk40,
+			gck2_clk80_in => gck2_clk80,
+			idelayctrl_refclk300_in => idelayctrl_refclk300,
+			CTRLBUS_OUT_P => CTRLIPBUS_P_OUT,
+			CTRLBUS_OUT_N => CTRLIPBUS_N_OUT,
+			CTRLBUS_IN_P => CTRLIPBUS_P_IN,
+			CTRLBUS_IN_N => CTRLIPBUS_N_IN,
+			ipb_read_in => ipb_master_read,
+			ipb_write_out => ipb_master_write,
+			idelay_value_in => ctrlbus_idelay_value,
+			idelay_load_in => ctrlbus_idelay_load,
+			ctrlbus_locked_out => ctrlbus_locked,
+	      	
+			clk400=>clk400
+		);
+
+	slaves: entity work.slaves port map(
+		ipb_clk => gck2_clk40, --ipb_clk
+		ipb_rst => rst_ipb,
+		ipb_in => ipb_master_write,
+		ipb_out => ipb_master_read,
 	
-	--	ctrlbus_idelay_value_out => ctrlbus_idelay_value,
-	--	ctrlbus_idelay_load_out => ctrlbus_idelay_load,
+		ctrlbus_idelay_value_out => ctrlbus_idelay_value,
+		ctrlbus_idelay_load_out => ctrlbus_idelay_load,
 
 
 		ctrlbus_locked_in => ctrlbus_locked,
@@ -182,7 +185,9 @@ begin
         SPECIAL_CHARACTER_OUT_reg => special_character_out,
         RESET_reg                 => (reset & KINTEX_READY) --reset line status
 	);
-        end generate SWITCH_OFF_IPBUS_FOR_SIM;
+        -----------------------------------------------------------------------
+        -- end sim comment
+        -----------------------------------------------------------------------
 
 	--Wrapper initialization______________________________________
     TransmittersWrapperInst :  entity work.TransmittersWrapper
