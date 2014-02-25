@@ -24,25 +24,26 @@ package body ipbus_addr_decode is
     variable sel : integer;
   begin
                 -- START automatically  generated VHDL the Tue Jan 21 22:26:41 2014 
-		if    std_match(addr, "-------------------0-------0000-") then
-			sel := 0; -- test_rw / base 0x00000000 / mask 0x0000101e
-		elsif std_match(addr, "-------------------0-------0001-") then
-			sel := 1; -- test_ro / base 0x00000002 / mask 0x0000101e
-		elsif std_match(addr, "-------------------0-------0010-") then
-			sel := 2; -- ctrlbus_value / base 0x00000004 / mask 0x0000101e
-		elsif std_match(addr, "-------------------0-------0100-") then
-			sel := 3; -- ctrlbus_load / base 0x00000008 / mask 0x0000101e
-		elsif std_match(addr, "-------------------0-------1000-") then
-			sel := 4; -- trigger_counter / base 0x00000010 / mask 0x0000101e
-		elsif std_match(addr, "-------------------0-------1001-") then
-			sel := 5; -- ctrlbus_error_counter / base 0x00000012 / mask 0x0000101e
-		elsif std_match(addr, "-------------------1------------") then
-			sel := 6; -- RAM / base 0x00001000 / mask 0x0000101e
-		elsif std_match(addr, "-----------------011---01-------") then
-            sel := 7; -- ROD_control / base 0x00003080 / mask 0x0000718f
-        elsif std_match(addr, "-----------------1--------------") then
-            sel := 8; -- ROD_control / base 0x00004000 / mask 0x00004000            
-            
+		if    std_match(addr, "----------------0000-------0000-") then
+			sel := 0; -- test_rw 
+		elsif std_match(addr, "----------------0001-------0001-") then
+			sel := 1; -- test_ro 
+		elsif std_match(addr, "----------------0010-------0010-") then
+			sel := 2; -- ctrlbus_value 
+		elsif std_match(addr, "----------------0011-------0100-") then
+			sel := 3; -- ctrlbus_load 
+		elsif std_match(addr, "----------------0100-------1000-") then
+			sel := 4; -- trigger_counter 
+		elsif std_match(addr, "----------------0101-------1001-") then
+			sel := 5; -- ctrlbus_error_counter 
+		elsif std_match(addr, "----------------0110------------") then
+			sel := 6; -- RAM /
+		elsif std_match(addr, "----------------0111------------") then
+            sel := 7; -- ROD_control
+        elsif std_match(addr, "----------------1000------------") then
+            sel := 8; -- ROD_control             
+        elsif std_match(addr, "----------------1001------------") then
+            sel := 9; -- ROD_control              
 		-- END automatic generated VHDL
 
                 else

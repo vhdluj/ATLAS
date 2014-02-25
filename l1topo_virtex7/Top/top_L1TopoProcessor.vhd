@@ -13,8 +13,8 @@ use work.rod_l1_topo_types_const.all;
 
 entity top_TopoVirtex is 
 GENERIC(
-	LINES_NUMBER : integer  := 8;
-        SIMULATION : boolean :=true
+	LINES_NUMBER : integer  := LINKS_NUMBER;
+        SIMULATION : boolean :=false
 );
 port(
 		GCK2_IN_P, GCK2_IN_N: in std_logic;
@@ -28,9 +28,9 @@ port(
         CTRLBUS_N_IN : in std_logic;     --LINES TO ISSUE DDR RESET
         
         ROD_CONTROL_P_IN : in std_logic;
-        ROD_CONTROL_N_IN : in std_logic;
+        ROD_CONTROL_N_IN : in std_logic
         
-        MMCX_U30_PIN : in std_logic --trigger source (pulser)
+       -- MMCX_U30_PIN : in std_logic --trigger source (pulser)
 	);
 end top_TopoVirtex;
 
@@ -117,7 +117,11 @@ component l1topo_to_ddr
     signal mmcx_u30_synch_a, mmcx_u30_synch_b  : std_logic;
     signal MMCX_U30 : std_logic := '0'; --it used to be external pulse for trigger creation. Now we put here ipbus register.
     signal kintex_reset_pulse : std_logic := '0';
-
+    --Virtex ROD registers nie potrzebne
+--    signal OUT_DATA_reg              : std_logic_vector(OUTPUT_DATA_WIDTH-1 downto 0) := (others => '0');
+--    signal DATA_VALID_OUT_reg        : std_logic_vector(NUMBER_OF_ROS_OUTPUT_BUSES-1 downto 0) := (others => '0');
+--    signal SPECIAL_CHARACTER_OUT_reg : std_logic_vector(NUMBER_OF_ROS_OUTPUT_BUSES-1 downto 0) := (others => '0');
+--    signal RESET_reg                 : std_logic_vector(1 downto 0):= (others=>'0');
     
 begin
 	clocks: entity work.clocks_TopoVirtex
@@ -168,9 +172,14 @@ begin
 		ctrlbus_idelay_load_out => ctrlbus_idelay_load,
 
 		ctrlbus_locked_in => ctrlbus_locked,
-		
+		--register signal sction:
 		ROD_rewi_reg => ROD_rewi_reg,
-		triggerReg =>triggerReg
+		triggerReg =>triggerReg,
+				
+        OUT_DATA_reg              => out_data, --data going from rod to ddr component
+        DATA_VALID_OUT_reg        => data_valid_out, --data valid coming out from l1_topo rod component
+        SPECIAL_CHARACTER_OUT_reg => special_character_out,
+        RESET_reg                 => (reset & KINTEX_READY) --reset line status
 	);
         end generate SWITCH_OFF_IPBUS_FOR_SIM;
 	--Wrapper initialization______________________________________
@@ -246,7 +255,8 @@ begin
     rod_reset <= not KINTEX_READY;    
     LED_OUT <= ctrlbus_locked;
     rst_ipb <= not gck2_mmcm_locked;
-    MMCX_U30 <= triggerReg(0) or MMCX_U30_PIN;
+    MMCX_U30 <= triggerReg(0);-- or MMCX_U30_PIN;
+
 	
 	----------------------------------------------------------------------------------------------
 	----------------------------------------------------------------------------------------------
@@ -344,7 +354,7 @@ begin
       if rising_edge(gck2_clk40) then
         --For time being  we put as data some constant values. Counter will be used later 
         --cntr_for_ros_roi_bus(i) <= std_logic_vector(unsigned(cntr_for_ros_roi_bus(i)) + 1);
-        cntr_for_ros_roi_bus(i) <= std_logic_vector(to_unsigned(i, cntr_for_ros_roi_bus(i)'length));
+        cntr_for_ros_roi_bus(i) <= std_logic_vector(to_unsigned(i+1, cntr_for_ros_roi_bus(i)'length));
       end if;
     end process CNTR_FOR_ROS_ROI_BUS_PROC;
   end generate GENERATE_CNTRS_FOR_ROS_ROI_DATA;

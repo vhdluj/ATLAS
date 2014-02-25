@@ -487,10 +487,12 @@ begin
         OUT_DATA <= out_data_mem;
       elsif reset = '1' then
         OUT_DATA <= ddr_synch_data;
-      else
+      elsif SEND_DATA_AND_CONF_FSM_CURRENT = SEND_CONF then
         OUT_DATA(7 downto 0) <= x"5C";
         OUT_DATA(23 downto 8) <= mem_sel_addr_mod_data_out;
         OUT_DATA(OUTPUT_DATA_WIDTH-1 downto 24) <= (others => '1');
+      else 
+        OUT_DATA <= ddr_synch_data;
       end if;
     end if;
   end process SEND_CONF_DATA;
