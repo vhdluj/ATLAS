@@ -437,7 +437,7 @@ begin
 			end if;
 		end if;
 	end process;
-	SYNCED_OUT <= synced;
+	SYNCED_OUT <= '1' when align_current_state = LINK_READY else '0'; --synced;
 
 
 end Behavioral;

@@ -112,16 +112,17 @@ begin
 			SYNCED_OUT        => local_synced(i)
 		);
 		
-		process(clk_80_i)
-		begin
-			if rising_edge(clk_80_i) then
-				if (local_data((i + 1) * 8 - 1 downto i * 8) /= x"1c" and local_valid(i) = '0') then
-					LINKS_SYNCED_OUT(i) <= '0';
-				else
-					LINKS_SYNCED_OUT(i) <= local_synced(i);
-				end if;
-			end if;
-		end process;
+--		process(clk_80_i)
+--		begin
+--			if rising_edge(clk_80_i) then
+--				if (local_data((i + 1) * 8 - 1 downto i * 8) /= x"1c" and local_valid(i) = '0') then
+--					LINKS_SYNCED_OUT(i) <= '0';
+--				else
+--					LINKS_SYNCED_OUT(i) <= local_synced(i);
+--				end if;
+--			end if;
+--		end process;
+		LINKS_SYNCED_OUT(i) <= local_synced(i);
 			
 		DATA_OUT((i + 1) * 8 - 1 downto i * 8) <= local_data((i + 1) * 8 - 1 downto i * 8);
 		DATA_VALID_OUT(i) <= local_valid(i);

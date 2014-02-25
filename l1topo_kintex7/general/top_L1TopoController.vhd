@@ -204,6 +204,7 @@ ddr_synced <= '1' when (links_synced = ones and rst_ipb = '0') else '0';
 
 
 ddr_rst <= not gck2_mmcm_locked or rst_ipb;
+
 v_reset <= rst_from_bank18 or rst_from_bank16;
 
 ddr_bank18 : entity work.ddr_links_wrapper
@@ -409,8 +410,8 @@ vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => 
 	LED_OUT(11) <= '0';
 	   LED_OUT(12) <= '0';
 	   LED_OUT(13) <= '0';
-	LED_OUT(14) <= rod_rdy;
-	LED_OUT(15) <= hola_ldown_n;
+	LED_OUT(14) <= '0';
+	LED_OUT(15) <= '0';
 
 ------ Ethernet MAC core and PHY interface
 ----	
@@ -504,7 +505,7 @@ vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => 
 	move : entity work.from_rod_to_ipbus
 	port map(
 		clk => gck2_clk80,
-		reset => sys_rst,
+		reset => rst_ipb,
 		
 		parsers_data_in => rod_data,
 		parsers_rd_out => rod_re,
