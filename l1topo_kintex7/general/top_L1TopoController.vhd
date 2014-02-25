@@ -99,8 +99,8 @@ architecture rtl of top is
 	signal ddr_dv_from_bank16 : std_logic_vector(ddr_lines_on_bank16 - 1 downto 0);
 	signal ddr_dv_from_bank18 : std_logic_vector(ddr_lines_on_bank18 - 1 downto 0);
 
-signal ddr_kctrl_from_bank16 : std_logic_vector(ddr_lines_on_bank16 - 1 downto 0);
-signal ddr_kctrl_from_bank18 : std_logic_vector(ddr_lines_on_bank18 - 1 downto 0);
+	signal ddr_kctrl_from_bank16 : std_logic_vector(ddr_lines_on_bank16 - 1 downto 0);
+	signal ddr_kctrl_from_bank18 : std_logic_vector(ddr_lines_on_bank18 - 1 downto 0);
 
 	signal hola_ldown_n : std_logic;
 	
@@ -125,6 +125,29 @@ signal ddr_kctrl_from_bank18 : std_logic_vector(ddr_lines_on_bank18 - 1 downto 0
 	signal ram_addr : std_logic_vector(9 downto 0);
 	signal rod_data, ram_data : std_logic_vector(31 downto 0);
 	signal rst_from_bank18, rst_from_bank16 : std_logic;
+
+	signal soft_rst : std_logic;
+	
+	signal dbg_ddr_state_from18   : std_logic_vector(ddr_lines_on_bank18 * 4 - 1 downto 0);
+	signal dbg_ddr_reg_from18     : std_logic_vector(ddr_lines_on_bank18 * 10 - 1 downto 0);
+	signal dbg_ddr_bitslip_from18 : std_logic_vector(ddr_lines_on_bank18 * 4 - 1 downto 0);
+	signal dbg_ddr_inc_from18     : std_logic_vector(ddr_lines_on_bank18 * 8 - 1 downto 0);
+	signal dbg_ddr_pause_from18   : std_logic_vector(ddr_lines_on_bank18 * 8 - 1 downto 0);
+	signal dbg_ddr_step_from18    : std_logic_vector(ddr_lines_on_bank18 * 8 - 1 downto 0);
+	
+	signal dbg_ddr_state_from16   : std_logic_vector(ddr_lines_on_bank16 * 4 - 1 downto 0);
+	signal dbg_ddr_reg_from16     : std_logic_vector(ddr_lines_on_bank16 * 10 - 1 downto 0);
+	signal dbg_ddr_bitslip_from16 : std_logic_vector(ddr_lines_on_bank16 * 4 - 1 downto 0);
+	signal dbg_ddr_inc_from16     : std_logic_vector(ddr_lines_on_bank16 * 8 - 1 downto 0);
+	signal dbg_ddr_pause_from16   : std_logic_vector(ddr_lines_on_bank16 * 8 - 1 downto 0);
+	signal dbg_ddr_step_from16    : std_logic_vector(ddr_lines_on_bank16 * 8 - 1 downto 0);
+	
+	signal dbg_ddr_state   : std_logic_vector(LINKS_NUMBER * 4 - 1 downto 0);
+	signal dbg_ddr_reg     : std_logic_vector(LINKS_NUMBER * 10 - 1 downto 0);
+	signal dbg_ddr_bitslip : std_logic_vector(LINKS_NUMBER * 4 - 1 downto 0);
+	signal dbg_ddr_inc     : std_logic_vector(LINKS_NUMBER * 8 - 1 downto 0);
+	signal dbg_ddr_pause   : std_logic_vector(LINKS_NUMBER * 8 - 1 downto 0);
+	signal dbg_ddr_step    : std_logic_vector(LINKS_NUMBER * 8 - 1 downto 0);
 
 begin
  ones <= (others => '1');
@@ -198,7 +221,7 @@ GENERATE_OUTPUT_PARSERS: for i in 0 to 0 generate--NUMBER_OF_OUTPUT_LINKS - 1 ge
 end generate GENERATE_OUTPUT_PARSERS;
 
 
-ddr_synced <= '1' when (links_synced = ones and rst_ipb = '0') else '0';
+ddr_synced <= '1' when (links_synced = ones and rst_ipb = '0') and soft_rst = '0' else '0';
 
 --##################################### END OF ROD
 
@@ -254,44 +277,6 @@ port map(
                 DATA_VALID_OUT     => ddr_dv_from_bank16,
                 DATA_KCTRL_OUT     => ddr_kctrl_from_bank16
 );
-
-ddr_data(1 * 8 - 1 downto 0 * 8) <= ddr_data_from_bank16(1 * 8 - 1 downto 0 * 8);
-ddr_data(2 * 8 - 1 downto 1 * 8) <= ddr_data_from_bank16(2 * 8 - 1 downto 1 * 8);
-ddr_data(3 * 8 - 1 downto 2 * 8) <= ddr_data_from_bank18(5 * 8 - 1 downto 4 * 8);
-ddr_data(4 * 8 - 1 downto 3 * 8) <= ddr_data_from_bank16(3 * 8 - 1 downto 2 * 8);
-ddr_data(5 * 8 - 1 downto 4 * 8) <= ddr_data_from_bank16(4 * 8 - 1 downto 3 * 8);
-ddr_data(6 * 8 - 1 downto 5 * 8) <= ddr_data_from_bank18(6 * 8 - 1 downto 5 * 8);
-ddr_data(7 * 8 - 1 downto 6 * 8) <= ddr_data_from_bank18(7 * 8 - 1 downto 6 * 8);
-ddr_data(8 * 8 - 1 downto 7 * 8) <= ddr_data_from_bank18(8 * 8 - 1 downto 7 * 8);
- 
-ddr_dv(0) <= ddr_dv_from_bank16(0);
-ddr_dv(1) <= ddr_dv_from_bank16(1);
-ddr_dv(2) <= ddr_dv_from_bank18(4);
-ddr_dv(3) <= ddr_dv_from_bank16(2);
-ddr_dv(4) <= ddr_dv_from_bank16(3);
-ddr_dv(5) <= ddr_dv_from_bank18(5);
-ddr_dv(6) <= ddr_dv_from_bank18(6);
-ddr_dv(7) <= ddr_dv_from_bank18(7);
-
-ddr_kctrl(0) <= ddr_kctrl_from_bank16(0);
-ddr_kctrl(1) <= ddr_kctrl_from_bank16(1);
-ddr_kctrl(2) <= ddr_kctrl_from_bank18(4);
-ddr_kctrl(3) <= ddr_kctrl_from_bank16(2);
-ddr_kctrl(4) <= ddr_kctrl_from_bank16(3);
-ddr_kctrl(5) <= ddr_kctrl_from_bank18(5);
-ddr_kctrl(6) <= ddr_kctrl_from_bank18(6);
-ddr_kctrl(7) <= ddr_kctrl_from_bank18(7);
-
-links_synced(0) <= ddr_receivers_synced_bank16(0);
-links_synced(1) <= ddr_receivers_synced_bank16(1);
-links_synced(2) <= ddr_receivers_synced_bank18(4);
-links_synced(3) <= ddr_receivers_synced_bank16(2);
-links_synced(4) <= ddr_receivers_synced_bank16(3);
-links_synced(5) <= ddr_receivers_synced_bank18(5);
-links_synced(6) <= ddr_receivers_synced_bank18(6);
-links_synced(7) <= ddr_receivers_synced_bank18(7);
-
-
 
 --ddr_bank32 : entity work.ddr_links_wrapper -- connected to ctrlbus U1
 --generic map(
@@ -495,6 +480,16 @@ vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => 
 		ctrlbus_idelay_value_out => ctrlbus_idelay_value,
 		ctrlbus_idelay_load_out => ctrlbus_idelay_load,
 		
+		
+			soft_rst_out => soft_rst,
+			
+		DBG_STATE_IN     => dbg_ddr_state,
+		DBG_REG_DATA_IN  => dbg_ddr_reg,
+		DBG_BITSLIP_IN   => dbg_ddr_bitslip,
+		DBG_INC_IN       => dbg_ddr_inc,
+		DBG_PAUSE_IN     => dbg_ddr_pause,
+		DBG_STEP_IN      => dbg_ddr_step,
+		
 		ROD_RAM_CLK_IN => gck2_clk80,
 		ROD_RAM_WE_IN => ram_we,
 		ROD_RAM_ADDR_IN => ram_addr,
@@ -545,6 +540,99 @@ vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => 
 		);
 
 
+--################### LINKS MAPPING
+
+ddr_data(1 * 8 - 1 downto 0 * 8) <= ddr_data_from_bank16(1 * 8 - 1 downto 0 * 8);
+ddr_data(2 * 8 - 1 downto 1 * 8) <= ddr_data_from_bank16(2 * 8 - 1 downto 1 * 8);
+ddr_data(3 * 8 - 1 downto 2 * 8) <= ddr_data_from_bank18(5 * 8 - 1 downto 4 * 8);
+ddr_data(4 * 8 - 1 downto 3 * 8) <= ddr_data_from_bank16(3 * 8 - 1 downto 2 * 8);
+ddr_data(5 * 8 - 1 downto 4 * 8) <= ddr_data_from_bank16(4 * 8 - 1 downto 3 * 8);
+ddr_data(6 * 8 - 1 downto 5 * 8) <= ddr_data_from_bank18(6 * 8 - 1 downto 5 * 8);
+ddr_data(7 * 8 - 1 downto 6 * 8) <= ddr_data_from_bank18(7 * 8 - 1 downto 6 * 8);
+ddr_data(8 * 8 - 1 downto 7 * 8) <= ddr_data_from_bank18(8 * 8 - 1 downto 7 * 8);
+ 
+ddr_dv(0) <= ddr_dv_from_bank16(0);
+ddr_dv(1) <= ddr_dv_from_bank16(1);
+ddr_dv(2) <= ddr_dv_from_bank18(4);
+ddr_dv(3) <= ddr_dv_from_bank16(2);
+ddr_dv(4) <= ddr_dv_from_bank16(3);
+ddr_dv(5) <= ddr_dv_from_bank18(5);
+ddr_dv(6) <= ddr_dv_from_bank18(6);
+ddr_dv(7) <= ddr_dv_from_bank18(7);
+
+ddr_kctrl(0) <= ddr_kctrl_from_bank16(0);
+ddr_kctrl(1) <= ddr_kctrl_from_bank16(1);
+ddr_kctrl(2) <= ddr_kctrl_from_bank18(4);
+ddr_kctrl(3) <= ddr_kctrl_from_bank16(2);
+ddr_kctrl(4) <= ddr_kctrl_from_bank16(3);
+ddr_kctrl(5) <= ddr_kctrl_from_bank18(5);
+ddr_kctrl(6) <= ddr_kctrl_from_bank18(6);
+ddr_kctrl(7) <= ddr_kctrl_from_bank18(7);
+
+links_synced(0) <= ddr_receivers_synced_bank16(0);
+links_synced(1) <= ddr_receivers_synced_bank16(1);
+links_synced(2) <= ddr_receivers_synced_bank18(4);
+links_synced(3) <= ddr_receivers_synced_bank16(2);
+links_synced(4) <= ddr_receivers_synced_bank16(3);
+links_synced(5) <= ddr_receivers_synced_bank18(5);
+links_synced(6) <= ddr_receivers_synced_bank18(6);
+links_synced(7) <= ddr_receivers_synced_bank18(7);
+
+dbg_ddr_state(0) <= dbg_ddr_state_from16(0);
+dbg_ddr_state(1) <= dbg_ddr_state_from16(1);
+dbg_ddr_state(2) <= dbg_ddr_state_from18(4);
+dbg_ddr_state(3) <= dbg_ddr_state_from16(2);
+dbg_ddr_state(4) <= dbg_ddr_state_from16(3);
+dbg_ddr_state(5) <= dbg_ddr_state_from18(5);
+dbg_ddr_state(6) <= dbg_ddr_state_from18(6);
+dbg_ddr_state(7) <= dbg_ddr_state_from18(7);
+
+dbg_ddr_reg(0) <= dbg_ddr_reg_from16(0);
+dbg_ddr_reg(1) <= dbg_ddr_reg_from16(1);
+dbg_ddr_reg(2) <= dbg_ddr_reg_from18(4);
+dbg_ddr_reg(3) <= dbg_ddr_reg_from16(2);
+dbg_ddr_reg(4) <= dbg_ddr_reg_from16(3);
+dbg_ddr_reg(5) <= dbg_ddr_reg_from18(5);
+dbg_ddr_reg(6) <= dbg_ddr_reg_from18(6);
+dbg_ddr_reg(7) <= dbg_ddr_reg_from18(7);
+
+dbg_ddr_bitslip(0) <= dbg_ddr_bitslip_from16(0);
+dbg_ddr_bitslip(1) <= dbg_ddr_bitslip_from16(1);
+dbg_ddr_bitslip(2) <= dbg_ddr_bitslip_from18(4);
+dbg_ddr_bitslip(3) <= dbg_ddr_bitslip_from16(2);
+dbg_ddr_bitslip(4) <= dbg_ddr_bitslip_from16(3);
+dbg_ddr_bitslip(5) <= dbg_ddr_bitslip_from18(5);
+dbg_ddr_bitslip(6) <= dbg_ddr_bitslip_from18(6);
+dbg_ddr_bitslip(7) <= dbg_ddr_bitslip_from18(7);
+
+dbg_ddr_inc(0) <= dbg_ddr_inc_from16(0);
+dbg_ddr_inc(1) <= dbg_ddr_inc_from16(1);
+dbg_ddr_inc(2) <= dbg_ddr_inc_from18(4);
+dbg_ddr_inc(3) <= dbg_ddr_inc_from16(2);
+dbg_ddr_inc(4) <= dbg_ddr_inc_from16(3);
+dbg_ddr_inc(5) <= dbg_ddr_inc_from18(5);
+dbg_ddr_inc(6) <= dbg_ddr_inc_from18(6);
+dbg_ddr_inc(7) <= dbg_ddr_inc_from18(7);
+
+dbg_ddr_pause(0) <= dbg_ddr_pause_from16(0);
+dbg_ddr_pause(1) <= dbg_ddr_pause_from16(1);
+dbg_ddr_pause(2) <= dbg_ddr_pause_from18(4);
+dbg_ddr_pause(3) <= dbg_ddr_pause_from16(2);
+dbg_ddr_pause(4) <= dbg_ddr_pause_from16(3);
+dbg_ddr_pause(5) <= dbg_ddr_pause_from18(5);
+dbg_ddr_pause(6) <= dbg_ddr_pause_from18(6);
+dbg_ddr_pause(7) <= dbg_ddr_pause_from18(7);
+
+dbg_ddr_step(0) <= dbg_ddr_step_from16(0);
+dbg_ddr_step(1) <= dbg_ddr_step_from16(1);
+dbg_ddr_step(2) <= dbg_ddr_step_from18(4);
+dbg_ddr_step(3) <= dbg_ddr_step_from16(2);
+dbg_ddr_step(4) <= dbg_ddr_step_from16(3);
+dbg_ddr_step(5) <= dbg_ddr_step_from18(5);
+dbg_ddr_step(6) <= dbg_ddr_step_from18(6);
+dbg_ddr_step(7) <= dbg_ddr_step_from18(7);
+
+--##################################
 	
 end rtl;
 
