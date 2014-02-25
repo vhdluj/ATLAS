@@ -17,7 +17,7 @@ use work.rod_l1_topo_types_const.all;
 entity top is
 generic (
 	LINKS_NUMBER : integer range 0 to 40 := 8;
-        SIMULATION : integer range 0 to 1 := 0
+        SIMULATION  : boolean := false
 		  );
 port(
 	gt_clkp, gt_clkn: in std_logic;
@@ -399,7 +399,9 @@ vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => 
 	LED_OUT(15) <= '0';
 
 ------ Ethernet MAC core and PHY interface
-----	
+----
+SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
+                         
 	eth: entity work.eth_7s_sgmii
 		port map(
 			gt_clkp => gt_clkp,
@@ -538,7 +540,7 @@ vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => 
 			mmcm_clk_80_u2_out => ctrlbus_17_clk,
 			mmcm_clk_400_u2_out => ctrlbus_17_clkx8
 		);
-
+end generate SWITCH_OFF_IPBUS_FOR_SIM;	
 
 --################### LINKS MAPPING
 
