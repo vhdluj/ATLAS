@@ -20,6 +20,13 @@ port(
 	
 	DATA_OUT          : out std_logic_vector(9 downto 0);
 	SYNCED_OUT        : out std_logic
+	-- debug ports:
+	DBG_STATE_OUT     : out std_logic_vector(3 downto 0);
+	DBG_REG_DATA_OUT  : out std_logic_vector(9 downto 0);
+	DBG_BITSLIP_OUT   : out std_logic_vector(3 downto 0);
+	DBG_INC_OUT       : out std_logic_vector(7 downto 0);
+	DBG_PAUSE_OUT     : out std_logic_vector(7 downto 0);
+	DBG_STEP_OUT      : out std_logic_vector(7 downto 0)	
 	
 );
 end ddr_input_module;
@@ -442,7 +449,13 @@ begin
 		end if;
 	end process;
 	SYNCED_OUT <= '1' when align_current_state = LINK_READY else '0'; --synced;
+        	-- debug ports:
+	DBG_STATE_OUT    <= state;
+	DBG_REG_DATA_OUT <= registered_data;
+	DBG_BITSLIP_OUT  <= std_logic_vector(to_unsigned(bitslips_ctr, 4));
+	DBG_INC_OUT      <= std_logic_vector(to_unsigned(inc_ctr, 8));
+	DBG_PAUSE_OUT    <= std_logic_vector(to_unsigned(pause_ctr, 8));
+	DBG_STEP_OUT     <= std_logic_vector(to_unsigned(step_ctr, 8));
 
 
 end Behavioral;
-

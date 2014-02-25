@@ -9,6 +9,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use work.ipbus.ALL;
 
 entity slaves is
+	generic ( lvds_lines : positive );
 	port(
 		ipb_clk: in std_logic;
 		ipb_rst: in std_logic;
@@ -31,7 +32,16 @@ entity slaves is
 		ROD_RAM_CLK_IN : in std_logic;
 		ROD_RAM_WE_IN : in std_logic;
 		ROD_RAM_ADDR_IN : in std_logic_vector(9 downto 0);
-		ROD_RAM_DATA_IN : in std_logic_vector(31 downto 0)
+		ROD_RAM_DATA_IN : in std_logic_vector(31 downto 0);
+		
+		DBG_STATE_IN     : in std_logic_vector(lvds_lines * 4 - 1 downto 0);
+		DBG_REG_DATA_IN  : in std_logic_vector(lvds_lines * 10 - 1 downto 0);
+		DBG_BITSLIP_IN   : in std_logic_vector(lvds_lines * 4 - 1 downto 0);
+		DBG_INC_IN       : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
+		DBG_PAUSE_IN     : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
+		DBG_STEP_IN      : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
+		
+		soft_rst_out : out std_logic
 	);
 
 end slaves;
@@ -72,6 +82,7 @@ begin
 		);
 		
 		rst_out <= ctrl_reg(0);
+		soft_rst_out <= ctrl_reg(1);
 
 -- Slave 1: register
 
@@ -126,6 +137,22 @@ begin
 --			ipbus_in => ipbw(4),
 --			ipbus_out => ipbr(4)
 --		);
+
+	slave4 : entity work.ipbus_slave_ddr_debug
+	generic map(lvds_lines => lvds_lines)
+	port map(
+		clk => ipb_clk,
+		reset => ipb_rst,
+		ipbus_in => ipbw(4),
+		ipbus_out => ipbr(4),
+		
+		DBG_STATE_IN     => DBG_STATE_IN,
+		DBG_REG_DATA_IN  => DBG_REG_DATA_IN,
+		DBG_BITSLIP_IN   => DBG_BITSLIP_IN,
+		DBG_INC_IN       => DBG_INC_IN,
+		DBG_PAUSE_IN     => DBG_PAUSE_IN,
+		DBG_STEP_IN      => DBG_STEP_IN
+	);
 	
 -- Slave 5: peephole RAM
 

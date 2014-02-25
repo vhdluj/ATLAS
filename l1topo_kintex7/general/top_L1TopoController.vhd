@@ -14,7 +14,7 @@ use work.ipbus.ALL;
 
 use work.rod_l1_topo_types_const.all;
 
-entity top is
+entity top_L1TopoController is
 generic (
 	LINKS_NUMBER : integer range 0 to 40 := 8;
         SIMULATION  : boolean := false
@@ -45,9 +45,9 @@ port(
 --	SFP3_TX_N, SFP3_TX_P : out std_logic
 	);
 
-end top;
+end top_L1TopoController;
 
-architecture rtl of top is
+architecture rtl of top_L1TopoController is
 
 	constant ddr_lines_on_bank16 : positive := 7;
 	constant ddr_lines_on_bank17 : positive := 2;
@@ -485,6 +485,7 @@ SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
 --			pkt_tx_led => pkt_tx_led
 --		);
 		
+<<<<<<< HEAD
 --	mac_addr <= X"000A3501F610";
 --	--ip_addr <= X"865D828B"; --134.93.130.139
 --	ip_addr <= X"898A5114"; --137.138.81.20
@@ -501,6 +502,28 @@ SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
 --		rst_out => sys_rst,
 --		pkt_rx => pkt_rx,
 --		pkt_tx => pkt_tx,
+=======
+	mac_addr <= X"000A3501F610";
+	--ip_addr <= X"865D828B"; --134.93.130.139
+	ip_addr <= X"898A5114"; --137.138.81.20
+
+
+-- ipbus slaves live in the entity below, and can expose top-level ports
+-- The ipbus fabric is instantiated within.
+
+	slaves: entity work.slaves 
+	generic map(
+		lvds_lines => LINKS_NUMBER
+		)
+	port map(
+		ipb_clk => gck2_clk40, --ipb_clk
+		ipb_rst => rst_ipb,
+		ipb_in => ipb_master_out,
+		ipb_out => ipb_master_in,
+		rst_out => sys_rst,
+		pkt_rx => pkt_rx,
+		pkt_tx => pkt_tx,
+>>>>>>> e9a1f1398f66a9e7ed7ea72a66a0699bbd28794a
 		
 --		ipb_write_U1_out => ipb_write_U1,
 --		ipb_read_U1_in => ipb_read_U1,
