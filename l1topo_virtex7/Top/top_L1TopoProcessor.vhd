@@ -189,9 +189,9 @@ begin
 	
 
  
- 	ASSIGN_NUMBER_OF_SLICES : for i in 0 to NUMBER_OF_SLICES'length-1 generate
-      NUMBER_OF_SLICES(i) <= to_unsigned(5, NUMBER_OF_SLICES(0)'length);--to_unsigned(((i mod 16)+1), NUMBER_OF_SLICES(0)'length);
-      LVL0_OFFSET(i)      <= to_unsigned(i mod 2, LVL0_OFFSET(0)'length); --to_unsigned(i mod 8, LVL0_OFFSET(0)'length);
+        ASSIGN_NUMBER_OF_SLICES : for i in 0 to NUMBER_OF_SLICES'length-1 generate
+          NUMBER_OF_SLICES(i) <= to_unsigned(3, NUMBER_OF_SLICES(0)'length);--to_unsigned(((i mod 16)+1), NUMBER_OF_SLICES(0)'length);
+          LVL0_OFFSET(i)      <= to_unsigned(i mod 2, LVL0_OFFSET(0)'length); --to_unsigned(i mod 8, LVL0_OFFSET(0)'length);
     end generate ASSIGN_NUMBER_OF_SLICES;   
     
 	l1topo_to_ddr_1: l1topo_to_ddr
@@ -253,7 +253,8 @@ begin
 	--Processes:
 	----------------------------------------------------------------------------------------------
 	----------------------------------------------------------------------------------------------
-   --l1topo ROD processes:    
+   --l1topo ROD processes:
+   slice_changes_aproved <= KINTEX_READY;
    DETECT_RISING_EDGE : process (gck2_clk40)
    begin
      if rising_edge(gck2_clk40) then
@@ -287,22 +288,22 @@ begin
          global_reset_cnt <= (others => '0');
          local_reset <= '1';
          local_reset_sync <= '1';
-         slice_changes_aproved <= '0';
+         --slice_changes_aproved <= '0';
        elsif global_reset_cnt < x"000e" then
          global_reset_cnt <= global_reset_cnt + 1;
          local_reset <= '1';-- or kintex_ready_pulse;
          local_reset_sync <= '1';
-         slice_changes_aproved <= '0';
+         --slice_changes_aproved <= '0';
        elsif global_reset_cnt = x"000e" and kintex_ready_synch_b = '1' then
          local_reset <= '0';
          local_reset_sync <= local_reset;
          global_reset_cnt <= x"000e";
-         slice_changes_aproved <= '1';
+         --slice_changes_aproved <= '1';
        else
          local_reset <= local_reset;-- or kintex_ready_pulse;
          local_reset_sync <= '0';
          global_reset_cnt <= global_reset_cnt;
-         slice_changes_aproved <= slice_changes_aproved;
+         --slice_changes_aproved <= slice_changes_aproved;
        end if;
      end if;
    end process GLOBAL_RESET;
@@ -343,8 +344,8 @@ begin
     begin
       if rising_edge(gck2_clk40) then
         --For time being  we put as data some constant values. Counter will be used later 
-        --cntr_for_ros_roi_bus(i) <= std_logic_vector(unsigned(cntr_for_ros_roi_bus(i)) + 1);
-        cntr_for_ros_roi_bus(i) <= std_logic_vector(to_unsigned(i, cntr_for_ros_roi_bus(i)'length));
+        cntr_for_ros_roi_bus(i) <= std_logic_vector(unsigned(cntr_for_ros_roi_bus(i)) + 1);
+        --cntr_for_ros_roi_bus(i) <= std_logic_vector(to_unsigned(i, cntr_for_ros_roi_bus(i)'length));
       end if;
     end process CNTR_FOR_ROS_ROI_BUS_PROC;
   end generate GENERATE_CNTRS_FOR_ROS_ROI_DATA;

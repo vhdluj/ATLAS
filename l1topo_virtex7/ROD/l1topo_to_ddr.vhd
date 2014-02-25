@@ -84,7 +84,7 @@ architecture l1topo_to_ddr of l1topo_to_ddr is
    
   signal number_of_slices_synch, lvl0_offset_synch                                             : slice_parameters_array_u;
   signal memory_data                                                                           : memory_array;
-  type   SEND_DATA_AND_CONF_FSM is (IDLE, PREPARE_DATA_A, PREPARE_DATA_B, SEND_DATA, SEND_CONF, WAIT_FOR_READOUT_FIFO_A, WAIT_FOR_READOUT_FIFO_B);
+  type   SEND_DATA_AND_CONF_FSM is (IDLE, PREPARE_DATA_A, PREPARE_DATA_B, SEND_DATA, SEND_CONF, SEND_LAST_CONF, WAIT_FOR_READOUT_FIFO_A, WAIT_FOR_READOUT_FIFO_B);
   signal SEND_DATA_AND_CONF_FSM_CURRENT, SEND_DATA_AND_CONF_FSM_NEXT                           : SEND_DATA_AND_CONF_FSM;
   signal time_slice_cntr                                                                       : unsigned(10 downto 0)                          := (others => '0');
   signal bus_cntr                                                                              : unsigned(5 downto 0)                := (others => '0');
@@ -452,12 +452,14 @@ begin
         if mem_sel_addr_mod_data_out(15) = '1' then -- x"ffff" then
           special_character_fsm       <= '0';
           --data_valid_fsm <= '0';
-          SEND_DATA_AND_CONF_FSM_NEXT <= IDLE;
+          SEND_DATA_AND_CONF_FSM_NEXT <= SEND_LAST_CONF;
         else
           special_character_fsm       <= '1';
           --data_valid_fsm <= '1';
           SEND_DATA_AND_CONF_FSM_NEXT <= SEND_CONF;
         end if;
+      when SEND_LAST_CONF =>
+        SEND_DATA_AND_CONF_FSM_NEXT <= IDLE;
       when others =>
         SEND_DATA_AND_CONF_FSM_NEXT <= IDLE;
     end case;
@@ -487,15 +489,15 @@ begin
         OUT_DATA <= out_data_mem;
       elsif reset = '1' then
         OUT_DATA <= ddr_synch_data;
-      elsif SEND_DATA_AND_CONF_FSM_CURRENT = SEND_CONF then
+      --elsif SEND_DATA_AND_CONF_FSM_CURRENT = SEND_CONF or SEND_DATA_AND_CONF_FSM_CURRENT = SEND_LAST_CONF then
+      --  OUT_DATA(7 downto 0) <= x"5C";
+      --  OUT_DATA(23 downto 8) <= mem_sel_addr_mod_data_out;
+      --  OUT_DATA(OUTPUT_DATA_WIDTH-1 downto 24) <= (others => '1');
+      else
+--        OUT_DATA <= ddr_synch_data;
         OUT_DATA(7 downto 0) <= x"5C";
         OUT_DATA(23 downto 8) <= mem_sel_addr_mod_data_out;
         OUT_DATA(OUTPUT_DATA_WIDTH-1 downto 24) <= (others => '1');
-      else
-        OUT_DATA <= ddr_synch_data;
-        --OUT_DATA(7 downto 0) <= x"5C";
-        --OUT_DATA(23 downto 8) <= mem_sel_addr_mod_data_out;
-        --OUT_DATA(OUTPUT_DATA_WIDTH-1 downto 24) <= (others => '1');
       end if;
     end if;
   end process SEND_CONF_DATA;

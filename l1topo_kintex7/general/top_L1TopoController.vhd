@@ -155,7 +155,8 @@ begin
 --##################   ROD
 
 SET_DUMMY_ASSIGNMENTS: for i in 0 to ros_roi_bus_assignment_sig'high generate
-  ros_roi_bus_assignment_sig(i) <= std_logic_vector(to_unsigned(i mod 12,ros_roi_bus_assignment_sig(0)'length));
+  ros_roi_bus_assignment_sig(i) <= std_logic_vector(to_unsigned(0,ros_roi_bus_assignment_sig(0)'length));--
+  --i, mod 12,ros_roi_bus_assignment_sig(0)'length));
 end generate SET_DUMMY_ASSIGNMENTS;
 
 GENERATE_V1_V2_DDR_TO_ROD: for i in 0 to 0 generate
@@ -175,7 +176,7 @@ GENERATE_V1_V2_DDR_TO_ROD: for i in 0 to 0 generate
     NUMBER_OF_SLICES_OUT        => number_of_slices_out_l,
     LVL0_OFFSET_OUT             => lvl0_offset_out_l,
     ROS_ROI_BUS_ASSIGNMENT      => ros_roi_bus_assignment_sig,
-    ROS_ROI_BUS_ASSIGNMENT_DONE => not sys_rst,--ROS_ROI_BUS_ASSIGNMENT_DONE,
+    ROS_ROI_BUS_ASSIGNMENT_DONE => ddr_synced,--ROS_ROI_BUS_ASSIGNMENT_DONE,
     ROS_ROI_OUT_DATA_CNTR       => open,--ROS_ROI_OUT_DATA_CNTR,
     START_OF_FRAME              => open,
     END_OF_FRAME                => open);
