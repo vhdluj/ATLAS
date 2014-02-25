@@ -439,10 +439,11 @@ end generate SIM_CLOCK;
 	   LED_OUT(13) <= '0';
 	LED_OUT(14) <= '0';
 	LED_OUT(15) <= '0';
-
+-------------------------------------------------------------------------------
+-- comment for sim
+-------------------------------------------------------------------------------
 ------ Ethernet MAC core and PHY interface
 ----
-SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
                          
 	eth: entity work.eth_7s_sgmii
 		port map(
@@ -605,7 +606,10 @@ SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
 			mmcm_clk_80_u2_out => ctrlbus_17_clk,
 			mmcm_clk_400_u2_out => ctrlbus_17_clkx8
 		);
-end generate SWITCH_OFF_IPBUS_FOR_SIM;	
+-------------------------------------------------------------------------------
+-- end comment for sim
+-------------------------------------------------------------------------------
+
 
 --################### LINKS MAPPING
 
