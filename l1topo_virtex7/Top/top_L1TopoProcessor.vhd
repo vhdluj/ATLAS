@@ -13,7 +13,8 @@ use work.rod_l1_topo_types_const.all;
 
 entity top_TopoVirtex is 
 GENERIC(
-	LINES_NUMBER : integer  := 8
+	LINES_NUMBER : integer  := 8;
+        SIMULATION : boolean :=true
 );
 port(
 		GCK2_IN_P, GCK2_IN_N: in std_logic;
@@ -27,15 +28,15 @@ port(
         CTRLBUS_N_IN : in std_logic;     --LINES TO ISSUE DDR RESET
         
         ROD_CONTROL_P_IN : in std_logic;
-        ROD_CONTROL_N_IN : in std_logic
+        ROD_CONTROL_N_IN : in std_logic;
         
-        --MMCX_U30 : in std_logic --trigger source
+        MMCX_U30_PIN : in std_logic --trigger source (pulser)
 	);
 end top_TopoVirtex;
 
 
 
-architecture Behavioral of top_TopoVirtex is
+architecture top_TopoVirtex of top_TopoVirtex is
 
 component l1topo_to_ddr
   generic (
@@ -128,7 +129,17 @@ begin
 			gck2_clk80_out => gck2_clk80,
 			idelayctrl_refclk300_out => idelayctrl_refclk300
 		);
-	
+
+        SIMULATION_ON: if SIMULATION generate
+          CLK400_PROC: process
+          begin  -- process 400MHz_CLK
+            clk400 <= '0';
+            wait for 2.5 ns;
+            clk400 <= '1';
+            wait for 2.5 ns;
+          end process CLK400_PROC;
+        end generate SIMULATION_ON;
+        SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION)  generate
 	ctrlbus: entity work.ctrlbus
 		port map(
 			gck2_clk40_in => gck2_clk40,
@@ -161,6 +172,7 @@ begin
 		ROD_rewi_reg => ROD_rewi_reg,
 		triggerReg =>triggerReg
 	);
+        end generate SWITCH_OFF_IPBUS_FOR_SIM;
 	--Wrapper initialization______________________________________
     TransmittersWrapperInst :  entity work.TransmittersWrapper
     	generic map(
@@ -234,7 +246,7 @@ begin
     rod_reset <= not KINTEX_READY;    
     LED_OUT <= ctrlbus_locked;
     rst_ipb <= not gck2_mmcm_locked;
-    MMCX_U30 <= triggerReg(0);
+    MMCX_U30 <= triggerReg(0) or MMCX_U30_PIN;
 	
 	----------------------------------------------------------------------------------------------
 	----------------------------------------------------------------------------------------------
@@ -402,5 +414,5 @@ begin
 
 
 
-end Behavioral;
+end top_TopoVirtex;
 
