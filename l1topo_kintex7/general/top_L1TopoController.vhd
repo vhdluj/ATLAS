@@ -397,25 +397,25 @@ end generate SIM_CLOCK;
         -----------------------------------------------------------------------
         -- comment for sim
         -----------------------------------------------------------------------                 
-	--clocks: entity work.clocks_7s_serdes
-	--	port map(
-	--		clki_fr => clk125_fr,
-	--		clki_125 => clk125,
-	--		clko_ipb => ipb_clk,
-	--		eth_locked => eth_locked,
-	--		locked => clk_locked,
-	--		nuke => sys_rst,
-	--		rsto_125 => rst_125,
-	--		rsto_ipb => rst_ipb,
-	--		rsto_eth => rst_eth,
-	--		onehz => onehz,
-	--		GCK2_IN_P => GCK2_IN_P,
-	--		GCK2_IN_N => GCK2_IN_N,
-	--		gck2_mmcm_locked_out => gck2_mmcm_locked,
-	--		gck2_clk40_out => gck2_clk40,
-	--		gck2_clk80_out => gck2_clk80,
-	--		idelayctrl_refclk300_out => idelayctrl_refclk300
-	--	);
+	clocks: entity work.clocks_7s_serdes
+		port map(
+			clki_fr => clk125_fr,
+			clki_125 => clk125,
+			clko_ipb => ipb_clk,
+			eth_locked => eth_locked,
+			locked => clk_locked,
+			nuke => sys_rst,
+			rsto_125 => rst_125,
+			rsto_ipb => rst_ipb,
+			rsto_eth => rst_eth,
+			onehz => onehz,
+			GCK2_IN_P => GCK2_IN_P,
+			GCK2_IN_N => GCK2_IN_N,
+			gck2_mmcm_locked_out => gck2_mmcm_locked,
+			gck2_clk40_out => gck2_clk40,
+			gck2_clk80_out => gck2_clk80,
+			idelayctrl_refclk300_out => idelayctrl_refclk300
+		);
         --------------------------------------------------------------------
         -- end comment for sim
         --------------------------------------------------------------------

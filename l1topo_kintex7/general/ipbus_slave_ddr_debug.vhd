@@ -27,7 +27,7 @@ architecture rtl of ipbus_slave_ddr_debug is
 	type reg_array is array(2*lvds_lines-1 downto 0) of std_logic_vector(31 downto 0);
 	signal reg: reg_array;
 	signal sel: integer;
-	signal akc : std_logic;
+	signal ack : std_logic;
 	
 begin
  
