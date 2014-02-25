@@ -83,7 +83,7 @@ component l1topo_to_ddr
     signal dataValidIn : std_logic_vector(LINES_NUMBER-1 downto 0)  := (others  => '0');
     signal dataKctrlIn : std_logic := '0';
     signal counter : std_logic_vector(23 downto 0)  := (others => '0');
-    signal cntW84SyncFlag : std_logic  := '0';
+  --  signal cntW84SyncFlag : std_logic  := '0';
     
     signal dataIn : std_logic_vector(8*(LINES_NUMBER)-1 downto 0)  := (others => '0');
     signal clockLock : std_logic  := '0';
@@ -186,7 +186,7 @@ begin
       generic map (
         MAKE_SYNCH_INPUT => 0)
       port map (
-        RESET                 => local_reset,--rst_ipb,
+        RESET                 => reset,--local_reset,--rst_ipb,
         DATA_IN_CLK           => gck2_clk40,
         DATA_OUT_CLK          => gck2_clk80,
         NUMBER_OF_SLICES      => NUMBER_OF_SLICES,
@@ -229,7 +229,7 @@ begin
     --Signal assigments
     ---------------------------------------------------------------------------------------------\
     --local_reset <= rst_ipb;
-    reset <= not gck2_mmcm_locked;--clockLock;
+    reset <= (not gck2_mmcm_locked) or (not KINTEX_READY);--clockLock;
     --reset_ctr : IBUFDS port map (I => CTRLBUS_P_IN ,IB => CTRLBUS_N_IN, O => reset_line );
     rod_reset <= not KINTEX_READY;    
     LED_OUT <= ctrlbus_locked;
@@ -260,7 +260,7 @@ begin
   DETECT_FALLING_EDGE : process (gck2_clk40)
   begin 
     if rising_edge(gck2_clk40) then
-      if kintex_ready_synch_a = '1' and kintex_ready_synch_b = '0' then
+      if kintex_ready_synch_a = '0' and kintex_ready_synch_b = '1' then
         kintex_reset_pulse <= '1';
       else 
         kintex_reset_pulse <= '0';
