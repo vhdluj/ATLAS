@@ -17,8 +17,8 @@ package rod_l1_topo_types_const is
   constant MAX_NUMBER_OF_TOTAL_SLICES    : integer := NUMBER_OF_ROS_ROI_INPUT_BUSES*2**(SIZE_OF_SLICE_VALUE);
   constant NUMBER_OF_PARSERS             : integer := 16;
   function log2_int (x : natural) return integer;
-  
-  
+  --DDR 
+  constant LINKS_NUMBER : integer := 8;
   -----------------------------------------------------------------------------
   -- virtex
   -----------------------------------------------------------------------------

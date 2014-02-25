@@ -146,7 +146,7 @@ begin
                 
 		DATA_OUT((i + 1) * 8 - 1 downto i * 8) <= local_data((i + 1) * 8 - 1 downto i * 8);
 		DATA_VALID_OUT(i) <= local_valid(i);
-                DATA_KCTRL_OUT(i) <= local_ktrl(i);
+        DATA_KCTRL_OUT(i) <= local_ktrl(i);
                 
 	end generate lvds_gen;
 
