@@ -53,7 +53,7 @@ begin
 		when COMPARE =>
 			if (SIMULATION = TRUE and samples_ctr = 7) then
 				check_next_state <= CLEANUP;
-			elsif (SIMULATION = FALSE and samples_ctr = 1000) then
+			elsif (SIMULATION = FALSE and samples_ctr = 254) then
 				check_next_state <= CLEANUP;
                                 
 			else

@@ -34,7 +34,8 @@ port (
 	DBG_BITSLIP_OUT   : out std_logic_vector(AVAILABLE_LVDS_LINES * 4 - 1 downto 0);
 	DBG_INC_OUT       : out std_logic_vector(AVAILABLE_LVDS_LINES * 8 - 1 downto 0);
 	DBG_PAUSE_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES * 8 - 1 downto 0);
-	DBG_STEP_OUT      : out std_logic_vector(AVAILABLE_LVDS_LINES * 8 - 1 downto 0)
+	DBG_STEP_OUT      : out std_logic_vector(AVAILABLE_LVDS_LINES * 8 - 1 downto 0);
+	DBG_RETRY_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES * 8 - 1 downto 0)
 
 );
 end ddr_links_wrapper;
@@ -56,7 +57,7 @@ begin
 
 	internal_reset <= '1' when RESET_IN = '1' or dcm_locked = '0' else '0';
 	
-	RESET_TRANS_OUT <= not dcm_locked;
+	RESET_TRANS_OUT <= not dcm_locked and local_ctrl_ready;
 
 	bridge_inst : entity work.ddr_bank_bridge
 	generic map( 
@@ -124,12 +125,13 @@ begin
 			DATA_OUT          => local_enc_data((i + 1) * 10 - 1 downto i * 10),
 			SYNCED_OUT        => local_synced(i),
                         
-                        DBG_STATE_OUT     => DBG_STATE_OUT((i + 1) * 4 - 1 downto i * 4),
+            DBG_STATE_OUT     => DBG_STATE_OUT((i + 1) * 4 - 1 downto i * 4),
 			DBG_REG_DATA_OUT  => DBG_REG_DATA_OUT((i + 1) * 10 - 1 downto i * 10),
 			DBG_BITSLIP_OUT   => DBG_BITSLIP_OUT((i + 1) * 4 - 1 downto i * 4),
 			DBG_INC_OUT       => DBG_INC_OUT((i + 1) * 8 - 1 downto i * 8),
 			DBG_PAUSE_OUT     => DBG_PAUSE_OUT((i + 1) * 8 - 1 downto i * 8),
-			DBG_STEP_OUT      => DBG_STEP_OUT((i + 1) * 8 - 1 downto i * 8)
+			DBG_STEP_OUT      => DBG_STEP_OUT((i + 1) * 8 - 1 downto i * 8),
+			DBG_RETRY_OUT     => DBG_RETRY_OUT((i + 1) * 8 - 1 downto i * 8)
 		);
 		
 		--process(clk_80_i)

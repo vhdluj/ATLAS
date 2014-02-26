@@ -47,7 +47,8 @@ entity ctrlbus is port(
 		idelay_value_in: in std_logic_vector(24 downto 0);
 		idelay_load_in: in std_logic_vector(4 downto 0);
 		
-		clk400 : out std_logic
+		clk400 : out std_logic;
+		clk80 : out std_logic
 	);
 end ctrlbus;
 
@@ -121,7 +122,7 @@ begin
 			CLR => '0',
 			I => ctrlbus_serdes_serialclk400_unbuffered
 		);
-
+clk80 <= ctrlbus_serdes_parallelclk80;
 
 
 	ctrlbus_in: entity work.ctrlbus_in

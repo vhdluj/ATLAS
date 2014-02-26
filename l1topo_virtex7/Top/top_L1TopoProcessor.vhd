@@ -90,7 +90,7 @@ component l1topo_to_ddr
     signal clockLock : std_logic  := '0';
       --CLOCK SIGNALS-------------------------------
 --    signal clk80MHz : std_logic  := '0';
-    signal clk400: std_logic  := '0';
+    signal clk400, clk80: std_logic  := '0';
 --    signal clk80 : std_logic := '0';
 --    signal clk40 : std_logic := '0';
       --signal clk200MHz  : std_logic  := '0';
@@ -122,8 +122,11 @@ component l1topo_to_ddr
 --    signal DATA_VALID_OUT_reg        : std_logic_vector(NUMBER_OF_ROS_OUTPUT_BUSES-1 downto 0) := (others => '0');
 --    signal SPECIAL_CHARACTER_OUT_reg : std_logic_vector(NUMBER_OF_ROS_OUTPUT_BUSES-1 downto 0) := (others => '0');
 --    signal RESET_reg                 : std_logic_vector(1 downto 0):= (others=>'0');
+
+signal greg_ddr_rst : std_logic;
     
 begin
+
 	clocks: entity work.clocks_TopoVirtex
 		port map(
 			GCK2_IN_P => GCK2_IN_P,
@@ -162,7 +165,8 @@ begin
 			idelay_load_in => ctrlbus_idelay_load,
 			ctrlbus_locked_out => ctrlbus_locked,
 	      	
-			clk400=>clk400
+			clk400=>clk400,
+			clk80=>clk80
 		);
 
 	slaves: entity work.slaves port map(
@@ -189,14 +193,16 @@ begin
         -- end sim comment
         -----------------------------------------------------------------------
 
+greg_ddr_rst <= not gck2_mmcm_locked or ddr_reset;
+
 	--Wrapper initialization______________________________________
     TransmittersWrapperInst :  entity work.TransmittersWrapper
     	generic map(
     			LINKS_NUMBER  => LINES_NUMBER
     	)
-    	port map(RESET          => ddr_reset,--,local_reset_sync,--rst_ipb,--reset
+    	port map(RESET          => greg_ddr_rst, --ddr_reset,--,local_reset_sync,--rst_ipb,--reset
     		     CLK_BIT_IN     => clk400,
-    		     CLK_WORD_IN    => gck2_clk80,--clk80
+    		     CLK_WORD_IN    => clk80, --gck2_clk80,--clk80
     		     DATA_IN        => out_data,--dataIn,             --out_data vector comming out form 'l1topo_to_ddr'
     		     DATA_VALID_IN  => data_valid_out,--dataValidIn,  --data_valid_out sgn comming out from 'l1topo_to_ddr'
     		     DATA_KCTRL_IN  => special_character_out,--dataKctrlIn,
@@ -208,28 +214,28 @@ begin
         ASSIGN_NUMBER_OF_SLICES : for i in 0 to NUMBER_OF_SLICES'length-1 generate
           NUMBER_OF_SLICES(i) <= to_unsigned(3, NUMBER_OF_SLICES(0)'length);--to_unsigned(((i mod 16)+1), NUMBER_OF_SLICES(0)'length);
           LVL0_OFFSET(i)      <= to_unsigned(i mod 2, LVL0_OFFSET(0)'length); --to_unsigned(i mod 8, LVL0_OFFSET(0)'length);
-    end generate ASSIGN_NUMBER_OF_SLICES;   
-    
-	l1topo_to_ddr_1: l1topo_to_ddr
-      generic map (
-        MAKE_SYNCH_INPUT => 0)
-      port map (
-        RESET                 => reset,--local_reset,--rst_ipb,
-        DATA_IN_CLK           => gck2_clk40,
-        DATA_OUT_CLK          => gck2_clk80,
-        NUMBER_OF_SLICES      => NUMBER_OF_SLICES,
-        SLICE_CHANGES_APROVED => slice_changes_aproved,
-        LVL0_ACCEPTED         => l1A_pulse,
-        LVL0_VALID            => lvl0_valid,
-        LVL0_FULL_THR         => x"d0",
-        LVL0_OFFSET           => lvl0_offset,
-        ROS_ROI_IN_DATA       => cntr_for_ros_roi_bus,-- ros_roi_in_data,
-        DATA_VALID_IN         => data_valid_in,
-        OUT_DATA              => out_data,
-        DATA_VALID_OUT        => data_valid_out,
-        L0_BUSY               => l0_busy,
-        SPECIAL_CHARACTER_OUT => special_character_out
-        );
+    end generate ASSIGN_NUMBER_OF_SLICES;
+	 
+--	l1topo_to_ddr_1: l1topo_to_ddr
+--      generic map (
+--        MAKE_SYNCH_INPUT => 0)
+--      port map (
+--        RESET                 => reset,--local_reset,--rst_ipb,
+--        DATA_IN_CLK           => gck2_clk40,
+--        DATA_OUT_CLK          => gck2_clk80,
+--        NUMBER_OF_SLICES      => NUMBER_OF_SLICES,
+--        SLICE_CHANGES_APROVED => slice_changes_aproved,
+--        LVL0_ACCEPTED         => l1A_pulse,
+--        LVL0_VALID            => lvl0_valid,
+--        LVL0_FULL_THR         => x"d0",
+--        LVL0_OFFSET           => lvl0_offset,
+--        ROS_ROI_IN_DATA       => cntr_for_ros_roi_bus,-- ros_roi_in_data,
+--        DATA_VALID_IN         => data_valid_in,
+--        OUT_DATA              => out_data,
+--        DATA_VALID_OUT        => data_valid_out,
+--        L0_BUSY               => l0_busy,
+--        SPECIAL_CHARACTER_OUT => special_character_out
+--        );
 
   --SETTING UP RESET LINES - this components take differential input lines and make signal out of them      
       IBUFDS_inst_0 : IBUFDS --

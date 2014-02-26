@@ -34,12 +34,14 @@ entity slaves is
 		ROD_RAM_ADDR_IN : in std_logic_vector(9 downto 0);
 		ROD_RAM_DATA_IN : in std_logic_vector(31 downto 0);
 		
+		DBG_LINKS_SYNCED_IN : in std_logic_vector(lvds_lines - 1 downto 0);
 		DBG_STATE_IN     : in std_logic_vector(lvds_lines * 4 - 1 downto 0);
 		DBG_REG_DATA_IN  : in std_logic_vector(lvds_lines * 10 - 1 downto 0);
 		DBG_BITSLIP_IN   : in std_logic_vector(lvds_lines * 4 - 1 downto 0);
 		DBG_INC_IN       : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
 		DBG_PAUSE_IN     : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
 		DBG_STEP_IN      : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
+		DBG_RETRY_IN     : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
 		
 		soft_rst_out : out std_logic
 	);
@@ -146,12 +148,14 @@ begin
 		ipbus_in => ipbw(4),
 		ipbus_out => ipbr(4),
 		
+		DBG_LINKS_SYNCED_IN => DBG_LINKS_SYNCED_IN,
 		DBG_STATE_IN     => DBG_STATE_IN,
 		DBG_REG_DATA_IN  => DBG_REG_DATA_IN,
 		DBG_BITSLIP_IN   => DBG_BITSLIP_IN,
 		DBG_INC_IN       => DBG_INC_IN,
 		DBG_PAUSE_IN     => DBG_PAUSE_IN,
-		DBG_STEP_IN      => DBG_STEP_IN
+		DBG_STEP_IN      => DBG_STEP_IN,
+		DBG_RETRY_IN     => DBG_RETRY_IN
 	);
 	
 -- Slave 5: peephole RAM

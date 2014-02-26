@@ -1,5 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.NUMERIC_STD.ALL;
 library UNISIM;
 use UNISIM.VComponents.all;
@@ -26,7 +28,8 @@ port(
 	DBG_BITSLIP_OUT   : out std_logic_vector(3 downto 0);
 	DBG_INC_OUT       : out std_logic_vector(7 downto 0);
 	DBG_PAUSE_OUT     : out std_logic_vector(7 downto 0);
-	DBG_STEP_OUT      : out std_logic_vector(7 downto 0)	
+	DBG_STEP_OUT      : out std_logic_vector(7 downto 0);
+	DBG_RETRY_OUT     : out std_logic_vector(7 downto 0)
 	
 );
 end ddr_input_module;
@@ -46,6 +49,8 @@ signal step_ctr, inc_ctr, pause_ctr : integer range 0 to 31 := 10;
 signal previous_data, registered_data : std_logic_vector(9 downto 0);
 signal synced : std_logic;
 signal state : std_logic_vector(3 downto 0);
+signal retry_ctr : std_logic_vector(7 downto 0);
+
 begin
 
 	iserdese2_master : ISERDESE2
@@ -293,6 +298,8 @@ ALIGN_MACHINE : process(registered_data, CTRL_READY_IN, inc_ctr, iserdes_q, step
 				start_check <= '1';
 			elsif (align_current_state = STABLE_REGION and pause_ctr = 1) then
 				start_check <= '1';
+			elsif (align_current_state = LINK_READY) then
+				start_check <= '1';
 			else
 				start_check <= '0';
 			end if;
@@ -363,9 +370,9 @@ ALIGN_MACHINE : process(registered_data, CTRL_READY_IN, inc_ctr, iserdes_q, step
 				pause_ctr <= pause_ctr;
 				step_ctr  <= step_ctr + 1;
 			elsif align_current_state = MATCH_WINDOW then
-				inc_ctr   <= 0;
+				inc_ctr   <= inc_ctr;
 				pause_ctr <= 31;
-				step_ctr  <= 0;
+				step_ctr  <= step_ctr;
 			else
 				inc_ctr   <= inc_ctr;
 				pause_ctr <= pause_ctr;
@@ -473,6 +480,20 @@ ALIGN_MACHINE : process(registered_data, CTRL_READY_IN, inc_ctr, iserdes_q, step
 	DBG_INC_OUT      <= std_logic_vector(to_unsigned(inc_ctr, 8));
 	DBG_PAUSE_OUT    <= std_logic_vector(to_unsigned(pause_ctr, 8));
 	DBG_STEP_OUT     <= std_logic_vector(to_unsigned(step_ctr, 8));
+	DBG_RETRY_OUT    <= retry_ctr;
 
+
+	process(DCM_DDR_CLK_IN)
+	begin
+		if rising_edge(DCM_DDR_CLK_IN) then
+			if RESET_IN = '1' then
+				retry_ctr <= (others => '0');
+			elsif (align_current_state = PAUSE_A_WHILE) then
+				retry_ctr <= retry_ctr + x"1";
+			else
+				retry_ctr <= retry_ctr;
+			end if;
+		end if;
+	end process;
 
 end Behavioral;

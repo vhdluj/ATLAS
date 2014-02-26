@@ -57,7 +57,7 @@ begin
 			CLK_40_OUT => clk_40_ub,
 			CLK_80_OUT => clk_80_ub,
 			CLK_400_OUT => clk_400_ub,
-			CLK_300_OUT => open,
+			--CLK_300_OUT => open,
 			-- Status and control signals
 			RESET  => '0',
 			LOCKED => DCM_LOCKED_OUT

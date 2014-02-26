@@ -40,19 +40,24 @@ begin
 		--	data_in_local   <= DATA_IN;
 		--	crc_in_en_local <= DATA_VALID_IN;
 		--end if;
-          if DATA_KCTRL_IN = '1' then
-            enc_810_kin   <= '1';
-            data_in_local <= DATA_IN;
-          elsif DATA_VALID_IN = '0' and reset = '1' then
-            enc_810_kin   <= '1';
-            data_in_local <= x"1C";
-          elsif DATA_VALID_IN = '0' and reset = '0' then
-            enc_810_kin   <= '1';
+		
+		
+--          if DATA_KCTRL_IN = '1' then
+--            enc_810_kin   <= '1';
+--            data_in_local <= DATA_IN;
+--          elsif DATA_VALID_IN = '0' and reset = '1' then
+--            enc_810_kin   <= '1';
+--            data_in_local <= x"1C";
+--          elsif DATA_VALID_IN = '0' and reset = '0' then
+--            enc_810_kin   <= '1';
+--            data_in_local <= x"1c";
+--          else
+--            enc_810_kin   <= '0';
+--            data_in_local <= DATA_IN;
+--          end if;
+			   enc_810_kin   <= '1';
             data_in_local <= x"1c";
-          else
-            enc_810_kin   <= '0';
-            data_in_local <= DATA_IN;
-          end if;
+			 
 	end if;
 end process;
 
