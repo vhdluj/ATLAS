@@ -200,7 +200,7 @@ greg_ddr_rst <= not gck2_mmcm_locked or ddr_reset;
     	generic map(
     			LINKS_NUMBER  => LINES_NUMBER
     	)
-    	port map(RESET          => greg_ddr_rst, --ddr_reset,--,local_reset_sync,--rst_ipb,--reset
+    	port map(RESET         => greg_ddr_rst, --ddr_reset,--,local_reset_sync,--rst_ipb,--reset
     		     CLK_BIT_IN     => clk400,
     		     CLK_WORD_IN    => clk80, --gck2_clk80,--clk80
     		     DATA_IN        => out_data,--dataIn,             --out_data vector comming out form 'l1topo_to_ddr'
@@ -216,26 +216,26 @@ greg_ddr_rst <= not gck2_mmcm_locked or ddr_reset;
           LVL0_OFFSET(i)      <= to_unsigned(i mod 2, LVL0_OFFSET(0)'length); --to_unsigned(i mod 8, LVL0_OFFSET(0)'length);
     end generate ASSIGN_NUMBER_OF_SLICES;
 	 
---	l1topo_to_ddr_1: l1topo_to_ddr
---      generic map (
---        MAKE_SYNCH_INPUT => 0)
---      port map (
---        RESET                 => reset,--local_reset,--rst_ipb,
---        DATA_IN_CLK           => gck2_clk40,
---        DATA_OUT_CLK          => gck2_clk80,
---        NUMBER_OF_SLICES      => NUMBER_OF_SLICES,
---        SLICE_CHANGES_APROVED => slice_changes_aproved,
---        LVL0_ACCEPTED         => l1A_pulse,
---        LVL0_VALID            => lvl0_valid,
---        LVL0_FULL_THR         => x"d0",
---        LVL0_OFFSET           => lvl0_offset,
---        ROS_ROI_IN_DATA       => cntr_for_ros_roi_bus,-- ros_roi_in_data,
---        DATA_VALID_IN         => data_valid_in,
---        OUT_DATA              => out_data,
---        DATA_VALID_OUT        => data_valid_out,
---        L0_BUSY               => l0_busy,
---        SPECIAL_CHARACTER_OUT => special_character_out
---        );
+	l1topo_to_ddr_1: l1topo_to_ddr
+      generic map (
+        MAKE_SYNCH_INPUT => 0)
+      port map (
+        RESET                 => reset,--local_reset,--rst_ipb,
+        DATA_IN_CLK           => gck2_clk40,
+        DATA_OUT_CLK          => gck2_clk80,
+        NUMBER_OF_SLICES      => NUMBER_OF_SLICES,
+        SLICE_CHANGES_APROVED => slice_changes_aproved,
+        LVL0_ACCEPTED         => l1A_pulse,
+        LVL0_VALID            => lvl0_valid,
+        LVL0_FULL_THR         => x"d0",
+        LVL0_OFFSET           => lvl0_offset,
+        ROS_ROI_IN_DATA       => cntr_for_ros_roi_bus,-- ros_roi_in_data,
+        DATA_VALID_IN         => data_valid_in,
+        OUT_DATA              => out_data,
+        DATA_VALID_OUT        => data_valid_out,
+        L0_BUSY               => l0_busy,
+        SPECIAL_CHARACTER_OUT => special_character_out
+        );
 
   --SETTING UP RESET LINES - this components take differential input lines and make signal out of them      
       IBUFDS_inst_0 : IBUFDS --
