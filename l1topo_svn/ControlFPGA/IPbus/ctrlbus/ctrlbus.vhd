@@ -54,6 +54,8 @@ entity ctrlbus is
 		idelay_value_in: in std_logic_vector(29 downto 0);
 		idelay_load_in: in std_logic_vector(5 downto 0);
 		
+		clk_80_in, clk_400_in : std_logic; 
+		
 		mmcm_clk_80_u1_out, mmcm_clk_400_u1_out : out std_logic;
 		mmcm_clk_80_u2_out, mmcm_clk_400_u2_out : out std_logic
 	);

@@ -377,7 +377,6 @@ NET "DATA_U2_SYNC_OUT_N" IOSTANDARD = LVDS_25;
 #NET "DATA_U2_SYNC_OUT_N" DIFF_TERM = "TRUE";
 
 INST "ddr_bank18/bridge_inst/int_clock_gen.clock_inst/mmcm_adv_inst" LOC = MMCME2_ADV_X0Y6;
-
 INST "ddr_bank16/bridge_inst/int_clock_gen.clock_inst/mmcm_adv_inst" LOC = MMCME2_ADV_X0Y4;
 
 # control line

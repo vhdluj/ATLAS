@@ -151,77 +151,87 @@ architecture rtl of top_L1TopoController is
 	signal dbg_ddr_pause   : std_logic_vector(LINKS_NUMBER * 8 - 1 downto 0);
 	signal dbg_ddr_step    : std_logic_vector(LINKS_NUMBER * 8 - 1 downto 0);
 	signal dbg_ddr_retry   : std_logic_vector(LINKS_NUMBER * 8 - 1 downto 0);
+	
+	signal ddr_val_bank18       : std_logic_vector(ddr_lines_on_bank18 * 5 - 1 downto 0);
+	signal ddr_val_load_bank18  : std_logic_vector(ddr_lines_on_bank18 - 1 downto 0);
+	signal ddr_val_bank16       : std_logic_vector(ddr_lines_on_bank16 * 5 - 1 downto 0);
+	signal ddr_val_load_bank16  : std_logic_vector(ddr_lines_on_bank16 - 1 downto 0);
+	
+	signal ddr_val              : std_logic_vector(LINKS_NUMBER * 5 - 1 downto 0);
+	signal ddr_val_load         : std_logic_vector(LINKS_NUMBER - 1 downto 0);
+	
+	signal clk_400, clk_80, clk_fb, clk_400_ub, clk_80_ub, local_dcm_locked : std_logic;
 
 begin
  ones <= (others => '1');
 
 --##################   ROD
 
-SET_DUMMY_ASSIGNMENTS: for i in 0 to ros_roi_bus_assignment_sig'high generate
-  ros_roi_bus_assignment_sig(i) <= std_logic_vector(to_unsigned(i mod 12,ros_roi_bus_assignment_sig(0)'length));
-end generate SET_DUMMY_ASSIGNMENTS;
-
-GENERATE_V1_V2_DDR_TO_ROD: for i in 0 to 0 generate
-  DDR_TO_ROD_INST: entity work.ddr_to_rod
-  port map (
-    RESET                       => ddr_rst,
-    DATA_IN_CLK                 => gck2_clk80, --clk_80,
-    DATA_OUT_CLK                => gck2_clk80, --clk_80,
-    LVL1_FULL_THR               => "11111110",
-    L1_BUSY                     => open,
-    DDR_ROS_ROI_IN_DATA         => ddr_data((i+1)*64-1 downto i*64),
-    DATA_VALID_IN               => ddr_dv(0),
-    SPECIAL_CHAR_IN             => ddr_kctrl(0),
-    OUT_DATA                    => data_out_l,
-    DATA_VALID_OUT              => data_valid_in_l,
-    ACTUAL_BUS_NUMBER_OUT       => actual_bus_number_out_l,
-    NUMBER_OF_SLICES_OUT        => number_of_slices_out_l,
-    LVL0_OFFSET_OUT             => lvl0_offset_out_l,
-    ROS_ROI_BUS_ASSIGNMENT      => ros_roi_bus_assignment_sig,
-    ROS_ROI_BUS_ASSIGNMENT_DONE => not sys_rst,--ROS_ROI_BUS_ASSIGNMENT_DONE,
-    ROS_ROI_OUT_DATA_CNTR       => open,--ROS_ROI_OUT_DATA_CNTR,
-    START_OF_FRAME              => open,
-    END_OF_FRAME                => open);
-end generate GENERATE_V1_V2_DDR_TO_ROD;
-
-
-set_data_assignment: for i in 0 to NUMBER_OF_ROS_ROI_INPUT_BUSES - 1 generate
-  MUON: if (i mod 4) = 0 generate
-    type_assignment_in_l(i) <= to_unsigned(4,4);
-  end generate MUON;
-  SUM: if (i mod 4) = 1 generate
-    type_assignment_in_l(i) <= x"8";
-  end generate SUM;
-  JET: if (i mod 4) = 2 generate
-    type_assignment_in_l(i) <= x"3";
-  end generate JET;
-  ENERGY: if (i mod 4) = 3 generate
-    type_assignment_in_l(i) <= x"2";
-  end generate ENERGY;
-end generate set_data_assignment;
-
-GENERATE_OUTPUT_PARSERS: for i in 0 to 0 generate--NUMBER_OF_OUTPUT_LINKS - 1 generate
-
-  PARSER_WRAPPER_INST: entity work.parser_wrapper
-    generic map (
-      LINK_NUMBER              => i,
-      TOTAL_NUMBER_OF_IN_LINKS => NUMBER_OF_ROS_ROI_INPUT_BUSES) --tot_number_of_links(ros_roi_bus_assignment_sig,i))
-      --ACTIVE_LINKS             => set_active_links(ros_roi_bus_assignment_sig,i))
-
-    port map (
-      CLK_WR_IN          => gck2_clk80, --clk_80,
-      CLK_RD_IN          => gck2_clk80, --clk_80,
-      RESET_IN           => ddr_rst,
-      BC_OFFSET_IN       => std_logic_vector(to_unsigned(3,6)),
-      BC_QTY_IN          => std_logic_vector(to_unsigned(3,6)),
-      DATA_IN            => data_out_l(i),
-      ROS_ROI_BUS_NUMBER => std_logic_vector(actual_bus_number_out_l(i)),
-      DATA_OUT           => rod_data,
-      DATA_RE_IN         => rod_re,
-      DATA_RDY_OUT       => rod_rdy,
-      DATA_VALID_IN      => data_valid_in_l(i));
-  
-end generate GENERATE_OUTPUT_PARSERS;
+--SET_DUMMY_ASSIGNMENTS: for i in 0 to ros_roi_bus_assignment_sig'high generate
+--  ros_roi_bus_assignment_sig(i) <= std_logic_vector(to_unsigned(i mod 12,ros_roi_bus_assignment_sig(0)'length));
+--end generate SET_DUMMY_ASSIGNMENTS;
+--
+--GENERATE_V1_V2_DDR_TO_ROD: for i in 0 to 0 generate
+--  DDR_TO_ROD_INST: entity work.ddr_to_rod
+--  port map (
+--    RESET                       => ddr_rst,
+--    DATA_IN_CLK                 => gck2_clk80, --clk_80,
+--    DATA_OUT_CLK                => gck2_clk80, --clk_80,
+--    LVL1_FULL_THR               => "11111110",
+--    L1_BUSY                     => open,
+--    DDR_ROS_ROI_IN_DATA         => ddr_data((i+1)*64-1 downto i*64),
+--    DATA_VALID_IN               => ddr_dv(0),
+--    SPECIAL_CHAR_IN             => ddr_kctrl(0),
+--    OUT_DATA                    => data_out_l,
+--    DATA_VALID_OUT              => data_valid_in_l,
+--    ACTUAL_BUS_NUMBER_OUT       => actual_bus_number_out_l,
+--    NUMBER_OF_SLICES_OUT        => number_of_slices_out_l,
+--    LVL0_OFFSET_OUT             => lvl0_offset_out_l,
+--    ROS_ROI_BUS_ASSIGNMENT      => ros_roi_bus_assignment_sig,
+--    ROS_ROI_BUS_ASSIGNMENT_DONE => not sys_rst,--ROS_ROI_BUS_ASSIGNMENT_DONE,
+--    ROS_ROI_OUT_DATA_CNTR       => open,--ROS_ROI_OUT_DATA_CNTR,
+--    START_OF_FRAME              => open,
+--    END_OF_FRAME                => open);
+--end generate GENERATE_V1_V2_DDR_TO_ROD;
+--
+--
+--set_data_assignment: for i in 0 to NUMBER_OF_ROS_ROI_INPUT_BUSES - 1 generate
+--  MUON: if (i mod 4) = 0 generate
+--    type_assignment_in_l(i) <= to_unsigned(4,4);
+--  end generate MUON;
+--  SUM: if (i mod 4) = 1 generate
+--    type_assignment_in_l(i) <= x"8";
+--  end generate SUM;
+--  JET: if (i mod 4) = 2 generate
+--    type_assignment_in_l(i) <= x"3";
+--  end generate JET;
+--  ENERGY: if (i mod 4) = 3 generate
+--    type_assignment_in_l(i) <= x"2";
+--  end generate ENERGY;
+--end generate set_data_assignment;
+--
+--GENERATE_OUTPUT_PARSERS: for i in 0 to 0 generate--NUMBER_OF_OUTPUT_LINKS - 1 generate
+--
+--  PARSER_WRAPPER_INST: entity work.parser_wrapper
+--    generic map (
+--      LINK_NUMBER              => i,
+--      TOTAL_NUMBER_OF_IN_LINKS => NUMBER_OF_ROS_ROI_INPUT_BUSES) --tot_number_of_links(ros_roi_bus_assignment_sig,i))
+--      --ACTIVE_LINKS             => set_active_links(ros_roi_bus_assignment_sig,i))
+--
+--    port map (
+--      CLK_WR_IN          => gck2_clk80, --clk_80,
+--      CLK_RD_IN          => gck2_clk80, --clk_80,
+--      RESET_IN           => ddr_rst,
+--      BC_OFFSET_IN       => std_logic_vector(to_unsigned(3,6)),
+--      BC_QTY_IN          => std_logic_vector(to_unsigned(3,6)),
+--      DATA_IN            => data_out_l(i),
+--      ROS_ROI_BUS_NUMBER => std_logic_vector(actual_bus_number_out_l(i)),
+--      DATA_OUT           => rod_data,
+--      DATA_RE_IN         => rod_re,
+--      DATA_RDY_OUT       => rod_rdy,
+--      DATA_VALID_IN      => data_valid_in_l(i));
+--  
+--end generate GENERATE_OUTPUT_PARSERS;
 
 
 ddr_synced <= '1' when (links_synced = ones and rst_ipb = '0') and soft_rst = '0' else '0';
@@ -231,7 +241,7 @@ ddr_synced <= '1' when (links_synced = ones and rst_ipb = '0') and soft_rst = '0
 
 ddr_rst <= not gck2_mmcm_locked or rst_ipb;
 
-v_reset <= rst_from_bank18 or rst_from_bank16;
+v_reset <= rst_from_bank18 or rst_from_bank16 or rst_ipb;
 
 ddr_bank18 : entity work.ddr_links_wrapper
 generic map(
@@ -252,6 +262,9 @@ port map(
                
                 LINKS_SYNCED_OUT   => ddr_receivers_synced_bank18,
 				RESET_TRANS_OUT    => rst_from_bank18,
+					 
+				DELAY_VALS_IN      => ddr_val_bank18,
+				DELAY_LOAD_IN      => ddr_val_load_bank18,
                                
                 DATA_OUT           => ddr_data_from_bank18,
                 DATA_VALID_OUT     => ddr_dv_from_bank18,
@@ -284,7 +297,10 @@ port map(
                 LVDS_IN_N          => DATA_BANK16_IN_N,
                
                 LINKS_SYNCED_OUT   => ddr_receivers_synced_bank16,
-				RESET_TRANS_OUT    => rst_from_bank16,                               
+				RESET_TRANS_OUT    => rst_from_bank16,           
+				
+				DELAY_VALS_IN      => ddr_val_bank16,
+				DELAY_LOAD_IN      => ddr_val_load_bank16,                    
 						
                 DATA_OUT           => ddr_data_from_bank16,
                 DATA_VALID_OUT     => ddr_dv_from_bank16,
@@ -539,6 +555,9 @@ end generate SIM_CLOCK;
       	
       	
 			soft_rst_out => soft_rst,
+			
+		DELAY_VALS_OUT   => ddr_val,
+		DELAY_LOAD_OUT   => ddr_val_load,
       		
       	DBG_LINKS_SYNCED_IN => links_synced,
 		DBG_STATE_IN     => dbg_ddr_state,
@@ -590,6 +609,9 @@ end generate SIM_CLOCK;
 			ipb_read_U2_out => ipb_read_U2,
 			idelay_value_in => ctrlbus_idelay_value,
 			idelay_load_in => ctrlbus_idelay_load,
+			
+			clk_400_in => clk_400,
+			clk_80_in  => clk_80,
       		
 			mmcm_clk_80_u1_out => ctrlbus_32_clk,
 			mmcm_clk_400_u1_out => ctrlbus_32_clkx8,
@@ -702,6 +724,25 @@ dbg_ddr_retry(39 downto 32) <= dbg_ddr_retry_from16(31 downto 24);
 dbg_ddr_retry(47 downto 40) <= dbg_ddr_retry_from18(47 downto 40);
 dbg_ddr_retry(55 downto 48) <= dbg_ddr_retry_from18(55 downto 48);
 dbg_ddr_retry(63 downto 56) <= dbg_ddr_retry_from18(63 downto 56);
+
+ddr_val_bank16(4 downto 0)   <= ddr_val(4 downto 0);
+ddr_val_bank16(9 downto 5)   <= ddr_val(9 downto 5);
+ddr_val_bank18(24 downto 20) <= ddr_val(14 downto 10);
+ddr_val_bank16(14 downto 10) <= ddr_val(19 downto 15);
+ddr_val_bank16(19 downto 15) <= ddr_val(24 downto 20);
+ddr_val_bank18(29 downto 25) <= ddr_val(29 downto 25);
+ddr_val_bank18(34 downto 30) <= ddr_val(34 downto 30);
+ddr_val_bank18(39 downto 35) <= ddr_val(39 downto 35);
+
+ddr_val_load_bank16(0)  <= ddr_val_load(0);
+ddr_val_load_bank16(1)  <= ddr_val_load(1);
+ddr_val_load_bank18(4)  <= ddr_val_load(2);
+ddr_val_load_bank16(2)  <= ddr_val_load(3);
+ddr_val_load_bank16(3)  <= ddr_val_load(4);
+ddr_val_load_bank18(5)  <= ddr_val_load(5);
+ddr_val_load_bank18(6)  <= ddr_val_load(6);
+ddr_val_load_bank18(7)  <= ddr_val_load(7);
+
 
 --##################################
 	
