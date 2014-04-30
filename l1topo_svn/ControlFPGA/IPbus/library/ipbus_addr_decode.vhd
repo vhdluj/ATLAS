@@ -24,13 +24,13 @@ package body ipbus_addr_decode is
     variable sel : integer;
   begin
                 -- START automatically  generated VHDL the Tue Jan  7 17:19:49 2014 
-		if    std_match(addr, "00----------------00--------000-") then
+		if    std_match(addr, "00----------------00-------0000-") then
 			sel := 0; -- ctrl_reg / base 0x00000000 / mask 0xc000300f
-		elsif std_match(addr, "00----------------00--------0010") then
+		elsif std_match(addr, "00----------------00-------1001-") then
 			sel := 1; -- reg / base 0x00000002 / mask 0xc000300f
-		elsif std_match(addr, "00----------------00--------01--") then
+		elsif std_match(addr, "00----------------00-------10111") then
 			sel := 2; -- err_inject / base 0x00000004 / mask 0xc000300f
-		elsif std_match(addr, "00----------------00--------100-") then
+		elsif std_match(addr, "00----------------00-------0100-") then
 			sel := 3; -- pkt_ctr / base 0x00000008 / mask 0xc000300f
 		elsif std_match(addr, "00----------------01------------") then
 			sel := 4; -- ram / base 0x00001000 / mask 0xc000300f

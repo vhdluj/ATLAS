@@ -22,8 +22,12 @@ port (
 	LVDS_IN_N          : in std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
 	DATA_LINES_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
 	
+	DELAY_VALS_IN      : in std_logic_vector(AVAILABLE_LVDS_LINES * 5 - 1 downto 0);
+	DELAY_LOAD_IN      : in std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
+	DELAY_VALS_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES * 5 - 1 downto 0);
 	DELAY_INC_IN       : in std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
 	DELAY_CE_IN        : in std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
+	
 	CTRL_READY_OUT     : out std_logic;
 	DCM_LOCKED_OUT     : out std_logic
 );
@@ -57,28 +61,27 @@ begin
 			CLK_40_OUT => clk_40_ub,
 			CLK_80_OUT => clk_80_ub,
 			CLK_400_OUT => clk_400_ub,
-			CLK_300_OUT => open,
+			--CLK_300_OUT => open,
 			-- Status and control signals
 			RESET  => '0',
 			LOCKED => DCM_LOCKED_OUT
 		);
-
-
-
 		
-		clk_80_bufr : BUFR
+		clk_80_bufio : BUFIO
 		port map(
-			I   => clk_80_ub,
-			O   => clk_80_r,
-			CE  => '1',
-			CLR => '0'
+			I   => clk_400_ub,
+			O   => clk_400_r
 		);
 		DCM_DDR_CLK_OUT <= clk_80_r;
 		
 		clk_400_bufr : BUFR
+		generic map(
+			BUFR_DIVIDE => "5",
+			SIM_DEVICE => "7SERIES"
+		)
 		port map(
 			I   => clk_400_ub,
-			O   => clk_400_r,
+			O   => clk_80_r,
 			CE  => '1',
 			CLR => '0'
 		);
@@ -116,44 +119,24 @@ begin
 		delay_n_inst : IDELAYE2
 		generic map(
 			 HIGH_PERFORMANCE_MODE => "TRUE",
-			 IDELAY_TYPE           => "VARIABLE",
+			 IDELAY_TYPE           => "VAR_LOAD",
 			 IDELAY_VALUE          => 0,
 			 REFCLK_FREQUENCY      => 300.0,
 			 SIGNAL_PATTERN        => "DATA"
 		)
 		port map(
-			 CNTVALUEOUT           => open,
+			 CNTVALUEOUT           => DELAY_VALS_OUT((i + 1) * 5 - 1 downto i * 5),
 			 DATAOUT               => DATA_LINES_OUT(i),
-			 C                     => DELAY_CLK_IN,
-			 CE                    => delay_ce_q(i),
+			 C                     => clk_80_r,
+			 CE                    => DELAY_CE_IN(i),
 			 CINVCTRL              => '0',
-			 CNTVALUEIN            => "00000",
+			 CNTVALUEIN            => DELAY_VALS_IN((i + 1) * 5 - 1 downto i * 5),
 			 DATAIN                => '0',
 			 IDATAIN               => local_data_lines(i),
-			 INC                   => delay_inc_q(i),
+			 INC                   => DELAY_INC_IN(i),
 			 REGRST                => RESET_IN,
-			 LD                    => '0',
+			 LD                    => DELAY_LOAD_IN(i),
 			 LDPIPEEN              => '0'
-		);
-		
-		d_inc_sync : entity work.pulse_sync
-		port map(
-			CLK_A_IN       => clk_80_r, 
-			RESET_A_IN     => RESET_IN, 
-			PULSE_A_IN     => DELAY_INC_IN(i), 
-			CLK_B_IN       => DELAY_CLK_IN,
-			RESET_B_IN     => RESET_IN, 
-			PULSE_B_OUT    => delay_inc_q(i) 
-		);
-
-		d_ce_sync : entity work.pulse_sync
-		port map(
-			CLK_A_IN       => clk_80_r, 
-			RESET_A_IN     => RESET_IN, 
-			PULSE_A_IN     => DELAY_CE_IN(i), 
-			CLK_B_IN       => DELAY_CLK_IN,
-			RESET_B_IN     => RESET_IN, 
-			PULSE_B_OUT    => delay_ce_q(i) 
 		);
 		
 	end generate lvds_inputs_gen;

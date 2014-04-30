@@ -4,7 +4,7 @@ use ieee.std_logic_unsigned.all;
 
 entity ddr_stability_checker is
   generic (
-    SIMULATION : integer := 0);
+    SIMULATION : boolean := FALSE);
 	port (
 		CLK_IN : in std_logic;
 		RESET_IN : in std_logic;
@@ -51,9 +51,9 @@ begin
 			check_next_state <= COMPARE;
 			
 		when COMPARE =>
-			if (SIMULATION = 1 and samples_ctr = 7) then
+			if (SIMULATION = TRUE and samples_ctr = 7) then
 				check_next_state <= CLEANUP;
-			elsif (SIMULATION = 0 and samples_ctr = 1000) then
+			elsif (SIMULATION = FALSE and samples_ctr = 254) then
 				check_next_state <= CLEANUP;
                                 
 			else

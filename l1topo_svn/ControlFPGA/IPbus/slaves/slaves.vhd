@@ -34,12 +34,17 @@ entity slaves is
 		ROD_RAM_ADDR_IN : in std_logic_vector(9 downto 0);
 		ROD_RAM_DATA_IN : in std_logic_vector(31 downto 0);
 		
+		DELAY_VALS_OUT    : out std_logic_vector(lvds_lines * 5 - 1 downto 0);
+		DELAY_LOAD_OUT   : out std_logic_vector(lvds_lines - 1 downto 0);
+		
+		DBG_LINKS_SYNCED_IN : in std_logic_vector(lvds_lines - 1 downto 0);
 		DBG_STATE_IN     : in std_logic_vector(lvds_lines * 4 - 1 downto 0);
 		DBG_REG_DATA_IN  : in std_logic_vector(lvds_lines * 10 - 1 downto 0);
 		DBG_BITSLIP_IN   : in std_logic_vector(lvds_lines * 4 - 1 downto 0);
 		DBG_INC_IN       : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
 		DBG_PAUSE_IN     : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
 		DBG_STEP_IN      : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
+		DBG_RETRY_IN     : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
 		
 		soft_rst_out : out std_logic
 	);
@@ -56,6 +61,9 @@ architecture rtl of slaves is
 	
 	signal ctrlbus_idelay_value_32bit: std_logic_vector(31 downto 0);
 	signal ctrlbus_idelay_load_32bit: std_logic_vector(31 downto 0);
+	
+	signal load_delays : std_logic_vector(31 downto 0);
+	signal values_delays : std_logic_vector(63 downto 0);
 	
 
 begin
@@ -95,6 +103,32 @@ begin
 --			ipbus_out => ipbr(1),
 --			q => open
 --		);
+
+	slave1: entity work.ipbus_slave_reg_readwrite
+		generic map(addr_width => 1)
+		port map(
+			clk => ipb_clk,
+			reset => ipb_rst,
+			ipbus_in => ipbw(1),
+			ipbus_out => ipbr(1),
+			q => values_delays
+		);
+		
+	DELAY_VALS_OUT <= values_delays(lvds_lines * 5 - 1 downto 0);	
+	
+
+
+	slave2: entity work.ipbus_slave_reg_pulse
+		generic map(addr_width => 0)
+		port map(
+			clk => ipb_clk,
+			reset => ipb_rst,
+			ipbus_in => ipbw(2),
+			ipbus_out => ipbr(2),
+			q => load_delays
+		);
+		
+		DELAY_LOAD_OUT <= load_delays(lvds_lines - 1 downto 0);
 			
 -- Slave 2: ethernet error injection
 
@@ -112,8 +146,8 @@ begin
 --			q => inj_ctrl
 --		);
 		
-	eth_err_ctrl <= inj_ctrl(49 downto 32) & inj_ctrl(17 downto 0);
-	inj_stat <= X"00" & eth_err_stat(47 downto 24) & X"00" & eth_err_stat(23 downto 0);
+--	eth_err_ctrl <= inj_ctrl(49 downto 32) & inj_ctrl(17 downto 0);
+--	inj_stat <= X"00" & eth_err_stat(47 downto 24) & X"00" & eth_err_stat(23 downto 0);
 	
 -- Slave 3: packet counters
 
@@ -146,12 +180,14 @@ begin
 		ipbus_in => ipbw(4),
 		ipbus_out => ipbr(4),
 		
+		DBG_LINKS_SYNCED_IN => DBG_LINKS_SYNCED_IN,
 		DBG_STATE_IN     => DBG_STATE_IN,
 		DBG_REG_DATA_IN  => DBG_REG_DATA_IN,
 		DBG_BITSLIP_IN   => DBG_BITSLIP_IN,
 		DBG_INC_IN       => DBG_INC_IN,
 		DBG_PAUSE_IN     => DBG_PAUSE_IN,
-		DBG_STEP_IN      => DBG_STEP_IN
+		DBG_STEP_IN      => DBG_STEP_IN,
+		DBG_RETRY_IN     => DBG_RETRY_IN
 	);
 	
 -- Slave 5: peephole RAM

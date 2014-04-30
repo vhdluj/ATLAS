@@ -6,157 +6,220 @@ use ieee.numeric_std.all;
 
 
 
-entity l1topo_rod_sim is
- 
+entity l1topo_rod_sim is 
 end l1topo_rod_sim;
 
-library work;
-use work.all;
+
 
 architecture l1topo_rod_sim of l1topo_rod_sim is
+  constant SIMULATION           : boolean := true;
+  
+  --component top_TopoVirtex
+  --  generic (
+  --    LINES_NUMBER : integer;
+  --    SIMULATION   : boolean);
+  --  port (
+  --    GCK2_IN_P, GCK2_IN_N             : in  std_logic;
+  --    CTRLIPBUS_P_IN, CTRLIPBUS_N_IN   : in  std_logic_vector(4 downto 0);
+  --    CTRLIPBUS_P_OUT, CTRLIPBUS_N_OUT : out std_logic_vector(2 downto 0);
+  --    LED_OUT                          : out std_logic;
+  --    CTRLBUS_P                        : out std_logic_vector(LINES_NUMBER-1 downto 0);
+  --    CTRLBUS_N                        : out std_logic_vector(LINES_NUMBER-1 downto 0);
+  --    CTRLBUS_P_IN                     : in  std_logic;
+  --    CTRLBUS_N_IN                     : in  std_logic;
+  --    ROD_CONTROL_P_IN                 : in  std_logic;
+  --    ROD_CONTROL_N_IN                 : in  std_logic);
+  --end component;
 
-  constant LINKS_NUMBER : integer := 8;
+  --component top
+  --  generic (
+  --    LINKS_NUMBER : integer range 0 to 40;
+  --    SIMULATION   : boolean);
+  --  port (
+  --    gt_clkp, gt_clkn                       : in  std_logic;
+  --    gt_txp, gt_txn                         : out std_logic;
+  --    gt_rxp, gt_rxn                         : in  std_logic;
+  --    GCK2_IN_P, GCK2_IN_N                   : in  std_logic;
+  --    CTRLBUS_U1_IN_P, CTRLBUS_U1_IN_N       : in  std_logic_vector(2 downto 0);
+  --    CTRLBUS_U2_IN_P, CTRLBUS_U2_IN_N       : in  std_logic_vector(2 downto 0);
+  --    CTRLBUS_U1_OUT_P, CTRLBUS_U1_OUT_N     : out std_logic_vector(4 downto 0);
+  --    CTRLBUS_U2_OUT_P, CTRLBUS_U2_OUT_N     : out std_logic_vector(4 downto 0);
+  --    DATA_U1_CTRL_OUT_P, DATA_U1_CTRL_OUT_N : out std_logic;
+  --    DATA_U2_CTRL_OUT_P, DATA_U2_CTRL_OUT_N : out std_logic;
+  --    DATA_U2_SYNC_OUT_P, DATA_U2_SYNC_OUT_N : out std_logic;
+  --    DATA_BANK18_IN_P, DATA_BANK18_IN_N     : in  std_logic_vector(7 downto 0);
+  --    DATA_BANK16_IN_P, DATA_BANK16_IN_N     : in  std_logic_vector(6 downto 0);
+  --    PHY_RESET_OUT_N                        : out std_logic;
+  --    LED_OUT                                : out STD_LOGIC_VECTOR(15 downto 0));
+  --end component;
   
-  signal A_CTRLBUS_P    : std_logic_vector(7 downto 0);
-  signal A_CTRLBUS_N    : std_logic_vector(7 downto 0);
-  signal A_CTRLBUS_P_IN : std_logic;
-  signal A_CTRLBUS_N_IN : std_logic;
-  
-  signal B_CTRLBUS_P    : std_logic_vector(7 downto 0);
-  signal B_CTRLBUS_N    : std_logic_vector(7 downto 0);
-  signal B_CTRLBUS_P_IN : std_logic;
-  signal B_CTRLBUS_N_IN : std_logic;
+  constant LINKS_NUMBER         : integer              := 8;
+  signal GCK2_IN_P, GCK2_IN_N             : std_logic;
+  signal CTRLIPBUS_P_IN, CTRLIPBUS_N_IN   : std_logic_vector(4 downto 0);
+  signal CTRLIPBUS_P_OUT, CTRLIPBUS_N_OUT : std_logic_vector(2 downto 0);
 
-  signal MMCX         : std_logic;
-  signal LhcClkInP    : std_logic;
-  signal LhcClkInN    : std_logic;
-  signal MMCX_U30     : std_logic;
+  signal CTRLBUS_P                        : std_logic_vector(LINKS_NUMBER-1 downto 0);
+  signal CTRLBUS_N                        : std_logic_vector(LINKS_NUMBER-1 downto 0);
+  signal CTRLBUS_P_IN                     : std_logic;
+  signal CTRLBUS_N_IN                     : std_logic;
+  signal ROD_CONTROL_P_IN                 : std_logic;
+  signal ROD_CONTROL_N_IN                 : std_logic;
+
   
-  signal SFP_TX_P      : std_logic;
-  signal SFP_TX_N      : std_logic;
-  signal SFP_RX_P      : std_logic;
-  signal SFP_RX_N      : std_logic;
-  signal GCLK2_P       : std_logic;
-  signal GCLK2_N       : std_logic;
-  signal GTXCLK_P      : std_logic;
-  signal GTXCLK_N      : std_logic;
-  signal SFP3_LOS      : std_logic;
-  signal SFP3_TXDIS    : std_logic;
-  signal DATA_PIN_P_IN : std_logic_vector(LINKS_NUMBER - 1 downto 0);
-  signal DATA_PIN_N_IN : std_logic_vector(LINKS_NUMBER - 1 downto 0);
-  signal CTRLBUS_OUT_P : std_logic_vector(1 downto 0);
-  signal CTRLBUS_OUT_N : std_logic_vector(1 downto 0);
-  signal IPBUS_TX_P    : std_logic;
-  signal IPBUS_TX_N    : std_logic;
-  signal IPBUS_RX_P    : std_logic;
-  signal IPBUS_RX_N    : std_logic;
-  signal DATA_BANK18_IN_P : std_logic_vector(7 downto 0);
-  signal DATA_BANK18_IN_N : std_logic_vector(7 downto 0);
-  signal DATA_BANK16_IN_P : std_logic_vector(6 downto 0);
-  signal DATA_BANK16_IN_N : std_logic_vector(6 downto 0);
+
+
+  signal   gt_clkp, gt_clkn     : std_logic;
+  signal   gt_txp, gt_txn       : std_logic;
+  signal   gt_rxp, gt_rxn       : std_logic;
+  
+
+  signal CTRLBUS_U1_IN_P, CTRLBUS_U1_IN_N   : std_logic_vector(2 downto 0);
+  signal CTRLBUS_U2_IN_P, CTRLBUS_U2_IN_N   : std_logic_vector(2 downto 0);
+  signal CTRLBUS_U1_OUT_P, CTRLBUS_U1_OUT_N : std_logic_vector(4 downto 0);
+  signal CTRLBUS_U2_OUT_P, CTRLBUS_U2_OUT_N : std_logic_vector(4 downto 0);
+
+  signal DATA_U1_CTRL_OUT_P, DATA_U1_CTRL_OUT_N : std_logic;
+  signal DATA_U2_CTRL_OUT_P, DATA_U2_CTRL_OUT_N : std_logic;
+  signal DATA_U2_SYNC_OUT_P, DATA_U2_SYNC_OUT_N : std_logic;
+--signal--      DATA_BANK17_IN_P, DATA_BANK17_IN_N :  std_logic_vector(1 downto 0);
+--signal--      DATA_BANK32_IN_P, DATA_BANK32_IN_N :  std_logic_vector(4 downto 0);
+  signal DATA_BANK18_IN_P, DATA_BANK18_IN_N     : std_logic_vector(7 downto 0);
+  signal DATA_BANK16_IN_P, DATA_BANK16_IN_N     : std_logic_vector(6 downto 0);
+
+  signal PHY_RESET_OUT_N : std_logic;
+ 
+--signal        SFP3_RX_N, SFP3_RX_P :  std_logic;
+  signal SFP3_TX_N, SFP3_TX_P : std_logic;
+  signal MMCX_U30_PIN : std_logic;
+    
+
+
+  
+
 begin
 
-  VIRTEX_TOP_TEST_A: entity virtex_top_test
-    port map (
-      CTRLBUS_P    => A_CTRLBUS_P,
-      CTRLBUS_N    => A_CTRLBUS_N,
-      CTRLBUS_P_IN => A_CTRLBUS_P_IN,
-      CTRLBUS_N_IN => A_CTRLBUS_N_IN,
-      MMCX         => '0',--MMCX,
-      LhcClkInP    => LhcClkInP,
-      LhcClkInN    => LhcClkInN,
-      MMCX_U30     => MMCX_U30);
-
-   --VIRTEX_TOP_TEST_B: entity virtex_top_test
-   -- port map (
-   --   CTRLBUS_P    => B_CTRLBUS_P,
-   --   CTRLBUS_N    => B_CTRLBUS_N,
-   --   CTRLBUS_P_IN => B_CTRLBUS_P_IN,
-   --   CTRLBUS_N_IN => B_CTRLBUS_N_IN,
-   --   MMCX         => '0',--MMCX,
-   --   LhcClkInP    => LhcClkInP,
-   --   LhcClkInN    => LhcClkInN,
-   --   MMCX_U30     => MMCX_U30);
-  
-
-  L1TOPO_KINTEX_TOP_INST: entity l1topo_kintex_top
+  TOP_TOPOVIRTEX_INST: entity work.top_TopoVirtex(top_TopoVirtex)
     generic map (
-      LINKS_NUMBER => LINKS_NUMBER)
+      LINES_NUMBER => LINKS_NUMBER,
+      SIMULATION   => SIMULATION)
     port map (
-      SFP_TX_P      => SFP_TX_P,
-      SFP_TX_N      => SFP_TX_N,
-      SFP_RX_P      => SFP_RX_P,
-      SFP_RX_N      => SFP_RX_N,
-      GCLK2_P       => GCLK2_P,
-      GCLK2_N       => GCLK2_N,
-      GTXCLK_P      => GTXCLK_P,
-      GTXCLK_N      => GTXCLK_N,
-      SFP3_LOS      => '0',
-      SFP3_TXDIS    => SFP3_TXDIS,
- --     DATA_PIN_P_IN => A_CTRLBUS_P,-- & B_CTRLBUS_P,
- --     DATA_PIN_N_IN => A_CTRLBUS_N,-- & B_CTRLBUS_N,
-      DATA_BANK18_IN_P => DATA_BANK18_IN_P,
-      DATA_BANK18_IN_N => DATA_BANK18_IN_N,
-      DATA_BANK16_IN_P => DATA_BANK16_IN_P,
-      DATA_BANK16_IN_N => DATA_BANK16_IN_N,
-      
-      CTRLBUS_OUT_P => CTRLBUS_OUT_P,
-      CTRLBUS_OUT_N => CTRLBUS_OUT_N,
-      IPBUS_TX_P    => IPBUS_TX_P,
-      IPBUS_TX_N    => IPBUS_TX_N,
-      IPBUS_RX_P    => IPBUS_RX_P,
-      IPBUS_RX_N    => IPBUS_RX_N);
+      GCK2_IN_P        => GCK2_IN_P,
+      GCK2_IN_N        => GCK2_IN_N,
+      CTRLIPBUS_P_IN   => CTRLIPBUS_P_IN,
+      CTRLIPBUS_N_IN   => CTRLIPBUS_N_IN,
+      CTRLIPBUS_P_OUT  => CTRLIPBUS_P_OUT,
+      CTRLIPBUS_N_OUT  => CTRLIPBUS_N_OUT,
+      LED_OUT          => open,
+      CTRLBUS_P        => CTRLBUS_P,
+      CTRLBUS_N        => CTRLBUS_N,
+      CTRLBUS_P_IN     => DATA_U2_CTRL_OUT_P,
+      CTRLBUS_N_IN     => DATA_U2_CTRL_OUT_N,
+      ROD_CONTROL_P_IN => DATA_U2_SYNC_OUT_P, 
+      ROD_CONTROL_N_IN => DATA_U2_SYNC_OUT_N,
+      MMCX_U30_PIN     => MMCX_U30_PIN);
+
+  KINTEX_TOP_INST : entity work.top_L1TopoController
+    generic map(
+      LINKS_NUMBER => LINKS_NUMBER,
+      SIMULATION   => SIMULATION
+      )
+      port map(
+        gt_clkp   => gt_clkp,
+        gt_clkn   => gt_clkn,
+        gt_txp    => gt_txp,
+        gt_txn    => gt_txn,
+        gt_rxp    => gt_rxp,
+        gt_rxn    => gt_rxn,
+        GCK2_IN_P => GCK2_IN_P,
+        GCK2_IN_N => GCK2_IN_N,
+
+        CTRLBUS_U1_IN_P  => CTRLBUS_U1_IN_P,
+        CTRLBUS_U1_IN_N  => CTRLBUS_U1_IN_N,
+        CTRLBUS_U2_IN_P  => CTRLBUS_U2_IN_P,
+        CTRLBUS_U2_IN_N  => CTRLBUS_U2_IN_N,
+        CTRLBUS_U1_OUT_P => CTRLBUS_U1_OUT_P,
+        CTRLBUS_U1_OUT_N => CTRLBUS_U1_OUT_N,
+        CTRLBUS_U2_OUT_P => CTRLBUS_U2_OUT_P,
+        CTRLBUS_U2_OUT_N => CTRLBUS_U2_OUT_N,
+
+        DATA_U1_CTRL_OUT_P => DATA_U1_CTRL_OUT_P,
+        DATA_U1_CTRL_OUT_N => DATA_U1_CTRL_OUT_N,
+        DATA_U2_CTRL_OUT_P => DATA_U2_CTRL_OUT_P,
+        DATA_U2_CTRL_OUT_N => DATA_U2_CTRL_OUT_N,
+        DATA_U2_SYNC_OUT_P => DATA_U2_SYNC_OUT_P,
+        DATA_U2_SYNC_OUT_N => DATA_U2_SYNC_OUT_N,
+--      DATA_BANK17_IN_P, DATA_BANK17_IN_N : in std_logic_vector(1 downto 0),
+--      DATA_BANK32_IN_P, DATA_BANK32_IN_N : in std_logic_vector(4 downto 0),
+        DATA_BANK18_IN_P   => DATA_BANK18_IN_P,
+        DATA_BANK18_IN_N   => DATA_BANK18_IN_N,
+        DATA_BANK16_IN_P   => DATA_BANK16_IN_P,
+        DATA_BANK16_IN_N   => DATA_BANK16_IN_N,
+        
+        PHY_RESET_OUT_N => PHY_RESET_OUT_N,
+        LED_OUT         => open
+
+--      SFP3_RX_N, SFP3_RX_P : in std_logic,
+--      SFP3_TX_N, SFP3_TX_P : out std_logic
+        );
 
 
-  DATA_BANK16_IN_P(0) <=  A_CTRLBUS_P(0);
-  DATA_BANK16_IN_N(0) <=  A_CTRLBUS_N(0);
 
-  DATA_BANK16_IN_P(1) <=  A_CTRLBUS_P(1);
-  DATA_BANK16_IN_N(1) <=  A_CTRLBUS_N(1);
+ DATA_BANK16_IN_P (0) <=  CTRLBUS_P(0);
+ DATA_BANK16_IN_N (0) <=  CTRLBUS_N(0);
+
+ DATA_BANK16_IN_P (1) <=  CTRLBUS_P(1);
+ DATA_BANK16_IN_N (1) <=  CTRLBUS_N(1);
   
-  DATA_BANK18_IN_P(4) <=  A_CTRLBUS_P(2);
-  DATA_BANK18_IN_N(4) <=  A_CTRLBUS_N(2);
-    
-  DATA_BANK16_IN_P(2) <=  A_CTRLBUS_P(3);
-  DATA_BANK16_IN_N(2) <=  A_CTRLBUS_N(3);
+ DATA_BANK18_IN_P (4) <=  CTRLBUS_P(2);
+ DATA_BANK18_IN_N (4) <=  CTRLBUS_N(2);
+  
+ DATA_BANK16_IN_P (2) <=  CTRLBUS_P(3);
+ DATA_BANK16_IN_N (2) <=  CTRLBUS_N(3);
 
-  DATA_BANK16_IN_P(3) <=   A_CTRLBUS_P(4);
-  DATA_BANK16_IN_N(3) <=   A_CTRLBUS_N(4);
-                                
-  DATA_BANK18_IN_P(5) <=   A_CTRLBUS_P(5);
-  DATA_BANK18_IN_N(5) <=   A_CTRLBUS_N(5); 
-                                
-  DATA_BANK18_IN_P(6) <=   A_CTRLBUS_P(6);
-  DATA_BANK18_IN_N(6) <=   A_CTRLBUS_N(6);
-                                
-  DATA_BANK18_IN_P(7) <=   A_CTRLBUS_P(7);
-  DATA_BANK18_IN_N(7) <=   A_CTRLBUS_N(7);
+ DATA_BANK16_IN_P (3) <=  CTRLBUS_P(4);
+ DATA_BANK16_IN_N (3) <=  CTRLBUS_N(4);
+                                   
+ DATA_BANK18_IN_P (5) <=  CTRLBUS_P(5);
+ DATA_BANK18_IN_N (5) <=  CTRLBUS_N(5); 
+                                   
+ DATA_BANK18_IN_P (6) <=  CTRLBUS_P(6);
+ DATA_BANK18_IN_N (6) <=  CTRLBUS_N(6);
+                                   
+ DATA_BANK18_IN_P (7) <=  CTRLBUS_P(7);
+ DATA_BANK18_IN_N (7) <=  CTRLBUS_N(7);
 
     
-  A_CTRLBUS_P_IN <= CTRLBUS_OUT_P(0);
-  A_CTRLBUS_N_IN <= CTRLBUS_OUT_N(0);
---  B_CTRLBUS_P_IN <= CTRLBUS_OUT_P(1);
---  B_CTRLBUS_N_IN <= CTRLBUS_OUT_N(1);
-    
-  CLOCK: process
+-------------------------------------------------------------------------------
+-- clocks
+-------------------------------------------------------------------------------
+  
+  GT_CLOCK: process
   begin  -- process CLOCK
-    GCLK2_P <= '1';
-    GCLK2_N <= '0';
+    gt_clkp <= '1';
+    gt_clkn <= '0';
+    wait for 4 ns;
+    gt_clkp <= '0';
+    gt_clkn <= '1';
+    wait for 4 ns;
+  end process GT_CLOCK;
+
+  GC_CLOCK: process
+  begin  -- process CLOCK
+    GCK2_IN_P <= '1';
+    GCK2_IN_N <= '0';
     wait for 12.5 ns;
-    GCLK2_P <= '0';
-    GCLK2_N <= '1';
+    GCK2_IN_P <= '0';
+    GCK2_IN_N <= '1';
     wait for 12.5 ns;
-    
-  end process CLOCK;
+  end process GC_CLOCK;
+
   
-  LhcClkInP <= GCLK2_P; 
-  LhcClkInN<= GCLK2_N; 
   
   process
   begin  -- process
-    MMCX_U30 <= '0';
+    MMCX_U30_PIN <= '0';
     wait for 5 us;
-    MMCX_U30 <= '1';
+    MMCX_U30_PIN <= '1';
     wait for 25 ns;
   end process;
   

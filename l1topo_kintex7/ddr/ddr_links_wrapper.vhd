@@ -1,3 +1,4 @@
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
@@ -8,13 +9,16 @@ entity ddr_links_wrapper is
 generic (
 	DELAY_GROUP_NAME : string := "delay_group";
 	AVAILABLE_LVDS_LINES : integer range 0 to 20 := 1;
-	EXCLUDE_DCM_IDELAY_CTRL : boolean 
+	EXCLUDE_DCM_IDELAY_CTRL : boolean;
+	MANUAL_SYNC : boolean;
+   SIMULATION : boolean := FALSE
 );
 port (
 	GCLK_40_IN         : in std_logic; -- global buffer input
 	DELAY_CLK_IN       : in std_logic; -- global clock for IDELAY components
 	EXT_DDR_CLK_IN     : in std_logic; -- external word clock (only if EXCLUDE... is true)
 	EXT_DDR_CLK_X8_IN  : in std_logic; -- external word clock (only if EXCLUDE... is true)
+	INT_DDR_CLK_OUT    : out std_logic;  -- internally generated word clock output
 	RESET_IN           : in std_logic;
 	
 	LVDS_IN_P          : in std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
@@ -23,17 +27,23 @@ port (
 	LINKS_SYNCED_OUT   : out std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
 	RESET_TRANS_OUT    : out std_logic;
 	
+	DELAY_VALS_IN      : in std_logic_vector(AVAILABLE_LVDS_LINES * 5 - 1 downto 0);
+	DELAY_VALS_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES * 5 - 1 downto 0);
+	DELAY_LOAD_IN      : in std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
+	
 	DATA_OUT           : out std_logic_vector(AVAILABLE_LVDS_LINES * 8 - 1 downto 0);
 	DATA_VALID_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
    DATA_KCTRL_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
-	
-	-- debug ports:
+    
+        	-- debug ports:
 	DBG_STATE_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES * 4 - 1 downto 0);
 	DBG_REG_DATA_OUT  : out std_logic_vector(AVAILABLE_LVDS_LINES * 10 - 1 downto 0);
 	DBG_BITSLIP_OUT   : out std_logic_vector(AVAILABLE_LVDS_LINES * 4 - 1 downto 0);
 	DBG_INC_OUT       : out std_logic_vector(AVAILABLE_LVDS_LINES * 8 - 1 downto 0);
 	DBG_PAUSE_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES * 8 - 1 downto 0);
-	DBG_STEP_OUT      : out std_logic_vector(AVAILABLE_LVDS_LINES * 8 - 1 downto 0)
+	DBG_STEP_OUT      : out std_logic_vector(AVAILABLE_LVDS_LINES * 8 - 1 downto 0);
+	DBG_RETRY_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES * 8 - 1 downto 0)
+
 );
 end ddr_links_wrapper;
 
@@ -54,7 +64,7 @@ begin
 
 	internal_reset <= '1' when RESET_IN = '1' or dcm_locked = '0' else '0';
 	
-	RESET_TRANS_OUT <= not dcm_locked;
+	RESET_TRANS_OUT <= not dcm_locked and local_ctrl_ready;
 
 	bridge_inst : entity work.ddr_bank_bridge
 	generic map( 
@@ -74,6 +84,10 @@ begin
 		LVDS_IN_N            => LVDS_IN_N,
 		DATA_LINES_OUT       => local_data_lines,
 		
+		DELAY_VALS_IN      	 => DELAY_VALS_IN,
+		DELAY_VALS_OUT        => DELAY_VALS_OUT,
+		DELAY_LOAD_IN      	 => DELAY_LOAD_IN,
+		
 		DELAY_INC_IN         => local_delay_inc,
 		DELAY_CE_IN          => local_delay_ce,
 		CTRL_READY_OUT       => local_ctrl_ready,
@@ -83,28 +97,20 @@ begin
 	lvds_gen : for i in 0 to AVAILABLE_LVDS_LINES - 1 generate
 	
 		int_clk : if EXCLUDE_DCM_IDELAY_CTRL = FALSE generate
-			clk_80_i  <= clk_80;
-			clk_400_i <= clk_400;
+			clk_80_i        <= clk_80;
+			clk_400_i       <= clk_400;
+			INT_DDR_CLK_OUT <= clk_80;
 		end generate;
 		ext_clk : if EXCLUDE_DCM_IDELAY_CTRL = TRUE generate
-			clk_80_i  <= EXT_DDR_CLK_IN;
-			clk_400_i <= EXT_DDR_CLK_X8_IN;
+			clk_80_i        <= EXT_DDR_CLK_IN;
+			clk_400_i       <= EXT_DDR_CLK_X8_IN;
+			INT_DDR_CLK_OUT <= '0';
 		end generate;
-	
-		dec_inst : entity work.ddr_decoder_module
-		port map(
-			RESET_IN          => internal_reset,
-			DCM_DDR_CLK_IN    => clk_80_i,
-			
-			ENC_DATA_IN       => local_enc_data((i + 1) * 10 - 1 downto i * 10),
-			DATA_OUT          => local_data((i + 1) * 8 - 1 downto i * 8),
-			DATA_VALID_OUT    => local_valid(i),
-                        DATA_KCTRL_OUT    => local_ktrl(i),
-                        LINK_IS_SYNC      => local_synced(i)
-                        
-		);
-		
+                	
 		in_inst : entity work.ddr_input_module
+      generic map (
+			MANUAL_SYNC => MANUAL_SYNC,
+			SIMULATION => SIMULATION)
 		port map(
 			RESET_IN          => internal_reset,
 			DCM_DDR_CLK_IN    => clk_80_i,
@@ -116,34 +122,28 @@ begin
 			
 			CTRL_READY_IN     => local_ctrl_ready,
 			
-			DATA_OUT          => local_enc_data((i + 1) * 10 - 1 downto i * 10),
-			SYNCED_OUT        => local_synced(i),
+			DELAY_LOAD_IN     => DELAY_LOAD_IN(i),
 			
-			DBG_STATE_OUT     => DBG_STATE_OUT((i + 1) * 4 - 1 downto i * 4),
+			DATA_OUT          => local_enc_data((i + 1) * 8 - 1 downto i * 8),
+			DATA_KCTRL_OUT    => local_ktrl(i),
+			DATA_VALID_OUT    => local_valid(i),
+			SYNCED_OUT        => local_synced(i),
+                        
+         DBG_STATE_OUT     => DBG_STATE_OUT((i + 1) * 4 - 1 downto i * 4),
 			DBG_REG_DATA_OUT  => DBG_REG_DATA_OUT((i + 1) * 10 - 1 downto i * 10),
 			DBG_BITSLIP_OUT   => DBG_BITSLIP_OUT((i + 1) * 4 - 1 downto i * 4),
 			DBG_INC_OUT       => DBG_INC_OUT((i + 1) * 8 - 1 downto i * 8),
 			DBG_PAUSE_OUT     => DBG_PAUSE_OUT((i + 1) * 8 - 1 downto i * 8),
-			DBG_STEP_OUT      => DBG_STEP_OUT((i + 1) * 8 - 1 downto i * 8)
+			DBG_STEP_OUT      => DBG_STEP_OUT((i + 1) * 8 - 1 downto i * 8),
+			DBG_RETRY_OUT     => DBG_RETRY_OUT((i + 1) * 8 - 1 downto i * 8)
 		);
-		
---		process(clk_80_i)
---		begin
---			if rising_edge(clk_80_i) then
---				if (local_data((i + 1) * 8 - 1 downto i * 8) /= x"1c" and local_valid(i) = '0') then
---					LINKS_SYNCED_OUT(i) <= '0';
---				else
---					LINKS_SYNCED_OUT(i) <= local_synced(i);
---				end if;
---			end if;
---		end process;
+
 		LINKS_SYNCED_OUT(i) <= local_synced(i);
-			
+                
 		DATA_OUT((i + 1) * 8 - 1 downto i * 8) <= local_data((i + 1) * 8 - 1 downto i * 8);
 		DATA_VALID_OUT(i) <= local_valid(i);
-		DATA_KCTRL_OUT(i) <= local_ktrl(i);
-	
+      DATA_KCTRL_OUT(i) <= local_ktrl(i);
+                
 	end generate lvds_gen;
 
 end Behavioral;
-

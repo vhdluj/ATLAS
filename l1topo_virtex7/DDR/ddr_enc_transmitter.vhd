@@ -6,7 +6,6 @@ use work.s7_transmission_components.all;
 
 entity ddr_enc_transmitter is
 port (
-        RESET          : in std_logic;
 	CLK_BIT_IN     : in std_logic;
 	CLK_WORD_IN    : in std_logic;
 	RESET_IN       : in std_logic;
@@ -40,19 +39,22 @@ begin
 		--	data_in_local   <= DATA_IN;
 		--	crc_in_en_local <= DATA_VALID_IN;
 		--end if;
+		
+		
           if DATA_KCTRL_IN = '1' then
             enc_810_kin   <= '1';
             data_in_local <= DATA_IN;
-          elsif DATA_VALID_IN = '0' and reset = '1' then
+          elsif DATA_VALID_IN = '0' and RESET_IN = '1' then
             enc_810_kin   <= '1';
-            data_in_local <= x"BC";
-          elsif DATA_VALID_IN = '0' and reset = '0' then
+            data_in_local <= x"bc"; --x"1C";
+          elsif DATA_VALID_IN = '0' and RESET_IN = '0' then
             enc_810_kin   <= '1';
-            data_in_local <= x"1c";
+            data_in_local <= x"bc"; --x"1c";
           else
             enc_810_kin   <= '0';
             data_in_local <= DATA_IN;
           end if;
+			 
 	end if;
 end process;
 

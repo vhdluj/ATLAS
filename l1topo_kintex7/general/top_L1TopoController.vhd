@@ -134,6 +134,7 @@ architecture rtl of top_L1TopoController is
 	signal dbg_ddr_inc_from18     : std_logic_vector(ddr_lines_on_bank18 * 8 - 1 downto 0);
 	signal dbg_ddr_pause_from18   : std_logic_vector(ddr_lines_on_bank18 * 8 - 1 downto 0);
 	signal dbg_ddr_step_from18    : std_logic_vector(ddr_lines_on_bank18 * 8 - 1 downto 0);
+	signal dbg_ddr_retry_from18   : std_logic_vector(ddr_lines_on_bank18 * 8 - 1 downto 0);
 	
 	signal dbg_ddr_state_from16   : std_logic_vector(ddr_lines_on_bank16 * 4 - 1 downto 0);
 	signal dbg_ddr_reg_from16     : std_logic_vector(ddr_lines_on_bank16 * 10 - 1 downto 0);
@@ -141,6 +142,7 @@ architecture rtl of top_L1TopoController is
 	signal dbg_ddr_inc_from16     : std_logic_vector(ddr_lines_on_bank16 * 8 - 1 downto 0);
 	signal dbg_ddr_pause_from16   : std_logic_vector(ddr_lines_on_bank16 * 8 - 1 downto 0);
 	signal dbg_ddr_step_from16    : std_logic_vector(ddr_lines_on_bank16 * 8 - 1 downto 0);
+	signal dbg_ddr_retry_from16   : std_logic_vector(ddr_lines_on_bank16 * 8 - 1 downto 0);
 	
 	signal dbg_ddr_state   : std_logic_vector(LINKS_NUMBER * 4 - 1 downto 0);
 	signal dbg_ddr_reg     : std_logic_vector(LINKS_NUMBER * 10 - 1 downto 0);
@@ -148,77 +150,88 @@ architecture rtl of top_L1TopoController is
 	signal dbg_ddr_inc     : std_logic_vector(LINKS_NUMBER * 8 - 1 downto 0);
 	signal dbg_ddr_pause   : std_logic_vector(LINKS_NUMBER * 8 - 1 downto 0);
 	signal dbg_ddr_step    : std_logic_vector(LINKS_NUMBER * 8 - 1 downto 0);
+	signal dbg_ddr_retry   : std_logic_vector(LINKS_NUMBER * 8 - 1 downto 0);
+	
+	signal ddr_val_bank18       : std_logic_vector(ddr_lines_on_bank18 * 5 - 1 downto 0);
+	signal ddr_val_load_bank18  : std_logic_vector(ddr_lines_on_bank18 - 1 downto 0);
+	signal ddr_val_bank16       : std_logic_vector(ddr_lines_on_bank16 * 5 - 1 downto 0);
+	signal ddr_val_load_bank16  : std_logic_vector(ddr_lines_on_bank16 - 1 downto 0);
+	
+	signal ddr_val              : std_logic_vector(LINKS_NUMBER * 5 - 1 downto 0);
+	signal ddr_val_load         : std_logic_vector(LINKS_NUMBER - 1 downto 0);
+	
+	signal clk_400, clk_80, clk_fb, clk_400_ub, clk_80_ub, local_dcm_locked : std_logic;
 
 begin
  ones <= (others => '1');
 
 --##################   ROD
 
-SET_DUMMY_ASSIGNMENTS: for i in 0 to ros_roi_bus_assignment_sig'high generate
-  ros_roi_bus_assignment_sig(i) <= std_logic_vector(to_unsigned(i mod 12,ros_roi_bus_assignment_sig(0)'length));
-end generate SET_DUMMY_ASSIGNMENTS;
-
-GENERATE_V1_V2_DDR_TO_ROD: for i in 0 to 0 generate
-  DDR_TO_ROD_INST: entity work.ddr_to_rod
-  port map (
-    RESET                       => ddr_rst,
-    DATA_IN_CLK                 => gck2_clk80, --clk_80,
-    DATA_OUT_CLK                => gck2_clk80, --clk_80,
-    LVL1_FULL_THR               => "11111110",
-    L1_BUSY                     => open,
-    DDR_ROS_ROI_IN_DATA         => ddr_data((i+1)*64-1 downto i*64),
-    DATA_VALID_IN               => ddr_dv(0),
-    SPECIAL_CHAR_IN             => ddr_kctrl(0),
-    OUT_DATA                    => data_out_l,
-    DATA_VALID_OUT              => data_valid_in_l,
-    ACTUAL_BUS_NUMBER_OUT       => actual_bus_number_out_l,
-    NUMBER_OF_SLICES_OUT        => number_of_slices_out_l,
-    LVL0_OFFSET_OUT             => lvl0_offset_out_l,
-    ROS_ROI_BUS_ASSIGNMENT      => ros_roi_bus_assignment_sig,
-    ROS_ROI_BUS_ASSIGNMENT_DONE => not sys_rst,--ROS_ROI_BUS_ASSIGNMENT_DONE,
-    ROS_ROI_OUT_DATA_CNTR       => open,--ROS_ROI_OUT_DATA_CNTR,
-    START_OF_FRAME              => open,
-    END_OF_FRAME                => open);
-end generate GENERATE_V1_V2_DDR_TO_ROD;
-
-
-set_data_assignment: for i in 0 to NUMBER_OF_ROS_ROI_INPUT_BUSES - 1 generate
-  MUON: if (i mod 4) = 0 generate
-    type_assignment_in_l(i) <= to_unsigned(4,4);
-  end generate MUON;
-  SUM: if (i mod 4) = 1 generate
-    type_assignment_in_l(i) <= x"8";
-  end generate SUM;
-  JET: if (i mod 4) = 2 generate
-    type_assignment_in_l(i) <= x"3";
-  end generate JET;
-  ENERGY: if (i mod 4) = 3 generate
-    type_assignment_in_l(i) <= x"2";
-  end generate ENERGY;
-end generate set_data_assignment;
-
-GENERATE_OUTPUT_PARSERS: for i in 0 to 0 generate--NUMBER_OF_OUTPUT_LINKS - 1 generate
-
-  PARSER_WRAPPER_INST: entity work.parser_wrapper
-    generic map (
-      LINK_NUMBER              => i,
-      TOTAL_NUMBER_OF_IN_LINKS => NUMBER_OF_ROS_ROI_INPUT_BUSES) --tot_number_of_links(ros_roi_bus_assignment_sig,i))
-      --ACTIVE_LINKS             => set_active_links(ros_roi_bus_assignment_sig,i))
-
-    port map (
-      CLK_WR_IN          => gck2_clk80, --clk_80,
-      CLK_RD_IN          => gck2_clk80, --clk_80,
-      RESET_IN           => ddr_rst,
-      BC_OFFSET_IN       => std_logic_vector(to_unsigned(3,6)),
-      BC_QTY_IN          => std_logic_vector(to_unsigned(3,6)),
-      DATA_IN            => data_out_l(i),
-      ROS_ROI_BUS_NUMBER => std_logic_vector(actual_bus_number_out_l(i)),
-      DATA_OUT           => rod_data,
-      DATA_RE_IN         => rod_re,
-      DATA_RDY_OUT       => rod_rdy,
-      DATA_VALID_IN      => data_valid_in_l(i));
-  
-end generate GENERATE_OUTPUT_PARSERS;
+--SET_DUMMY_ASSIGNMENTS: for i in 0 to ros_roi_bus_assignment_sig'high generate
+--  ros_roi_bus_assignment_sig(i) <= std_logic_vector(to_unsigned(i mod 12,ros_roi_bus_assignment_sig(0)'length));
+--end generate SET_DUMMY_ASSIGNMENTS;
+--
+--GENERATE_V1_V2_DDR_TO_ROD: for i in 0 to 0 generate
+--  DDR_TO_ROD_INST: entity work.ddr_to_rod
+--  port map (
+--    RESET                       => ddr_rst,
+--    DATA_IN_CLK                 => gck2_clk80, --clk_80,
+--    DATA_OUT_CLK                => gck2_clk80, --clk_80,
+--    LVL1_FULL_THR               => "11111110",
+--    L1_BUSY                     => open,
+--    DDR_ROS_ROI_IN_DATA         => ddr_data((i+1)*64-1 downto i*64),
+--    DATA_VALID_IN               => ddr_dv(0),
+--    SPECIAL_CHAR_IN             => ddr_kctrl(0),
+--    OUT_DATA                    => data_out_l,
+--    DATA_VALID_OUT              => data_valid_in_l,
+--    ACTUAL_BUS_NUMBER_OUT       => actual_bus_number_out_l,
+--    NUMBER_OF_SLICES_OUT        => number_of_slices_out_l,
+--    LVL0_OFFSET_OUT             => lvl0_offset_out_l,
+--    ROS_ROI_BUS_ASSIGNMENT      => ros_roi_bus_assignment_sig,
+--    ROS_ROI_BUS_ASSIGNMENT_DONE => not sys_rst,--ROS_ROI_BUS_ASSIGNMENT_DONE,
+--    ROS_ROI_OUT_DATA_CNTR       => open,--ROS_ROI_OUT_DATA_CNTR,
+--    START_OF_FRAME              => open,
+--    END_OF_FRAME                => open);
+--end generate GENERATE_V1_V2_DDR_TO_ROD;
+--
+--
+--set_data_assignment: for i in 0 to NUMBER_OF_ROS_ROI_INPUT_BUSES - 1 generate
+--  MUON: if (i mod 4) = 0 generate
+--    type_assignment_in_l(i) <= to_unsigned(4,4);
+--  end generate MUON;
+--  SUM: if (i mod 4) = 1 generate
+--    type_assignment_in_l(i) <= x"8";
+--  end generate SUM;
+--  JET: if (i mod 4) = 2 generate
+--    type_assignment_in_l(i) <= x"3";
+--  end generate JET;
+--  ENERGY: if (i mod 4) = 3 generate
+--    type_assignment_in_l(i) <= x"2";
+--  end generate ENERGY;
+--end generate set_data_assignment;
+--
+--GENERATE_OUTPUT_PARSERS: for i in 0 to 0 generate--NUMBER_OF_OUTPUT_LINKS - 1 generate
+--
+--  PARSER_WRAPPER_INST: entity work.parser_wrapper
+--    generic map (
+--      LINK_NUMBER              => i,
+--      TOTAL_NUMBER_OF_IN_LINKS => NUMBER_OF_ROS_ROI_INPUT_BUSES) --tot_number_of_links(ros_roi_bus_assignment_sig,i))
+--      --ACTIVE_LINKS             => set_active_links(ros_roi_bus_assignment_sig,i))
+--
+--    port map (
+--      CLK_WR_IN          => gck2_clk80, --clk_80,
+--      CLK_RD_IN          => gck2_clk80, --clk_80,
+--      RESET_IN           => ddr_rst,
+--      BC_OFFSET_IN       => std_logic_vector(to_unsigned(3,6)),
+--      BC_QTY_IN          => std_logic_vector(to_unsigned(3,6)),
+--      DATA_IN            => data_out_l(i),
+--      ROS_ROI_BUS_NUMBER => std_logic_vector(actual_bus_number_out_l(i)),
+--      DATA_OUT           => rod_data,
+--      DATA_RE_IN         => rod_re,
+--      DATA_RDY_OUT       => rod_rdy,
+--      DATA_VALID_IN      => data_valid_in_l(i));
+--  
+--end generate GENERATE_OUTPUT_PARSERS;
 
 
 ddr_synced <= '1' when (links_synced = ones and rst_ipb = '0') and soft_rst = '0' else '0';
@@ -228,13 +241,14 @@ ddr_synced <= '1' when (links_synced = ones and rst_ipb = '0') and soft_rst = '0
 
 ddr_rst <= not gck2_mmcm_locked or rst_ipb;
 
-v_reset <= rst_from_bank18 or rst_from_bank16;
+v_reset <= rst_from_bank18 or rst_from_bank16 or rst_ipb;
 
 ddr_bank18 : entity work.ddr_links_wrapper
 generic map(
                 DELAY_GROUP_NAME     => "bank18_delay_group",
                 AVAILABLE_LVDS_LINES => ddr_lines_on_bank18,
-                EXCLUDE_DCM_IDELAY_CTRL => FALSE
+                EXCLUDE_DCM_IDELAY_CTRL => FALSE,
+                SIMULATION => SIMULATION
 )
 port map(
                 GCLK_40_IN         => gck2_clk40,
@@ -247,18 +261,30 @@ port map(
                 LVDS_IN_N          => DATA_BANK18_IN_N,
                
                 LINKS_SYNCED_OUT   => ddr_receivers_synced_bank18,
-					 RESET_TRANS_OUT    => rst_from_bank18,
+				RESET_TRANS_OUT    => rst_from_bank18,
+					 
+				DELAY_VALS_IN      => ddr_val_bank18,
+				DELAY_LOAD_IN      => ddr_val_load_bank18,
                                
                 DATA_OUT           => ddr_data_from_bank18,
                 DATA_VALID_OUT     => ddr_dv_from_bank18,
-                DATA_KCTRL_OUT     => ddr_kctrl_from_bank18
+                DATA_KCTRL_OUT     => ddr_kctrl_from_bank18,
+                
+                DBG_STATE_OUT    => dbg_ddr_state_from18,
+				DBG_REG_DATA_OUT => dbg_ddr_reg_from18,
+				DBG_BITSLIP_OUT  => dbg_ddr_bitslip_from18,
+				DBG_INC_OUT      => dbg_ddr_inc_from18,
+				DBG_PAUSE_OUT    => dbg_ddr_pause_from18,
+				DBG_STEP_OUT     => dbg_ddr_step_from18,
+				DBG_RETRY_OUT    => dbg_ddr_retry_from18
 );
  
 ddr_bank16 : entity work.ddr_links_wrapper
 generic map(
                 DELAY_GROUP_NAME     => "bank16_delay_group",
                 AVAILABLE_LVDS_LINES => ddr_lines_on_bank16,
-                EXCLUDE_DCM_IDELAY_CTRL => FALSE
+                EXCLUDE_DCM_IDELAY_CTRL => FALSE,
+                SIMULATION => SIMULATION
 )
 port map(
                 GCLK_40_IN         => gck2_clk40,
@@ -271,11 +297,22 @@ port map(
                 LVDS_IN_N          => DATA_BANK16_IN_N,
                
                 LINKS_SYNCED_OUT   => ddr_receivers_synced_bank16,
-					 RESET_TRANS_OUT    => rst_from_bank16,                               
+				RESET_TRANS_OUT    => rst_from_bank16,           
+				
+				DELAY_VALS_IN      => ddr_val_bank16,
+				DELAY_LOAD_IN      => ddr_val_load_bank16,                    
 						
                 DATA_OUT           => ddr_data_from_bank16,
                 DATA_VALID_OUT     => ddr_dv_from_bank16,
-                DATA_KCTRL_OUT     => ddr_kctrl_from_bank16
+                DATA_KCTRL_OUT     => ddr_kctrl_from_bank16,
+                
+                DBG_STATE_OUT    => dbg_ddr_state_from16,
+				DBG_REG_DATA_OUT => dbg_ddr_reg_from16,
+				DBG_BITSLIP_OUT  => dbg_ddr_bitslip_from16,
+				DBG_INC_OUT      => dbg_ddr_inc_from16,
+				DBG_PAUSE_OUT    => dbg_ddr_pause_from16,
+				DBG_STEP_OUT     => dbg_ddr_step_from16,
+				DBG_RETRY_OUT    => dbg_ddr_retry_from16
 );
 
 --ddr_bank32 : entity work.ddr_links_wrapper -- connected to ctrlbus U1
@@ -359,6 +396,28 @@ vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => 
 
 --	DCM clock generation for internal bus, ethernet
 
+SIM_CLOCK: if SIMULATION generate
+  GC_CLOCK: process
+  begin  -- process CLOCK
+    gck2_clk40 <= '1';
+    wait for 12.5 ns;
+    gck2_clk40 <= '0';
+    wait for 12.5 ns;
+  end process GC_CLOCK;
+
+  DELAY_CLK: process
+  begin  -- process
+    idelayctrl_refclk300 <= '1';
+    wait for 1.666 ns;
+    idelayctrl_refclk300 <= '0';
+    wait for 1.666 ns;
+  end process DELAY_CLK;
+  rst_ipb <= '0';
+  gck2_mmcm_locked <= not rst_from_bank18;
+end generate SIM_CLOCK;
+        -----------------------------------------------------------------------
+        -- comment for sim
+        -----------------------------------------------------------------------                 
 	clocks: entity work.clocks_7s_serdes
 		port map(
 			clki_fr => clk125_fr,
@@ -378,6 +437,10 @@ vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => 
 			gck2_clk80_out => gck2_clk80,
 			idelayctrl_refclk300_out => idelayctrl_refclk300
 		);
+        --------------------------------------------------------------------
+        -- end comment for sim
+        --------------------------------------------------------------------
+           
 	locked <= clk_locked and eth_locked;
 	led_speedis1000 <= pcs_pma_status(11) and not pcs_pma_status(10);
 
@@ -397,10 +460,11 @@ vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => 
 	   LED_OUT(13) <= '0';
 	LED_OUT(14) <= '0';
 	LED_OUT(15) <= '0';
-
+-------------------------------------------------------------------------------
+-- comment for sim
+-------------------------------------------------------------------------------
 ------ Ethernet MAC core and PHY interface
 ----
-SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
                          
 	eth: entity work.eth_7s_sgmii
 		port map(
@@ -427,9 +491,9 @@ SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
 			pcs_pma_status => pcs_pma_status,
 			ExternalPhyChip_reset_out => phy_reset
 		);
-	
+      
 	PHY_RESET_OUT_N <= not phy_reset;
-	
+      
 -- ipbus control logic
 
 	ipbus: entity work.ipbus_ctrl
@@ -456,7 +520,8 @@ SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
 			pkt_rx_led => pkt_rx_led,
 			pkt_tx_led => pkt_tx_led
 		);
-		
+      	
+
 	mac_addr <= X"000A3501F610";
 	--ip_addr <= X"865D828B"; --134.93.130.139
 	ip_addr <= X"898A5114"; --137.138.81.20
@@ -465,58 +530,65 @@ SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
 -- ipbus slaves live in the entity below, and can expose top-level ports
 -- The ipbus fabric is instantiated within.
 
-	slaves: entity work.slaves 
-	generic map(
-		lvds_lines => LINKS_NUMBER
-		)
-	port map(
-		ipb_clk => gck2_clk40, --ipb_clk
-		ipb_rst => rst_ipb,
-		ipb_in => ipb_master_out,
-		ipb_out => ipb_master_in,
-		rst_out => sys_rst,
-		pkt_rx => pkt_rx,
-		pkt_tx => pkt_tx,
-		
+
+      slaves: entity work.slaves 
+      generic map(
+      	lvds_lines => LINKS_NUMBER
+      	)
+      port map(
+      	ipb_clk => gck2_clk40, --ipb_clk
+      	ipb_rst => rst_ipb,
+      	ipb_in => ipb_master_out,
+      	ipb_out => ipb_master_in,
+      	rst_out => sys_rst,
+      	pkt_rx => pkt_rx,
+      	pkt_tx => pkt_tx,
+
+      	
 		ipb_write_U1_out => ipb_write_U1,
 		ipb_read_U1_in => ipb_read_U1,
 		ipb_write_U2_out => ipb_write_U2,
 		ipb_read_U2_in => ipb_read_U2,
-		
+      	
 		ctrlbus_idelay_value_out => ctrlbus_idelay_value,
 		ctrlbus_idelay_load_out => ctrlbus_idelay_load,
-		
-		
+      	
+      	
 			soft_rst_out => soft_rst,
 			
+		DELAY_VALS_OUT   => ddr_val,
+		DELAY_LOAD_OUT   => ddr_val_load,
+      		
+      	DBG_LINKS_SYNCED_IN => links_synced,
 		DBG_STATE_IN     => dbg_ddr_state,
 		DBG_REG_DATA_IN  => dbg_ddr_reg,
 		DBG_BITSLIP_IN   => dbg_ddr_bitslip,
 		DBG_INC_IN       => dbg_ddr_inc,
 		DBG_PAUSE_IN     => dbg_ddr_pause,
 		DBG_STEP_IN      => dbg_ddr_step,
-		
+		DBG_RETRY_IN     => dbg_ddr_retry,
+      	
 		ROD_RAM_CLK_IN => gck2_clk80,
 		ROD_RAM_WE_IN => ram_we,
 		ROD_RAM_ADDR_IN => ram_addr,
 		ROD_RAM_DATA_IN => ram_data
 	);
-	
-	
+      
+      
 	move : entity work.from_rod_to_ipbus
 	port map(
 		clk => gck2_clk80,
 		reset => rst_ipb,
-		
+      	
 		parsers_data_in => rod_data,
 		parsers_rd_out => rod_re,
 		parsers_rdy_in => rod_rdy,
-		
+      	
 		ram_we_out => ram_we,
 		ram_waddr_out => ram_addr,
 		ram_data_out => ram_data
 	);
-	
+      
 	ctrlbus: entity work.ctrlbus
 		port map(
 			gck2_clk40_in => gck2_clk40,
@@ -538,15 +610,21 @@ SWITCH_OFF_IPBUS_FOR_SIM: if not(SIMULATION) generate
 			idelay_value_in => ctrlbus_idelay_value,
 			idelay_load_in => ctrlbus_idelay_load,
 			
+			clk_400_in => clk_400,
+			clk_80_in  => clk_80,
+      		
 			mmcm_clk_80_u1_out => ctrlbus_32_clk,
 			mmcm_clk_400_u1_out => ctrlbus_32_clkx8,
-			
+      		
 			mmcm_clk_80_u2_out => ctrlbus_17_clk,
 			mmcm_clk_400_u2_out => ctrlbus_17_clkx8
 		);
-end generate SWITCH_OFF_IPBUS_FOR_SIM;	
+-------------------------------------------------------------------------------
+-- end comment for sim
+-------------------------------------------------------------------------------
 
---################### LINKS MAPPING
+
+--################### UGLY LINKS MAPPING
 
 ddr_data(1 * 8 - 1 downto 0 * 8) <= ddr_data_from_bank16(1 * 8 - 1 downto 0 * 8);
 ddr_data(2 * 8 - 1 downto 1 * 8) <= ddr_data_from_bank16(2 * 8 - 1 downto 1 * 8);
@@ -584,61 +662,90 @@ links_synced(5) <= ddr_receivers_synced_bank18(5);
 links_synced(6) <= ddr_receivers_synced_bank18(6);
 links_synced(7) <= ddr_receivers_synced_bank18(7);
 
-dbg_ddr_state(0) <= dbg_ddr_state_from16(0);
-dbg_ddr_state(1) <= dbg_ddr_state_from16(1);
-dbg_ddr_state(2) <= dbg_ddr_state_from18(4);
-dbg_ddr_state(3) <= dbg_ddr_state_from16(2);
-dbg_ddr_state(4) <= dbg_ddr_state_from16(3);
-dbg_ddr_state(5) <= dbg_ddr_state_from18(5);
-dbg_ddr_state(6) <= dbg_ddr_state_from18(6);
-dbg_ddr_state(7) <= dbg_ddr_state_from18(7);
+dbg_ddr_state(3 downto 0)   <= dbg_ddr_state_from16(3 downto 0);
+dbg_ddr_state(7 downto 4)   <= dbg_ddr_state_from16(7 downto 4);
+dbg_ddr_state(11 downto 8)  <= dbg_ddr_state_from18(19 downto 16);
+dbg_ddr_state(15 downto 12) <= dbg_ddr_state_from16(11 downto 8);
+dbg_ddr_state(19 downto 16) <= dbg_ddr_state_from16(15 downto 12);
+dbg_ddr_state(23 downto 20) <= dbg_ddr_state_from18(23 downto 20);
+dbg_ddr_state(27 downto 24) <= dbg_ddr_state_from18(27 downto 24);
+dbg_ddr_state(31 downto 28) <= dbg_ddr_state_from18(31 downto 28);
 
-dbg_ddr_reg(0) <= dbg_ddr_reg_from16(0);
-dbg_ddr_reg(1) <= dbg_ddr_reg_from16(1);
-dbg_ddr_reg(2) <= dbg_ddr_reg_from18(4);
-dbg_ddr_reg(3) <= dbg_ddr_reg_from16(2);
-dbg_ddr_reg(4) <= dbg_ddr_reg_from16(3);
-dbg_ddr_reg(5) <= dbg_ddr_reg_from18(5);
-dbg_ddr_reg(6) <= dbg_ddr_reg_from18(6);
-dbg_ddr_reg(7) <= dbg_ddr_reg_from18(7);
+dbg_ddr_reg(9 downto 0)   <= dbg_ddr_reg_from16(9 downto 0);
+dbg_ddr_reg(19 downto 10) <= dbg_ddr_reg_from16(19 downto 10);
+dbg_ddr_reg(29 downto 20) <= dbg_ddr_reg_from18(49 downto 40);
+dbg_ddr_reg(39 downto 30) <= dbg_ddr_reg_from16(29 downto 20);
+dbg_ddr_reg(49 downto 40) <= dbg_ddr_reg_from16(39 downto 30);
+dbg_ddr_reg(59 downto 50) <= dbg_ddr_reg_from18(59 downto 50);
+dbg_ddr_reg(69 downto 60) <= dbg_ddr_reg_from18(69 downto 60);
+dbg_ddr_reg(79 downto 70) <= dbg_ddr_reg_from18(79 downto 70);
 
-dbg_ddr_bitslip(0) <= dbg_ddr_bitslip_from16(0);
-dbg_ddr_bitslip(1) <= dbg_ddr_bitslip_from16(1);
-dbg_ddr_bitslip(2) <= dbg_ddr_bitslip_from18(4);
-dbg_ddr_bitslip(3) <= dbg_ddr_bitslip_from16(2);
-dbg_ddr_bitslip(4) <= dbg_ddr_bitslip_from16(3);
-dbg_ddr_bitslip(5) <= dbg_ddr_bitslip_from18(5);
-dbg_ddr_bitslip(6) <= dbg_ddr_bitslip_from18(6);
-dbg_ddr_bitslip(7) <= dbg_ddr_bitslip_from18(7);
+dbg_ddr_bitslip(3 downto 0)   <= dbg_ddr_bitslip_from16(3 downto 0);  
+dbg_ddr_bitslip(7 downto 4)   <= dbg_ddr_bitslip_from16(7 downto 4);  
+dbg_ddr_bitslip(11 downto 8)  <= dbg_ddr_bitslip_from18(19 downto 16);
+dbg_ddr_bitslip(15 downto 12) <= dbg_ddr_bitslip_from16(11 downto 8); 
+dbg_ddr_bitslip(19 downto 16) <= dbg_ddr_bitslip_from16(15 downto 12);
+dbg_ddr_bitslip(23 downto 20) <= dbg_ddr_bitslip_from18(23 downto 20);
+dbg_ddr_bitslip(27 downto 24) <= dbg_ddr_bitslip_from18(27 downto 24);
+dbg_ddr_bitslip(31 downto 28) <= dbg_ddr_bitslip_from18(31 downto 28);
 
-dbg_ddr_inc(0) <= dbg_ddr_inc_from16(0);
-dbg_ddr_inc(1) <= dbg_ddr_inc_from16(1);
-dbg_ddr_inc(2) <= dbg_ddr_inc_from18(4);
-dbg_ddr_inc(3) <= dbg_ddr_inc_from16(2);
-dbg_ddr_inc(4) <= dbg_ddr_inc_from16(3);
-dbg_ddr_inc(5) <= dbg_ddr_inc_from18(5);
-dbg_ddr_inc(6) <= dbg_ddr_inc_from18(6);
-dbg_ddr_inc(7) <= dbg_ddr_inc_from18(7);
+dbg_ddr_inc(7 downto 0)   <= dbg_ddr_inc_from16(7 downto 0);
+dbg_ddr_inc(15 downto 8)  <= dbg_ddr_inc_from16(15 downto 8);
+dbg_ddr_inc(23 downto 16) <= dbg_ddr_inc_from18(39 downto 32);
+dbg_ddr_inc(31 downto 24) <= dbg_ddr_inc_from16(23 downto 16);
+dbg_ddr_inc(39 downto 32) <= dbg_ddr_inc_from16(31 downto 24);
+dbg_ddr_inc(47 downto 40) <= dbg_ddr_inc_from18(47 downto 40);
+dbg_ddr_inc(55 downto 48) <= dbg_ddr_inc_from18(55 downto 48);
+dbg_ddr_inc(63 downto 56) <= dbg_ddr_inc_from18(63 downto 56);
 
-dbg_ddr_pause(0) <= dbg_ddr_pause_from16(0);
-dbg_ddr_pause(1) <= dbg_ddr_pause_from16(1);
-dbg_ddr_pause(2) <= dbg_ddr_pause_from18(4);
-dbg_ddr_pause(3) <= dbg_ddr_pause_from16(2);
-dbg_ddr_pause(4) <= dbg_ddr_pause_from16(3);
-dbg_ddr_pause(5) <= dbg_ddr_pause_from18(5);
-dbg_ddr_pause(6) <= dbg_ddr_pause_from18(6);
-dbg_ddr_pause(7) <= dbg_ddr_pause_from18(7);
+dbg_ddr_pause(7 downto 0)   <= dbg_ddr_pause_from16(7 downto 0);  
+dbg_ddr_pause(15 downto 8)  <= dbg_ddr_pause_from16(15 downto 8); 
+dbg_ddr_pause(23 downto 16) <= dbg_ddr_pause_from18(39 downto 32);
+dbg_ddr_pause(31 downto 24) <= dbg_ddr_pause_from16(23 downto 16);
+dbg_ddr_pause(39 downto 32) <= dbg_ddr_pause_from16(31 downto 24);
+dbg_ddr_pause(47 downto 40) <= dbg_ddr_pause_from18(47 downto 40);
+dbg_ddr_pause(55 downto 48) <= dbg_ddr_pause_from18(55 downto 48);
+dbg_ddr_pause(63 downto 56) <= dbg_ddr_pause_from18(63 downto 56);
 
-dbg_ddr_step(0) <= dbg_ddr_step_from16(0);
-dbg_ddr_step(1) <= dbg_ddr_step_from16(1);
-dbg_ddr_step(2) <= dbg_ddr_step_from18(4);
-dbg_ddr_step(3) <= dbg_ddr_step_from16(2);
-dbg_ddr_step(4) <= dbg_ddr_step_from16(3);
-dbg_ddr_step(5) <= dbg_ddr_step_from18(5);
-dbg_ddr_step(6) <= dbg_ddr_step_from18(6);
-dbg_ddr_step(7) <= dbg_ddr_step_from18(7);
+dbg_ddr_step(7 downto 0)   <= dbg_ddr_step_from16(7 downto 0);  
+dbg_ddr_step(15 downto 8)  <= dbg_ddr_step_from16(15 downto 8); 
+dbg_ddr_step(23 downto 16) <= dbg_ddr_step_from18(39 downto 32);
+dbg_ddr_step(31 downto 24) <= dbg_ddr_step_from16(23 downto 16);
+dbg_ddr_step(39 downto 32) <= dbg_ddr_step_from16(31 downto 24);
+dbg_ddr_step(47 downto 40) <= dbg_ddr_step_from18(47 downto 40);
+dbg_ddr_step(55 downto 48) <= dbg_ddr_step_from18(55 downto 48);
+dbg_ddr_step(63 downto 56) <= dbg_ddr_step_from18(63 downto 56);
+
+dbg_ddr_retry(7 downto 0)   <= dbg_ddr_retry_from16(7 downto 0);  
+dbg_ddr_retry(15 downto 8)  <= dbg_ddr_retry_from16(15 downto 8); 
+dbg_ddr_retry(23 downto 16) <= dbg_ddr_retry_from18(39 downto 32);
+dbg_ddr_retry(31 downto 24) <= dbg_ddr_retry_from16(23 downto 16);
+dbg_ddr_retry(39 downto 32) <= dbg_ddr_retry_from16(31 downto 24);
+dbg_ddr_retry(47 downto 40) <= dbg_ddr_retry_from18(47 downto 40);
+dbg_ddr_retry(55 downto 48) <= dbg_ddr_retry_from18(55 downto 48);
+dbg_ddr_retry(63 downto 56) <= dbg_ddr_retry_from18(63 downto 56);
+
+ddr_val_bank16(4 downto 0)   <= ddr_val(4 downto 0);
+ddr_val_bank16(9 downto 5)   <= ddr_val(9 downto 5);
+ddr_val_bank18(24 downto 20) <= ddr_val(14 downto 10);
+ddr_val_bank16(14 downto 10) <= ddr_val(19 downto 15);
+ddr_val_bank16(19 downto 15) <= ddr_val(24 downto 20);
+ddr_val_bank18(29 downto 25) <= ddr_val(29 downto 25);
+ddr_val_bank18(34 downto 30) <= ddr_val(34 downto 30);
+ddr_val_bank18(39 downto 35) <= ddr_val(39 downto 35);
+
+ddr_val_load_bank16(0)  <= ddr_val_load(0);
+ddr_val_load_bank16(1)  <= ddr_val_load(1);
+ddr_val_load_bank18(4)  <= ddr_val_load(2);
+ddr_val_load_bank16(2)  <= ddr_val_load(3);
+ddr_val_load_bank16(3)  <= ddr_val_load(4);
+ddr_val_load_bank18(5)  <= ddr_val_load(5);
+ddr_val_load_bank18(6)  <= ddr_val_load(6);
+ddr_val_load_bank18(7)  <= ddr_val_load(7);
+
 
 --##################################
 	
 end rtl;
 
+ 
