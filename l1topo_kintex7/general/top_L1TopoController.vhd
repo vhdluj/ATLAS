@@ -154,13 +154,17 @@ architecture rtl of top_L1TopoController is
 	
 	signal ddr_val_bank18       : std_logic_vector(ddr_lines_on_bank18 * 5 - 1 downto 0);
 	signal ddr_val_load_bank18  : std_logic_vector(ddr_lines_on_bank18 - 1 downto 0);
+	signal ddr_val_out_bank18   : std_logic_vector(ddr_lines_on_bank18 * 5 - 1 downto 0);
 	signal ddr_val_bank16       : std_logic_vector(ddr_lines_on_bank16 * 5 - 1 downto 0);
 	signal ddr_val_load_bank16  : std_logic_vector(ddr_lines_on_bank16 - 1 downto 0);
+	signal ddr_val_out_bank16   : std_logic_vector(ddr_lines_on_bank16 * 5 - 1 downto 0);
 	
 	signal ddr_val              : std_logic_vector(LINKS_NUMBER * 5 - 1 downto 0);
 	signal ddr_val_load         : std_logic_vector(LINKS_NUMBER - 1 downto 0);
 	
 	signal clk_400, clk_80, clk_fb, clk_400_ub, clk_80_ub, local_dcm_locked : std_logic;
+	
+	signal ddr_clk_bank18, ddr_clk_bank16 : std_logic;
 
 begin
  ones <= (others => '1');
@@ -234,20 +238,21 @@ begin
 --end generate GENERATE_OUTPUT_PARSERS;
 
 
-ddr_synced <= '1' when (links_synced = ones and rst_ipb = '0') and soft_rst = '0' else '0';
+ddr_synced <= '1' when (links_synced = ones) else '0'; -- and rst_ipb = '0') and soft_rst = '0' else '0';
 
 --##################################### END OF ROD
 
 
-ddr_rst <= not gck2_mmcm_locked or rst_ipb;
+ddr_rst <= not gck2_mmcm_locked; -- or rst_ipb;
 
-v_reset <= rst_from_bank18 or rst_from_bank16 or rst_ipb;
+v_reset <= '0'; --rst_from_bank18 or rst_from_bank16 or rst_ipb;
 
 ddr_bank18 : entity work.ddr_links_wrapper
 generic map(
                 DELAY_GROUP_NAME     => "bank18_delay_group",
                 AVAILABLE_LVDS_LINES => ddr_lines_on_bank18,
                 EXCLUDE_DCM_IDELAY_CTRL => FALSE,
+					 MANUAL_SYNC => TRUE,
                 SIMULATION => SIMULATION
 )
 port map(
@@ -255,6 +260,7 @@ port map(
                 DELAY_CLK_IN       => idelayctrl_refclk300,
                 EXT_DDR_CLK_IN     => '0',
                 EXT_DDR_CLK_X8_IN  => '0',
+					 INT_DDR_CLK_OUT    => ddr_clk_bank18,
                 RESET_IN           => ddr_rst,
                
                 LVDS_IN_P          => DATA_BANK18_IN_P,
@@ -265,6 +271,7 @@ port map(
 					 
 				DELAY_VALS_IN      => ddr_val_bank18,
 				DELAY_LOAD_IN      => ddr_val_load_bank18,
+				DELAY_VALS_OUT     => ddr_val_out_bank18,
                                
                 DATA_OUT           => ddr_data_from_bank18,
                 DATA_VALID_OUT     => ddr_dv_from_bank18,
@@ -284,6 +291,7 @@ generic map(
                 DELAY_GROUP_NAME     => "bank16_delay_group",
                 AVAILABLE_LVDS_LINES => ddr_lines_on_bank16,
                 EXCLUDE_DCM_IDELAY_CTRL => FALSE,
+					 MANUAL_SYNC => TRUE,
                 SIMULATION => SIMULATION
 )
 port map(
@@ -291,6 +299,7 @@ port map(
                 DELAY_CLK_IN       => idelayctrl_refclk300,
                 EXT_DDR_CLK_IN     => '0',
                 EXT_DDR_CLK_X8_IN  => '0',
+					 INT_DDR_CLK_OUT    => ddr_clk_bank16,
                 RESET_IN           => ddr_rst,
                
                 LVDS_IN_P          => DATA_BANK16_IN_P,
@@ -300,7 +309,8 @@ port map(
 				RESET_TRANS_OUT    => rst_from_bank16,           
 				
 				DELAY_VALS_IN      => ddr_val_bank16,
-				DELAY_LOAD_IN      => ddr_val_load_bank16,                    
+				DELAY_LOAD_IN      => ddr_val_load_bank16,
+				DELAY_VALS_OUT     => ddr_val_out_bank16,                    
 						
                 DATA_OUT           => ddr_data_from_bank16,
                 DATA_VALID_OUT     => ddr_dv_from_bank16,
