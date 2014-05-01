@@ -154,7 +154,7 @@ void getDdrStatus() {
 	union BytesOfInteger{unsigned int i; unsigned char c[4];} BoI;
 	int returnvalue;
 
-	for (int kk = 0; kk < 16; kk++) {
+	for (int kk = 0; kk < 17; kk++) {
 	  returnvalue = ipb.read(address, rxdata, 1);
 	  for(int b=0; b<4; ++b){BoI.c[b] = rxdata[8+3-b];}
 	  printf("%x : %#x\n", address, BoI.i);
@@ -164,6 +164,35 @@ void getDdrStatus() {
 	return;	
 }
 
+void setDelays() {
+  unsigned int address = 0;
+  unsigned int dataToWrite = 1;
+  unsigned char txdata[4];
+  unsigned char rxdata[12];
+  union BytesOfInteger{unsigned int i; unsigned char c[4];} BoI;
+  int returnvalue;
+  
+  scanf("%x", &dataToWrite);
+  address = 0x12;
+  BoI.i = dataToWrite;
+  for(int b=0; b<4; ++b){txdata[b]=BoI.c[3-b];}
+  returnvalue = ipb.write(address, txdata, 1);
+  
+  scanf("%x", &dataToWrite);
+  address = 0x13;
+  BoI.i = dataToWrite;
+  for(int b=0; b<4; ++b){txdata[b]=BoI.c[3-b];}
+  returnvalue = ipb.write(address, txdata, 1);
+  
+  scanf("%x", &dataToWrite);
+  address = 0x17;
+  BoI.i = dataToWrite;
+  for(int b=0; b<4; ++b){txdata[b]=BoI.c[3-b];}
+  returnvalue = ipb.write(address, txdata, 1);
+
+  return;
+  
+}
 
 
 int main(){
@@ -180,6 +209,7 @@ int main(){
 		std::cout << "5) writememblock" << std::endl;
 		std::cout << "6) resetfpga" << std::endl;
 		std::cout << "7) getddrstatus" << std::endl;
+		std::cout << "8) setdelays" << std::endl;
 		std::cout << "> ";
 		std::cin >> command;
 		if(command.compare("quit")==0 || command.compare("0")==0){break;}
@@ -190,6 +220,7 @@ int main(){
 		else if(command.compare("writememblock")==0 || command.compare("5")==0){writeMemBlock();}
 		else if(command.compare("resetfpga")==0 || command.compare("6")==0){resetFpga();}
 		else if(command.compare("getddrstatus")==0 || command.compare("7")==0){getDdrStatus();}
+		else if(command.compare("setdelays")==0 || command.compare("8")==0){setDelays();}
 		else{std::cout << "Sorry. I haven't understood your input." << std::endl;}
 	}
 	
