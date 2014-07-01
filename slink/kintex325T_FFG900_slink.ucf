@@ -1,0 +1,156 @@
+### UCF file fragment form xilinx kintex 7 dev board
+
+#NET  SFP3_TXDIS            LOC = Y20  | IOSTANDARD=LVCMOS25; # Bank  12 VCCO - VADJ_FPGA - IO_0_12
+#NET  GPIO_LED<4>             LOC = AE26 |IOSTANDARD=LVCMOS25; # Bank  13 VCCO - VADJ_FPGA - IO_25_13
+#NET  SFP3_LOS                LOC = P19  | IOSTANDARD=LVCMOS25; # Bank  15 VCCO - VCC2V5_FPGA - IO_25_15
+#NET  GPIO_LED<5>             LOC = G19  |IOSTANDARD=LVCMOS25; # Bank  17 VCCO - VADJ_FPGA - IO_0_17
+#NET  GPIO_LED<6>             LOC = E18  |IOSTANDARD=LVCMOS25; # Bank  17 VCCO - VADJ_FPGA - IO_25_17
+#NET  GPIO_LED<7>             LOC = F16  |IOSTANDARD=LVCMOS25; # Bank  18 VCCO - VADJ_FPGA - IO_25_18
+#NET  GPIO_LED<1>             LOC = AA8  |IOSTANDARD=LVCMOS15; # Bank  33 VCCO - VCC1V5_FPGA - IO_L2P_T0_33
+#NET  GPIO_LED<0>             LOC = AB8  |IOSTANDARD=LVCMOS15; # Bank  33 VCCO - VCC1V5_FPGA - IO_L2N_T0_33
+#NET  GPIO_LED<3>             LOC = AB9  |IOSTANDARD=LVCMOS15; # Bank  33 VCCO - VCC1V5_FPGA - IO_L3P_T0_DQS_33
+#NET  GPIO_LED<2>             LOC = AC9  |IOSTANDARD=LVCMOS15; # Bank  33 VCCO - VCC1V5_FPGA - IO_L3N_T0_DQS_33
+#NET  SYSCLK_P                  LOC = AD12 |IOSTANDARD=LVDS; # Bank  33 VCCO - VCC1V5_FPGA - IO_L12P_T1_MRCC_33
+#NET  SYSCLK_N                  LOC = AD11 |IOSTANDARD=LVDS; # Bank  33 VCCO - VCC1V5_FPGA - IO_L12N_T1_MRCC_33
+#cfcfcfcf
+#
+#NET  SFP3_TX_P                  LOC = H2                        ; # Bank 117                 - MGTXTXP2_117
+#NET  SFP3_RX_N                  LOC = G3                        ; # Bank 117                 - MGTXRXP2_117
+#NET  SFP3_TX_N                  LOC = H1                        ; # Bank 117                 - MGTXTXN2_117
+#NET  gt_clkp             LOC = G8                        ; # Bank 117                 - MGTREFCLK0P_117
+#NET  SFP3_RX_P                  LOC = G4                        ; # Bank 117                 - MGTXRXN2_117
+#NET  gt_clkn             LOC = G7                        ; # Bank 117                 - MGTREFCLK0N_117
+#
+##Created by Constraints Editor (xc7k325t-ffg900-2) - 2013/10/02
+#NET "SYSCLK_P" TNM_NET = SYSCLK_P;
+#TIMESPEC TS_SYSCLK_P = PERIOD "SYSCLK_P" 200 MHz HIGH 50%;
+#
+#INST "hola_inst/tlk_wrapper_k7_1/hola_tlk_gtx_i/hola_gtx_7_i/gt0_hola_gtx_7_i/gtxe2_i"  LOC="GTXE2_CHANNEL_X0Y10"; #bank 117
+#
+
+#====================================================================================================================
+
+
+NET "SYSCLK_P" TNM_NET=SYSCLK_P;
+TIMESPEC TS_SYSCLK_P = PERIOD SYSCLK_P 16ns;
+#INST "hola_inst/tlk_wrapper_k7_1/hola_tlk_gtx_i/hola_gtx_7_i/gt0_hola_gtx_7_i/gtxe2_i" LOC=GTXE2_CHANNEL_X0Y15;
+INST "hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_hola_kin7_gtx_i/gtxe2_i"  LOC="GTXE2_CHANNEL_X0Y15";
+NET PHY_RESET_N LOC=Y13 ;#| IOSTANDARD=LVCMOS15;
+
+NET "SYSCLK_P" LOC = U27;# |IOSTANDARD=LVDS;
+NET "SYSCLK_N" LOC = U28;# |IOSTANDARD=LVDS;
+
+NET SFP3_TXDIS LOC = K23;
+NET SFP3_LOS   LOC = L20;
+
+#NET  SFP3_TX_P                  LOC = A4                        ; # Bank 117                 - MGTXTXP2_117
+#NET  SFP3_RX_N                  LOC = A7                        ; # Bank 117                 - MGTXRXP2_117
+#NET  SFP3_TX_N                  LOC = A3                        ; # Bank 117                 - MGTXTXN2_117
+#NET  SFP3_RX_P                  LOC = A8                        ; # Bank 117                 - MGTXRXN2_117
+
+
+INST "gt_clkp" LOC = "C8" | DIFF_TERM=TRUE | TNM_NET=gt_clk;
+INST "gt_clkn" LOC = "C7" | DIFF_TERM=TRUE;
+TIMESPEC TS_gt_clk = PERIOD gt_clk 8ns;
+
+#INST "aurora_inst?aurora_module_i?gt_wrapper_i?aurora2_test_multi_gt_i?gt0_aurora2_test_i?gtxe2_i" LOC = "GTXE2_CHANNEL_X0Y14";
+
+
+#Created by Constraints Editor (xc7k325t-ffg900-2) - 2013/10/14
+#NET "GCLK2_P" TNM_NET = GCLK2_P;
+#TIMESPEC TS_GCLK2_P = PERIOD "GCLK2_P" 40 MHz HIGH 50%;
+
+NET "LED_OUT" LOC = AA12;
+#NET "DATA_PIN_P_IN<0>" LOC = L12;
+#NET "DATA_PIN_P_IN<1>" LOC = AA18;
+#NET "DATA_PIN_P_IN<2>" LOC = K14;
+#NET "DATA_PIN_P_IN<3>" LOC = Y19;
+#NET "DATA_PIN_P_IN<4>" LOC = AD18;
+#NET "DATA_PIN_P_IN<5>" LOC = L16;
+#NET "DATA_PIN_P_IN<6>" LOC = AD19;
+#NET "DATA_PIN_P_IN<7>" LOC = L15;
+#NET "DATA_PIN_P_IN<8>" LOC = AD17;
+#NET "DATA_PIN_P_IN<9>" LOC = L17;
+#NET "DATA_PIN_P_IN<10>" LOC = AG19;
+#NET "DATA_PIN_P_IN<11>" LOC = AF18;
+#NET "DATA_PIN_P_IN<12>" LOC = AJ19;
+#NET "DATA_PIN_P_IN<13>" LOC = AH17;
+#NET "DATA_PIN_P_IN<14>" LOC = AJ18;
+#NET "DATA_PIN_P_IN<15>" LOC = AH16;
+#NET "DATA_PIN_P_IN<16>" LOC = AK16;
+#NET "DATA_PIN_P_IN<17>" LOC = AF15;
+#NET "DATA_PIN_P_IN<18>" LOC = K19;
+#NET "DATA_PIN_P_IN<19>" LOC = AE16;
+##NET "DATA_PIN_P_IN<20>" LOC = AG15;
+#NET "CTRLBUS_OUT_P<0>" LOC = AG15;
+#NET "DATA_PIN_P_IN<8>" LOC = F21;
+#NET "DATA_PIN_P_IN<9>" LOC = G22;
+#NET "DATA_PIN_P_IN<10>" LOC = F20;
+#NET "DATA_PIN_P_IN<11>" LOC = E19;
+#NET "DATA_PIN_P_IN<12>" LOC = D16;
+#NET "DATA_PIN_P_IN<13>" LOC = G17;
+#NET "DATA_PIN_P_IN<14>" LOC = E23;
+#NET "DATA_PIN_P_IN<15>" LOC = G18;
+#NET "DATA_PIN_P_IN<28>" LOC = E24;
+#NET "DATA_PIN_P_IN<29>" LOC = F15;
+#NET "DATA_PIN_P_IN<30>" LOC = F25;
+#NET "DATA_PIN_P_IN<31>" LOC = F26;
+#NET "DATA_PIN_P_IN<32>" LOC = E14;
+#NET "DATA_PIN_P_IN<33>" LOC = G27;
+#NET "DATA_PIN_P_IN<34>" LOC = F12;
+#NET "DATA_PIN_P_IN<35>" LOC = D12;
+#NET "DATA_PIN_P_IN<36>" LOC = H26;
+#NET "DATA_PIN_P_IN<37>" LOC = G23;
+#NET "DATA_PIN_P_IN<38>" LOC = F11;
+#NET "DATA_PIN_P_IN<39>" LOC = H21;
+##NET "DATA_PIN_P_IN<41>" LOC = H24;
+#NET "CTRLBUS_OUT_P<1>" LOC = H24;
+##
+#NET "DATA_PIN_N_IN<0>" LOC = L13;
+#NET "DATA_PIN_N_IN<1>" LOC = AB18;
+#NET "DATA_PIN_N_IN<2>" LOC = J14;
+#NET "DATA_PIN_N_IN<3>" LOC = Y18;
+#NET "DATA_PIN_N_IN<4>" LOC = AE18;
+#NET "DATA_PIN_N_IN<5>" LOC = K16;
+#NET "DATA_PIN_N_IN<6>" LOC = AE19;
+#NET "DATA_PIN_N_IN<7>" LOC = K15;
+#NET "DATA_PIN_N_IN<8>" LOC = AD16;
+#NET "DATA_PIN_N_IN<9>" LOC = L18;
+#NET "DATA_PIN_N_IN<10>" LOC = AH19;
+#NET "DATA_PIN_N_IN<11>" LOC = AG18;
+#NET "DATA_PIN_N_IN<12>" LOC = AK19;
+#NET "DATA_PIN_N_IN<13>" LOC = AJ17;
+#NET "DATA_PIN_N_IN<14>" LOC = AK18;
+#NET "DATA_PIN_N_IN<15>" LOC = AJ16;
+#NET "DATA_PIN_N_IN<16>" LOC = AK15;
+#NET "DATA_PIN_N_IN<17>" LOC = AG14;
+#NET "DATA_PIN_N_IN<18>" LOC = K20;
+#NET "DATA_PIN_N_IN<19>" LOC = AF16;
+##NET "DATA_PIN_N_IN<20>" LOC = AH15;
+#NET "CTRLBUS_OUT_N<0>" LOC = AH15;
+#NET "DATA_PIN_N_IN<8>" LOC = E21;
+#NET "DATA_PIN_N_IN<9>" LOC = F22;
+#NET "DATA_PIN_N_IN<10>" LOC = E20;
+#NET "DATA_PIN_N_IN<11>" LOC = D19;
+#NET "DATA_PIN_N_IN<12>" LOC = C16;
+#NET "DATA_PIN_N_IN<13>" LOC = F17;
+#NET "DATA_PIN_N_IN<14>" LOC = D23;
+#NET "DATA_PIN_N_IN<15>" LOC = F18;
+#NET "DATA_PIN_N_IN<28>" LOC = D24;
+#NET "DATA_PIN_N_IN<29>" LOC = E16;
+#NET "DATA_PIN_N_IN<30>" LOC = E25;
+#NET "DATA_PIN_N_IN<31>" LOC = E26;
+#NET "DATA_PIN_N_IN<32>" LOC = E15;
+#NET "DATA_PIN_N_IN<33>" LOC = F27;
+#NET "DATA_PIN_N_IN<34>" LOC = E13;
+#NET "DATA_PIN_N_IN<35>" LOC = D13;
+#NET "DATA_PIN_N_IN<36>" LOC = H27;
+#NET "DATA_PIN_N_IN<37>" LOC = G24;
+#NET "DATA_PIN_N_IN<38>" LOC = E11;
+#NET "DATA_PIN_N_IN<39>" LOC = H22;
+##NET "DATA_PIN_N_IN<41>" LOC = H25;
+#NET "CTRLBUS_OUT_N<1>" LOC = H25;
+
+
+
+
