@@ -17,7 +17,7 @@ use work.rod_l1_topo_types_const.all;
 entity top_L1TopoController is
 generic (
 	LINKS_NUMBER : integer range 0 to 40 := 8;
-        SIMULATION  : boolean := false
+	SIMULATION  : boolean := false
 		  );
 port(
 	gt_clkp, gt_clkn: in std_logic;
@@ -371,35 +371,6 @@ port map(
 --	DATA_VALID_OUT     => open
 --);
 
-
---hola_inst : entity work.hola_lsc_vtx6
---  port map(
---        MGTREFCLK_P     => clk125_fr,
---        MGTREFCLK_N     => '0',
---        SYS_RST         => sys_rst,
---        -- S-LINK interface
---        UD              => (others => '0'),
---        URESET_N        => '1',
---        UTEST_N         => '1',
---        UCTRL_N         => '1',
---        UWEN_N          => '0',
---        UCLK            => clk125_fr,
---        LFF_N           => open,
---        LRL             => open,
---        LDOWN_N         => hola_ldown_n,
---        -- SFP serial interface
---        TLK_SIN_P       => SFP3_RX_P,
---        TLK_SIN_N       => SFP3_RX_N,
---        TLK_SOUT_P      => SFP3_TX_P,
---        TLK_SOUT_N      => SFP3_TX_N,
---        -- LEDs
---        TESTLED_N       => LED_OUT(1),
---        LDERRLED_N      => LED_OUT(2),
---        LUPLED_N        => LED_OUT(3),
---        FLOWCTLLED_N    => LED_OUT(5),
---        ACTIVITYLED_N   => LED_OUT(6)
---        );
-
 vrst_u1_buf : obufds port map( I =>  v_reset, O => DATA_U1_CTRL_OUT_P, OB => DATA_U1_CTRL_OUT_N);
 vrst_u2_buf : obufds port map( I =>  v_reset, O => DATA_U2_CTRL_OUT_P, OB => DATA_U2_CTRL_OUT_N);
 vsyn_u2_buf : obufds port map( I =>  ddr_synced, O => DATA_U2_SYNC_OUT_P, OB => DATA_U2_SYNC_OUT_N);
@@ -585,19 +556,19 @@ end generate SIM_CLOCK;
 	);
       
       
-	move : entity work.from_rod_to_ipbus
-	port map(
-		clk => gck2_clk80,
-		reset => rst_ipb,
-      	
-		parsers_data_in => rod_data,
-		parsers_rd_out => rod_re,
-		parsers_rdy_in => rod_rdy,
-      	
-		ram_we_out => ram_we,
-		ram_waddr_out => ram_addr,
-		ram_data_out => ram_data
-	);
+--	move : entity work.from_rod_to_ipbus
+--	port map(
+--		clk => gck2_clk80,
+--		reset => rst_ipb,
+--      	
+--		parsers_data_in => rod_data,
+--		parsers_rd_out => rod_re,
+--		parsers_rdy_in => rod_rdy,
+--      	
+--		ram_we_out => ram_we,
+--		ram_waddr_out => ram_addr,
+--		ram_data_out => ram_data
+--	);
       
 	ctrlbus: entity work.ctrlbus
 		port map(

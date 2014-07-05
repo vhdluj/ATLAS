@@ -209,22 +209,5 @@ greg_ddr_rst <= not ctrlbus_locked or ddr_reset;
     rst_ipb <= not gck2_mmcm_locked;
     MMCX_U30 <= triggerReg(0);-- or MMCX_U30_PIN;
 
-	
-  my_icon : entity work.cs_icon
-  port map (
-    CONTROL0 => CONTROL0); 
-   
- my_ila : entity work.cs_ils
-  port map (
-    CONTROL => CONTROL0,
-    CLK => gck2_clk40,
-    TRIG0 => trg);  
-
-trg(0) <= reset;
-trg(1) <= gck2_mmcm_locked;
-trg(2) <= ddr_reset;
-trg(3) <= ctrlbus_locked;
-trg(4) <= greg_ddr_rst;
-
 end top_TopoVirtex;
 
