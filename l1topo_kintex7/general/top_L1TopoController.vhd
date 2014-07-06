@@ -1,9 +1,3 @@
--- Top-level design for ipbus demo
---
--- You must edit this file to set the IP and MAC addresses
---
--- Dave Newbold, 16/7/12
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
@@ -556,19 +550,19 @@ end generate SIM_CLOCK;
 	);
       
       
---	move : entity work.from_rod_to_ipbus
---	port map(
---		clk => gck2_clk80,
---		reset => rst_ipb,
---      	
---		parsers_data_in => rod_data,
---		parsers_rd_out => rod_re,
---		parsers_rdy_in => rod_rdy,
---      	
---		ram_we_out => ram_we,
---		ram_waddr_out => ram_addr,
---		ram_data_out => ram_data
---	);
+	move : entity work.from_rod_to_ipbus
+	port map(
+		clk => gck2_clk80,
+		reset => rst_ipb,
+      	
+		parsers_data_in => rod_data,
+		parsers_rd_out => rod_re,
+		parsers_rdy_in => rod_rdy,
+      	
+		ram_we_out => ram_we,
+		ram_waddr_out => ram_addr,
+		ram_data_out => ram_data
+	);
       
 	ctrlbus: entity work.ctrlbus
 		port map(
