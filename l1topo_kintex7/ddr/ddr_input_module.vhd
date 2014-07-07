@@ -9,7 +9,7 @@ use UNISIM.VComponents.all;
 entity ddr_input_module is
 generic (
 	MANUAL_SYNC : boolean := FALSE;
-   SIMULATION : boolean := FALSE);
+    SIMULATION : boolean := FALSE);
 port(
 	RESET_IN          : in std_logic;
 	DCM_DDR_CLK_IN    : in std_logic;
@@ -168,7 +168,7 @@ begin
 	
 	MANUAL_SYNC_GEN : if (MANUAL_SYNC = TRUE) generate
 	
-		ALIGN_MACHINE : process(align_current_state, CTRL_READY_IN, bitslips_ctr, pause_ctr, synced, local_kctrl, local_valid, local_data)
+		ALIGN_MACHINE : process(align_current_state, CTRL_READY_IN, bitslips_ctr, pause_ctr, synced, local_valid, local_data)
 		begin
 				state <= x"0";
 		

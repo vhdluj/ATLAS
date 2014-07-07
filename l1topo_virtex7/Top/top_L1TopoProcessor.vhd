@@ -128,6 +128,12 @@ signal greg_ddr_rst : std_logic;
 	 
 signal control0, control1 : std_logic_vector(35 downto 0);
 signal trg : std_logic_vector(255 downto 0);
+
+signal test_ctr : std_logic_vector(7 downto 0);
+signal test_data : std_logic_vector(63 downto 0);
+
+signal icon_control0, icon_control1 : std_logic_vector(35 downto 0);
+signal ila_trg : std_logic_vector(255 downto 0);
 	 
 begin
 
@@ -162,6 +168,16 @@ begin
 
 greg_ddr_rst <= not ctrlbus_locked or ddr_reset;
 
+process(clk80)
+begin
+	if rising_edge(clk80) then
+		test_ctr <= test_ctr + x"1";
+	end if;
+end process;
+		
+test_data <= test_ctr & test_ctr & test_ctr & test_ctr & test_ctr & test_ctr & test_ctr & test_ctr;
+data_valid_out <= (others => '1') when KINTEX_READY = '1' else (others => '0');
+
 	--Wrapper initialization______________________________________
     TransmittersWrapperInst :  entity work.TransmittersWrapper
     	generic map(
@@ -170,7 +186,7 @@ greg_ddr_rst <= not ctrlbus_locked or ddr_reset;
     	port map(RESET         => reset, --greg_ddr_rst,
     		     CLK_BIT_IN     => clk400,
     		     CLK_WORD_IN    => clk80, --gck2_clk80,--clk80
-    		     DATA_IN        => out_data,--dataIn,             --out_data vector comming out form 'l1topo_to_ddr'
+    		     DATA_IN        => test_data, --out_data,--dataIn,             --out_data vector comming out form 'l1topo_to_ddr'
     		     DATA_VALID_IN  => data_valid_out,--dataValidIn,  --data_valid_out sgn comming out from 'l1topo_to_ddr'
     		     DATA_KCTRL_IN  => special_character_out,--dataKctrlIn,
     		     DATA_PIN_P_OUT => CTRLBUS_P,
@@ -208,6 +224,39 @@ greg_ddr_rst <= not ctrlbus_locked or ddr_reset;
     LED_OUT <= ctrlbus_locked;
     rst_ipb <= not gck2_mmcm_locked;
     MMCX_U30 <= triggerReg(0);-- or MMCX_U30_PIN;
+    
+    
+    
+    
+    
+    
+icon : entity work.cs_icon
+PORT map(
+    CONTROL0 => icon_control0,
+    CONTROL1 => icon_control1
+);
+
+ila0 : entity work.cs_ila
+PORT map(
+    CONTROL => icon_control0,
+    CLK     => idelayctrl_refclk300,
+    TRIG0   => ila_trg
+);
+
+ila1 : entity work.cs_ila
+PORT map(
+    CONTROL => icon_control1,
+    CLK     => idelayctrl_refclk300,
+    TRIG0   => (others => '0')
+);
+
+
+ila_trg(63 downto 0)  <= test_data;
+ila_trg(71 downto 64) <= data_valid_out;
+ila_trg(72) <= reset;
+ila_trg(73) <= KINTEX_READY;
+
+ila_trg(255 downto 74) <= (others => '0');
 
 end top_TopoVirtex;
 

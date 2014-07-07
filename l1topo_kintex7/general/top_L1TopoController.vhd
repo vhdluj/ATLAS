@@ -14,10 +14,19 @@ generic (
 	SIMULATION  : boolean := false
 		  );
 port(
+	-- 125 mhz 
 	gt_clkp, gt_clkn: in std_logic;
+	
+	-- ipbus eth
 	gt_txp, gt_txn: out std_logic;
 	gt_rxp, gt_rxn: in std_logic;
+	
+	-- 40 mhz
 	GCK2_IN_P, GCK2_IN_N: in std_logic;
+	
+	-- link minipod (3)
+	OPTO_KR1_P, OPTO_KR1_N : in std_logic;
+	OPTO_KT1_P, OPTO_KT1_N : out std_logic;
 	
 	CTRLBUS_U1_IN_P, CTRLBUS_U1_IN_N: in std_logic_vector(2 downto 0);
 	CTRLBUS_U2_IN_P, CTRLBUS_U2_IN_N: in std_logic_vector(2 downto 0);
@@ -159,6 +168,38 @@ architecture rtl of top_L1TopoController is
 	signal clk_400, clk_80, clk_fb, clk_400_ub, clk_80_ub, local_dcm_locked : std_logic;
 	
 	signal ddr_clk_bank18, ddr_clk_bank16 : std_logic;
+	signal icon_control0, icon_control1 : std_logic_vector(35 downto 0);
+	signal ila_trg : std_logic_vector(254 downto 0);
+	
+	-- SLINK signals
+--	type state is (working, reseting, initializing);
+--	signal holaInitNS, holaInitCS : state := working;
+--	signal LFF_N_sgn  : std_logic;
+--	signal LRL_sgn    : std_logic_vector(3 downto 0);
+--	signal LDOWN_N_sgn: std_logic;
+--	signal uwen_cntr : std_logic_vector(2 downto 0) := "000";
+--	signal uwen_allowed_n : std_logic;
+--	signal ureset_n_sgn : std_logic:= '0';
+--	signal ctr : std_logic_vector(29 downto 0) := b"00_0000_0000_0000_0000_0000_0000_0000";
+	
+	signal enable_in_sgn : std_logic  := '0';
+	signal ready_out_sgn : std_logic  := '0';  
+	signal busy_out_sgn      : std_logic  := '0';  
+	signal ureset_in_sgn     : std_logic  := '0';  
+	signal payload_in_sgn 	 : std_logic_vector (31 downto 0)  := (others => '0');
+	signal cnt 				 : std_logic_vector(7 downto 0)  := x"00";
+	signal runNumber_sgn	 : std_logic_vector(23 downto 0)  := x"00_0000";
+	signal numberOfDataEl_sgn	 : std_logic_vector(15 downto 0)  := x"0001";
+	signal pauseCnt : std_logic_vector(31 downto 0)   :=  (others => '0');
+	signal wordsCnt : std_logic_vector(3 downto 0)  := (others => '0');
+	signal rstCnt : std_logic_vector(28 downto 0) := (others => '0');
+	signal rstCnt_sgn : std_logic := '0';
+	
+	type state_type is (idle,reset,prepare2send, send , pause);
+	signal state, n_state : state_type  := idle;
+	-- end of SLINK signals
+	
+	signal gte2_clk_125 : std_logic;
 
 begin
  ones <= (others => '1');
@@ -246,7 +287,7 @@ generic map(
                 DELAY_GROUP_NAME     => "bank18_delay_group",
                 AVAILABLE_LVDS_LINES => ddr_lines_on_bank18,
                 EXCLUDE_DCM_IDELAY_CTRL => FALSE,
-					 MANUAL_SYNC => TRUE,
+				MANUAL_SYNC => TRUE,
                 SIMULATION => SIMULATION
 )
 port map(
@@ -254,7 +295,7 @@ port map(
                 DELAY_CLK_IN       => idelayctrl_refclk300,
                 EXT_DDR_CLK_IN     => '0',
                 EXT_DDR_CLK_X8_IN  => '0',
-					 INT_DDR_CLK_OUT    => ddr_clk_bank18,
+				INT_DDR_CLK_OUT    => ddr_clk_bank18,
                 RESET_IN           => ddr_rst,
                
                 LVDS_IN_P          => DATA_BANK18_IN_P,
@@ -285,7 +326,7 @@ generic map(
                 DELAY_GROUP_NAME     => "bank16_delay_group",
                 AVAILABLE_LVDS_LINES => ddr_lines_on_bank16,
                 EXCLUDE_DCM_IDELAY_CTRL => FALSE,
-					 MANUAL_SYNC => TRUE,
+				MANUAL_SYNC => TRUE,
                 SIMULATION => SIMULATION
 )
 port map(
@@ -293,7 +334,7 @@ port map(
                 DELAY_CLK_IN       => idelayctrl_refclk300,
                 EXT_DDR_CLK_IN     => '0',
                 EXT_DDR_CLK_X8_IN  => '0',
-					 INT_DDR_CLK_OUT    => ddr_clk_bank16,
+				INT_DDR_CLK_OUT    => ddr_clk_bank16,
                 RESET_IN           => ddr_rst,
                
                 LVDS_IN_P          => DATA_BANK16_IN_P,
@@ -440,11 +481,23 @@ end generate SIM_CLOCK;
 -------------------------------------------------------------------------------
 ------ Ethernet MAC core and PHY interface
 ----
+
+	refclk_ibufds_i : IBUFDS_GTE2
+	port map (
+		O     => gte2_clk_125,
+	    ODIV2 => open,
+		CEB   => '0',
+		I     => gt_clkp,
+		IB    => gt_clkn
+	);
+
                          
 	eth: entity work.eth_7s_sgmii
 		port map(
-			gt_clkp => gt_clkp,
-			gt_clkn => gt_clkn,
+			--!!! GK: clock distributed also to slink, only P is used with buffered clock !!!
+			gt_clkp => gte2_clk_125, --gt_clkp,
+			gt_clkn => '0', --gt_clkn,
+			
 			gt_txp => gt_txp,
 			gt_txn => gt_txn,
 			gt_rxp => gt_rxp,
@@ -466,6 +519,8 @@ end generate SIM_CLOCK;
 			pcs_pma_status => pcs_pma_status,
 			ExternalPhyChip_reset_out => phy_reset
 		);
+
+
       
 	PHY_RESET_OUT_N <= not phy_reset;
       
@@ -499,7 +554,7 @@ end generate SIM_CLOCK;
 
 	mac_addr <= X"000A3501F610";
 	--ip_addr <= X"865D828B"; --134.93.130.139
-	ip_addr <= X"898A5114"; --137.138.81.20
+	ip_addr <= X"898A5121"; --137.138.81.33  --X"898A5114"; --137.138.81.20
 
 
 -- ipbus slaves live in the entity below, and can expose top-level ports
@@ -529,7 +584,7 @@ end generate SIM_CLOCK;
 		ctrlbus_idelay_load_out => ctrlbus_idelay_load,
       	
       	
-			soft_rst_out => soft_rst,
+		soft_rst_out => soft_rst,
 			
 		DELAY_VALS_OUT   => ddr_val,
 		DELAY_LOAD_OUT   => ddr_val_load,
@@ -550,53 +605,276 @@ end generate SIM_CLOCK;
 	);
       
       
-	move : entity work.from_rod_to_ipbus
-	port map(
-		clk => gck2_clk80,
-		reset => rst_ipb,
-      	
-		parsers_data_in => rod_data,
-		parsers_rd_out => rod_re,
-		parsers_rdy_in => rod_rdy,
-      	
-		ram_we_out => ram_we,
-		ram_waddr_out => ram_addr,
-		ram_data_out => ram_data
-	);
+--	move : entity work.from_rod_to_ipbus
+--	port map(
+--		clk => gck2_clk80,
+--		reset => rst_ipb,
+--      	
+--		parsers_data_in => rod_data,
+--		parsers_rd_out => rod_re,
+--		parsers_rdy_in => rod_rdy,
+--      	
+--		ram_we_out => ram_we,
+--		ram_waddr_out => ram_addr,
+--		ram_data_out => ram_data
+--	);
       
-	ctrlbus: entity work.ctrlbus
-		port map(
-			gck2_clk40_in => gck2_clk40,
-			gck2_clk80_in => gck2_clk80,
-			idelayctrl_refclk300_in => idelayctrl_refclk300,
-			gck2_mmcm_locked_in => gck2_mmcm_locked,
-			CTRLBUS_U1_OUT_P => CTRLBUS_U1_OUT_P,
-			CTRLBUS_U1_OUT_N => CTRLBUS_U1_OUT_N,
-			CTRLBUS_U2_OUT_P => CTRLBUS_U2_OUT_P,
-			CTRLBUS_U2_OUT_N => CTRLBUS_U2_OUT_N,
-			CTRLBUS_U1_IN_P => CTRLBUS_U1_IN_P,
-			CTRLBUS_U1_IN_N => CTRLBUS_U1_IN_N,
-			CTRLBUS_U2_IN_P => CTRLBUS_U2_IN_P,
-			CTRLBUS_U2_IN_N => CTRLBUS_U2_IN_N,
-			ipb_write_U1_in => ipb_write_U1,
-			ipb_read_U1_out => ipb_read_U1,
-			ipb_write_U2_in => ipb_write_U2,
-			ipb_read_U2_out => ipb_read_U2,
-			idelay_value_in => ctrlbus_idelay_value,
-			idelay_load_in => ctrlbus_idelay_load,
-			
-			clk_400_in => clk_400,
-			clk_80_in  => clk_80,
-      		
-			mmcm_clk_80_u1_out => ctrlbus_32_clk,
-			mmcm_clk_400_u1_out => ctrlbus_32_clkx8,
-      		
-			mmcm_clk_80_u2_out => ctrlbus_17_clk,
-			mmcm_clk_400_u2_out => ctrlbus_17_clkx8
-		);
+--	ctrlbus: entity work.ctrlbus
+--		port map(
+--			gck2_clk40_in => gck2_clk40,
+--			gck2_clk80_in => gck2_clk80,
+--			idelayctrl_refclk300_in => idelayctrl_refclk300,
+--			gck2_mmcm_locked_in => gck2_mmcm_locked,
+--			CTRLBUS_U1_OUT_P => CTRLBUS_U1_OUT_P,
+--			CTRLBUS_U1_OUT_N => CTRLBUS_U1_OUT_N,
+--			CTRLBUS_U2_OUT_P => CTRLBUS_U2_OUT_P,
+--			CTRLBUS_U2_OUT_N => CTRLBUS_U2_OUT_N,
+--			CTRLBUS_U1_IN_P => CTRLBUS_U1_IN_P,
+--			CTRLBUS_U1_IN_N => CTRLBUS_U1_IN_N,
+--			CTRLBUS_U2_IN_P => CTRLBUS_U2_IN_P,
+--			CTRLBUS_U2_IN_N => CTRLBUS_U2_IN_N,
+--			ipb_write_U1_in => ipb_write_U1,
+--			ipb_read_U1_out => ipb_read_U1,
+--			ipb_write_U2_in => ipb_write_U2,
+--			ipb_read_U2_out => ipb_read_U2,
+--			idelay_value_in => ctrlbus_idelay_value,
+--			idelay_load_in => ctrlbus_idelay_load,
+--			
+--			clk_400_in => clk_400,
+--			clk_80_in  => clk_80,
+--      		
+--			mmcm_clk_80_u1_out => ctrlbus_32_clk,
+--			mmcm_clk_400_u1_out => ctrlbus_32_clkx8,
+--      		
+--			mmcm_clk_80_u2_out => ctrlbus_17_clk,
+--			mmcm_clk_400_u2_out => ctrlbus_17_clkx8
+--		);
+
 -------------------------------------------------------------------------------
 -- end comment for sim
 -------------------------------------------------------------------------------
+
+
+--hola_inst : entity work.hola_lsc_vtx6
+--port map(
+--	--!!! GK: clock distributed also to ipbus, only P is used with buffered clock !!!
+--	MGTREFCLK_P     		=> gte2_clk_125,
+--	MGTREFCLK_N     		=> '0',
+--	
+--	SYS_RST         		=> ddr_rst,
+--	CLK_LOCKED      		=> gck2_mmcm_locked,
+--	-- S-LINK interface
+--	UD              		=> b"00" & ctr,--(others => '0'),
+--	URESET_N        		=> ureset_n_sgn,--sys_rst,--not sys_rst,--ila_zegar_lock,
+--	UTEST_N         		=> '1',
+--	UCTRL_N         		=> '1',
+--	UWEN_N          		=> uwen_allowed_n,
+--	UCLK            		=> gck2_clk40,
+--	LFF_N           		=> LFF_N_sgn,
+--	LRL             		=> LRL_sgn,
+--	LDOWN_N         		=> LDOWN_N_sgn,
+--	-- SFP serial interface
+--	TLK_SIN_P       		=> OPTO_KR1_P, --SFP3_RX_P,
+--	TLK_SIN_N       		=> OPTO_KR1_N, --SFP3_RX_N,
+--	TLK_SOUT_P      		=> OPTO_KT1_P, --SFP3_TX_P,
+--	TLK_SOUT_N      		=> OPTO_KT1_N, --SFP3_TX_N,
+--	-- LEDs
+--	TESTLED_N       		=> open,--GPIO_LED(0),
+--	LDERRLED_N      		=> open,--GPIO_LED(1),
+--	LUPLED_N        		=> open,--GPIO_LED(2),
+--	FLOWCTLLED_N    		=> open,--GPIO_LED(3),
+--	ACTIVITYLED_N   		=> open,--GPIO_LED(4),
+--	
+--	--debbug
+--	GTX_RESETDONE_OUT  		=> open,
+--	LSC_RST_N_OUT  			=> open,
+--	TX_ER_OUT  				=> open,
+--	GTX_TXRESETDONE_DEBUG  	=> open,
+--	GTX_RESET_DEBUG        	=> open,
+--	GTX_CPLLOCK_DEBUG      	=> open,
+--	TLK_RXCLK  				=> open 
+--);
+
+in_slinkPckBuilder : entity work.slinkPckBuilder
+generic map( 
+			SIMULATION => 0
+)
+port map(sysClk             => gck2_clk40,
+	     CLK_LOCKED_IN      => gck2_mmcm_locked,
+	     
+	     	--!!! GK: clock distributed also to ipbus, only P is used with buffered clock !!!
+	     gt_clkp            => gte2_clk_125,
+	     gt_clkn            => '0',
+	     
+	     PHY_RESET_N        => '1', -- NOT USED INSIDE
+	     SFP3_TXDIS         => open,  -- NOT USED INSIDE
+	     SFP3_LOS           => '0', -- NOT USED INSIDE
+	     SFP3_RX_N          => OPTO_KR1_N, --SFP3_RX_N,
+	     SFP3_RX_P          => OPTO_KR1_P, --SFP3_RX_P,
+	     SFP3_TX_N          => OPTO_KT1_N, --SFP3_TX_N,
+	     SFP3_TX_P          => OPTO_KT1_P, --SFP3_TX_P,
+	     enable_in          => enable_in_sgn,
+	     ready_out          => ready_out_sgn,
+	     busy_out           => busy_out_sgn,
+	     ureset_in          => ureset_in_sgn,
+	     headerSize         => x"0000_0009", --nine words in the header exluding control word
+	     minorFormatVersion => x"1002",
+	     subDetId           => x"91",
+	     moduleId           => x"0001",
+	     runType            => b"0000_1111", --0 = physics, 1 = Calibration, 2 = Cosmics, 15=test
+	     runNumber          => runNumber_sgn,
+	     ECRID              => x"00",
+	     ROD_L1ID           => x"00_0000",
+	     ROD_BCN            => x"000",
+	     triggerType        => x"00",
+	     detectorEventType  => x"0000_0000",
+	     numberOfStatEl     => b"00",
+	     numberOfDataEl     => numberOfDataEl_sgn,
+	     statBlockPos       => '1',
+	     statWord1_in       => x"0000_0000",
+	     statWord2_in       => x"0000_0000",
+	     payload_in         => payload_in_sgn
+);
+
+FSM_sync : process(gck2_clk40) 
+begin
+	if rising_edge(gck2_clk40) then
+		rstCnt <= rstCnt + 1;
+		if(gck2_mmcm_locked = '0' or rstCnt_sgn = '1') then
+			state <= idle;
+		else
+			state  <= n_state;
+		end if;
+		if(state = send) then
+			numberOfDataEl_sgn  <= numberOfDataEl_sgn + 1;
+		elsif(state = pause) then
+			numberOfDataEl_sgn <= numberOfDataEl_sgn;
+		else
+			numberOfDataEl_sgn  <= x"0001";
+		end if;
+		if(state = pause) then
+			pauseCnt  <=  pauseCnt + 1;
+		else
+			pauseCnt  <= (others  => '0');
+		end if;
+		if(state = send) then
+			wordsCnt  <= wordsCnt -1;
+		else
+			wordsCnt  <= x"4";  --we send 4 words
+		end if;
+	end if;
+end process;
+
+FSM : process(ready_out_sgn,wordsCnt,pauseCnt,busy_out_sgn, runNumber_sgn, state)
+begin
+enable_in_sgn  <= '0';
+ureset_in_sgn  <= '0';
+runNumber_sgn  <= runNumber_sgn;
+	case state is 
+		when idle =>
+			n_state <= reset;
+			ureset_in_sgn  <= '1';
+		when reset =>
+			if (busy_out_sgn = '0') then	
+				n_state  <= prepare2Send;
+			else
+				n_state  <= reset;
+			end if;
+		when prepare2Send => 
+			enable_in_sgn <= '1';
+			if (ready_out_sgn = '1') then
+				n_state  <= send;
+			else
+				n_state  <= prepare2Send;
+			end if;		
+		when send =>
+			enable_in_sgn <= '1';
+			if(ready_out_sgn = '1' and wordsCnt >0 ) then
+				n_state  <= send;
+			else
+				n_state  <= pause;
+			end if;
+		when pause =>
+			if(pauseCnt > 100000 and busy_out_sgn = '0') then
+				n_state   <= prepare2Send;
+			else
+				n_state  <= pause; 
+			end if;			
+	end case;
+end process;
+
+
+
+
+DataGenerator : process (gck2_clk40)
+begin
+	if rising_edge ( gck2_clk40 ) then
+		cnt  <=  cnt + 1;
+	end if;
+end process;
+
+
+--One line signal assigmnet
+payload_in_sgn  <= cnt & cnt & cnt & cnt;
+rstCnt_sgn <= '1' when rstCnt = x"00_0000" else '0';
+
+--Slink_reset_sync : process (gck2_clk40)
+--begin
+--	if rising_edge(gck2_clk40) then
+--		
+--		if (gck2_mmcm_locked = '0') then
+--			holaInitCS <= working;
+--		else
+--			holaInitCS <= holaInitNS;
+--		end if;
+--		
+--		if( holaInitCS = initializing) then
+--			uwen_cntr <= uwen_cntr +1;
+--		else
+--			uwen_cntr <=(others=>'0');
+--		end if;
+--		
+--	end if;
+--end process;
+--
+--Slink_reset : process(holaInitCS, ddr_rst, LDOWN_N_sgn, uwen_cntr)
+--begin
+--	uwen_allowed_n <= '0';
+--	ureset_n_sgn <= '1';
+--	
+--	case holaInitCS is
+--		when working =>
+--			if(ddr_rst = '1') then
+--				holaInitNS <= reseting;
+--			else
+--				holaInitNS <= working;
+--			end if;
+--		when reseting =>
+--			uwen_allowed_n <= '1';
+--			ureset_n_sgn <= '0';
+--			if(LDOWN_N_sgn = '1') then
+--				holaInitNS <= initializing;
+--			else
+--				holaInitNS <= reseting;
+--			end if;
+--		when initializing =>
+--			uwen_allowed_n <= '1';
+--				if(uwen_cntr < 5) then 
+--					holaInitNS <= initializing;
+--				else
+--					holaInitNS <= working;
+--				end if;
+--		when others =>
+--			holaInitNS <= working;
+--	end case;
+--end process;
+--
+--process(gck2_clk40)
+--begin	    
+--	if rising_edge(gck2_clk40) then
+--		ctr <= ctr + x"1";
+--	end if;
+--end process;
 
 
 --################### UGLY LINKS MAPPING
@@ -720,6 +998,48 @@ ddr_val_load_bank18(7)  <= ddr_val_load(7);
 
 
 --##################################
+
+
+icon : entity work.cs_icon
+PORT map(
+    CONTROL0 => icon_control0,
+    CONTROL1 => icon_control1
+);
+    
+ila0 : entity work.cs_ila
+PORT map(
+    CONTROL => icon_control0,
+    CLK     => idelayctrl_refclk300,
+    TRIG0   => ila_trg
+);
+
+ila1 : entity work.cs_ila
+PORT map(
+    CONTROL => icon_control1,
+    CLK     => idelayctrl_refclk300,
+    TRIG0   => (others => '0')
+);
+
+ila_trg(63 downto 0)   <= ddr_data;
+ila_trg(71 downto 64)  <= ddr_dv;
+ila_trg(79 downto 72)  <= ddr_kctrl;
+ila_trg(87 downto 80)  <= links_synced;
+ila_trg(168 downto 89) <= dbg_ddr_reg;
+
+--ila_trg(254)            <= LDOWN_N_sgn;
+--ila_trg(253 downto 251) <= uwen_cntr;
+--ila_trg(250)            <= uwen_allowed_n;
+--ila_trg(249)            <= ureset_n_sgn;
+--ila_trg(248)            <= LFF_N_sgn;
+--ila_trg(247 downto 244) <= LRL_sgn;
+
+ila_trg(254) <= enable_in_sgn;
+ila_trg(253) <= ready_out_sgn;
+ila_trg(252) <= busy_out_sgn;
+ila_trg(251) <= ureset_in_sgn;
+
+ila_trg(250 downto 169) <= (others => '0'); 
+
 	
 end rtl;
 
