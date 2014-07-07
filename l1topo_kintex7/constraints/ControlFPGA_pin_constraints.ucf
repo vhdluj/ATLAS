@@ -1,4 +1,4 @@
-INST "eth/phy/transceiver_inst/gtwizard_inst/gtwizard_v2_7_i/gt0_gtwizard_v2_7_i/gtxe2_i" LOC = GTXE2_CHANNEL_X0Y15;
+#INST "eth/phy/transceiver_inst/gtwizard_inst/gtwizard_v2_7_i/gt0_gtwizard_v2_7_i/gtxe2_i" LOC = GTXE2_CHANNEL_X0Y15;
 
 NET "PHY_RESET_OUT_N" LOC = Y13;
 NET "PHY_RESET_OUT_N" IOSTANDARD = LVCMOS15;
