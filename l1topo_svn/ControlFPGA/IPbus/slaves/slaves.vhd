@@ -37,14 +37,23 @@ entity slaves is
 		DELAY_VALS_OUT    : out std_logic_vector(lvds_lines * 5 - 1 downto 0);
 		DELAY_LOAD_OUT   : out std_logic_vector(lvds_lines - 1 downto 0);
 		
-		DBG_LINKS_SYNCED_IN : in std_logic_vector(lvds_lines - 1 downto 0);
-		DBG_STATE_IN     : in std_logic_vector(lvds_lines * 4 - 1 downto 0);
-		DBG_REG_DATA_IN  : in std_logic_vector(lvds_lines * 10 - 1 downto 0);
-		DBG_BITSLIP_IN   : in std_logic_vector(lvds_lines * 4 - 1 downto 0);
-		DBG_INC_IN       : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
-		DBG_PAUSE_IN     : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
-		DBG_STEP_IN      : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
-		DBG_RETRY_IN     : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
+		DBG_LINKS_SYNCED_IN_U1 : in std_logic_vector(lvds_lines - 1 downto 0);
+		DBG_STATE_IN_U1     : in std_logic_vector(lvds_lines * 4 - 1 downto 0);
+		DBG_REG_DATA_IN_U1  : in std_logic_vector(lvds_lines * 10 - 1 downto 0);
+		DBG_BITSLIP_IN_U1   : in std_logic_vector(lvds_lines * 4 - 1 downto 0);
+		DBG_INC_IN_U1       : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
+		DBG_PAUSE_IN_U1     : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
+		DBG_STEP_IN_U1      : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
+		DBG_RETRY_IN_U1    : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
+		
+		DBG_LINKS_SYNCED_IN_U2 : in std_logic_vector(lvds_lines - 1 downto 0);
+		DBG_STATE_IN_U2     : in std_logic_vector(lvds_lines * 4 - 1 downto 0);
+		DBG_REG_DATA_IN_U2  : in std_logic_vector(lvds_lines * 10 - 1 downto 0);
+		DBG_BITSLIP_IN_U2   : in std_logic_vector(lvds_lines * 4 - 1 downto 0);
+		DBG_INC_IN_U2       : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
+		DBG_PAUSE_IN_U2     : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
+		DBG_STEP_IN_U2      : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
+		DBG_RETRY_IN_U2    : in std_logic_vector(lvds_lines * 8 - 1 downto 0);
 		
 		soft_rst_out : out std_logic
 	);
@@ -180,14 +189,32 @@ begin
 		ipbus_in => ipbw(4),
 		ipbus_out => ipbr(4),
 		
-		DBG_LINKS_SYNCED_IN => DBG_LINKS_SYNCED_IN,
-		DBG_STATE_IN     => DBG_STATE_IN,
-		DBG_REG_DATA_IN  => DBG_REG_DATA_IN,
-		DBG_BITSLIP_IN   => DBG_BITSLIP_IN,
-		DBG_INC_IN       => DBG_INC_IN,
-		DBG_PAUSE_IN     => DBG_PAUSE_IN,
-		DBG_STEP_IN      => DBG_STEP_IN,
-		DBG_RETRY_IN     => DBG_RETRY_IN
+		DBG_LINKS_SYNCED_IN => DBG_LINKS_SYNCED_IN_U1,
+		DBG_STATE_IN     => DBG_STATE_IN_U1,
+		DBG_REG_DATA_IN  => DBG_REG_DATA_IN_U1,
+		DBG_BITSLIP_IN   => DBG_BITSLIP_IN_U1,
+		DBG_INC_IN       => DBG_INC_IN_U1,
+		DBG_PAUSE_IN     => DBG_PAUSE_IN_U1,
+		DBG_STEP_IN      => DBG_STEP_IN_U1,
+		DBG_RETRY_IN     => DBG_RETRY_IN_U1
+	);
+	
+	slave5 : entity work.ipbus_slave_ddr_debug
+	generic map(lvds_lines => lvds_lines)
+	port map(
+		clk => ipb_clk,
+		reset => ipb_rst,
+		ipbus_in => ipbw(5),
+		ipbus_out => ipbr(5),
+		
+		DBG_LINKS_SYNCED_IN => DBG_LINKS_SYNCED_IN_U2,
+		DBG_STATE_IN     => DBG_STATE_IN_U2,
+		DBG_REG_DATA_IN  => DBG_REG_DATA_IN_U2,
+		DBG_BITSLIP_IN   => DBG_BITSLIP_IN_U2,
+		DBG_INC_IN       => DBG_INC_IN_U2,
+		DBG_PAUSE_IN     => DBG_PAUSE_IN_U2,
+		DBG_STEP_IN      => DBG_STEP_IN_U2,
+		DBG_RETRY_IN     => DBG_RETRY_IN_U2
 	);
 	
 -- Slave 5: peephole RAM
@@ -201,19 +228,19 @@ begin
 --			ipbus_out => ipbr(5)
 --		);
 
-	slave5: entity work.ipbus_slave_mem
-		generic map(addr_width => 10)
-		port map(
-			clk => ipb_clk,
-			reset => ipb_rst,
-			ipbus_in => ipbw(5),
-			ipbus_out => ipbr(5),
-			
-			ram_clk_in => ROD_RAM_CLK_IN,
-			ram_we_in => ROD_RAM_WE_IN,
-			ram_waddr_in => ROD_RAM_ADDR_IN,
-			ram_data_in => ROD_RAM_DATA_IN
-		);
+--	slave5: entity work.ipbus_slave_mem
+--		generic map(addr_width => 10)
+--		port map(
+--			clk => ipb_clk,
+--			reset => ipb_rst,
+--			ipbus_in => ipbw(5),
+--			ipbus_out => ipbr(5),
+--			
+--			ram_clk_in => ROD_RAM_CLK_IN,
+--			ram_we_in => ROD_RAM_WE_IN,
+--			ram_waddr_in => ROD_RAM_ADDR_IN,
+--			ram_data_in => ROD_RAM_DATA_IN
+--		);
 
 --------------------------------------------------------------
 

@@ -19,9 +19,3 @@ NET "gt_clkn" LOC = C7;
 NET "gt_clkn" DIFF_TERM = "TRUE";
 
 TIMESPEC TS_gt_clk = PERIOD "gt_clk" 8 ns;
-
-
-
-
-
-

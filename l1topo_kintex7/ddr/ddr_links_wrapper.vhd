@@ -85,7 +85,7 @@ begin
 		DATA_LINES_OUT       => local_data_lines,
 		
 		DELAY_VALS_IN      	 => DELAY_VALS_IN,
-		DELAY_VALS_OUT        => DELAY_VALS_OUT,
+		DELAY_VALS_OUT       => DELAY_VALS_OUT,
 		DELAY_LOAD_IN      	 => DELAY_LOAD_IN,
 		
 		DELAY_INC_IN         => local_delay_inc,
