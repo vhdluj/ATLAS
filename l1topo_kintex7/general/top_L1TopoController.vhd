@@ -36,8 +36,8 @@ port(
 	DATA_U1_CTRL_OUT_P, DATA_U1_CTRL_OUT_N : out std_logic;
 	DATA_U2_CTRL_OUT_P, DATA_U2_CTRL_OUT_N : out std_logic;
 	DATA_U2_SYNC_OUT_P, DATA_U2_SYNC_OUT_N : out std_logic;
---	DATA_BANK17_IN_P, DATA_BANK17_IN_N : in std_logic_vector(1 downto 0);
---	DATA_BANK32_IN_P, DATA_BANK32_IN_N : in std_logic_vector(4 downto 0);
+	DATA_BANK17_IN_P, DATA_BANK17_IN_N : in std_logic_vector(1 downto 0);
+	DATA_BANK32_IN_P, DATA_BANK32_IN_N : in std_logic_vector(4 downto 0);
 	DATA_BANK18_IN_P, DATA_BANK18_IN_N : in std_logic_vector(7 downto 0);
 	DATA_BANK16_IN_P, DATA_BANK16_IN_N : in std_logic_vector(6 downto 0);
 	
@@ -360,51 +360,81 @@ port map(
 				DBG_RETRY_OUT    => dbg_ddr_retry_from16
 );
 
---ddr_bank32 : entity work.ddr_links_wrapper -- connected to ctrlbus U1
---generic map(
---	DELAY_GROUP_NAME     => "bank32_delay_group",
---	AVAILABLE_LVDS_LINES => ddr_lines_on_bank32,
---	EXCLUDE_DCM_IDELAY_CTRL => TRUE
---)
---port map(
---	GCLK_40_IN         => gck2_clk40,
---	DELAY_CLK_IN       => idelayctrl_refclk300,
---	EXT_DDR_CLK_IN     => ctrlbus_32_clk,
---	EXT_DDR_CLK_X8_IN  => ctrlbus_32_clkx8,
---	RESET_IN           => ddr_rst,
---	
---	LVDS_IN_P          => DATA_BANK32_IN_P,
---	LVDS_IN_N          => DATA_BANK32_IN_N,
---	
---	LINKS_SYNCED_OUT   => ddr_receivers_synced_bank32,
---	RESET_TRANS_OUT    => open,
---	
---	DATA_OUT           => open,
---	DATA_VALID_OUT     => open
---);
---
---ddr_bank17 : entity work.ddr_links_wrapper -- connected to ctrlbus U2
---generic map(
---	DELAY_GROUP_NAME     => "bank17_delay_group",
---	AVAILABLE_LVDS_LINES => ddr_lines_on_bank17,
---	EXCLUDE_DCM_IDELAY_CTRL => TRUE
---)
---port map(
---	GCLK_40_IN         => gck2_clk40,
---	DELAY_CLK_IN       => idelayctrl_refclk300,
---	EXT_DDR_CLK_IN     => ctrlbus_17_clk,
---	EXT_DDR_CLK_X8_IN  => ctrlbus_17_clkx8,
---	RESET_IN           => ddr_rst,
---	
---	LVDS_IN_P          => DATA_BANK17_IN_P,
---	LVDS_IN_N          => DATA_BANK17_IN_N,
---	
---	LINKS_SYNCED_OUT   => ddr_receivers_synced_bank17,
---	RESET_TRANS_OUT    => open,
---	
---	DATA_OUT           => open,
---	DATA_VALID_OUT     => open
---);
+ddr_bank32 : entity work.ddr_links_wrapper -- connected to ctrlbus U1
+generic map(
+	DELAY_GROUP_NAME     => "bank32_delay_group",
+	AVAILABLE_LVDS_LINES => ddr_lines_on_bank32,
+	EXCLUDE_DCM_IDELAY_CTRL => TRUE,
+	MANUAL_SYNC => TRUE,
+    SIMULATION => SIMULATION
+)
+port map(
+	GCLK_40_IN         => gck2_clk40,
+	DELAY_CLK_IN       => idelayctrl_refclk300,
+	EXT_DDR_CLK_IN     => ctrlbus_32_clk,
+	EXT_DDR_CLK_X8_IN  => ctrlbus_32_clkx8,
+	RESET_IN           => ddr_rst,
+	
+	LVDS_IN_P          => DATA_BANK32_IN_P,
+	LVDS_IN_N          => DATA_BANK32_IN_N,
+	
+	LINKS_SYNCED_OUT   => ddr_receivers_synced_bank32,
+	RESET_TRANS_OUT    => open,       
+				
+	DELAY_VALS_IN      => (others => '0'),
+	DELAY_LOAD_IN      => (others => '0'),
+	DELAY_VALS_OUT     => open,                    
+			
+    DATA_OUT           => open,
+    DATA_VALID_OUT     => open,
+    DATA_KCTRL_OUT     => open,
+    
+    DBG_STATE_OUT    => open,
+	DBG_REG_DATA_OUT => open,
+	DBG_BITSLIP_OUT  => open,
+	DBG_INC_OUT      => open,
+	DBG_PAUSE_OUT    => open,
+	DBG_STEP_OUT     => open,
+	DBG_RETRY_OUT    => open
+);
+
+ddr_bank17 : entity work.ddr_links_wrapper -- connected to ctrlbus U2
+generic map(
+	DELAY_GROUP_NAME     => "bank17_delay_group",
+	AVAILABLE_LVDS_LINES => ddr_lines_on_bank17,
+	EXCLUDE_DCM_IDELAY_CTRL => TRUE,
+	MANUAL_SYNC => TRUE,
+    SIMULATION => SIMULATION
+)
+port map(
+	GCLK_40_IN         => gck2_clk40,
+	DELAY_CLK_IN       => idelayctrl_refclk300,
+	EXT_DDR_CLK_IN     => ctrlbus_17_clk,
+	EXT_DDR_CLK_X8_IN  => ctrlbus_17_clkx8,
+	RESET_IN           => ddr_rst,
+	
+	LVDS_IN_P          => DATA_BANK17_IN_P,
+	LVDS_IN_N          => DATA_BANK17_IN_N,
+	
+	LINKS_SYNCED_OUT   => ddr_receivers_synced_bank17,
+	RESET_TRANS_OUT    => open,
+	
+	DELAY_VALS_IN      => (others => '0'),
+	DELAY_LOAD_IN      => (others => '0'),
+	DELAY_VALS_OUT     => open,                    
+			
+    DATA_OUT           => open,
+    DATA_VALID_OUT     => open,
+    DATA_KCTRL_OUT     => open,
+    
+    DBG_STATE_OUT    => open,
+	DBG_REG_DATA_OUT => open,
+	DBG_BITSLIP_OUT  => open,
+	DBG_INC_OUT      => open,
+	DBG_PAUSE_OUT    => open,
+	DBG_STEP_OUT     => open,
+	DBG_RETRY_OUT    => open
+);
 
 vrst_u1_buf : obufds port map( I =>  v_reset, O => DATA_U1_CTRL_OUT_P, OB => DATA_U1_CTRL_OUT_N);
 vrst_u2_buf : obufds port map( I =>  v_reset, O => DATA_U2_CTRL_OUT_P, OB => DATA_U2_CTRL_OUT_N);
@@ -573,7 +603,6 @@ end generate SIM_CLOCK;
       	rst_out => sys_rst,
       	pkt_rx => pkt_rx,
       	pkt_tx => pkt_tx,
-
       	
 		ipb_write_U1_out => ipb_write_U1,
 		ipb_read_U1_in => ipb_read_U1,
@@ -582,7 +611,6 @@ end generate SIM_CLOCK;
       	
 		ctrlbus_idelay_value_out => ctrlbus_idelay_value,
 		ctrlbus_idelay_load_out => ctrlbus_idelay_load,
-      	
       	
 		soft_rst_out => soft_rst,
 			
@@ -604,96 +632,41 @@ end generate SIM_CLOCK;
 		ROD_RAM_DATA_IN => ram_data
 	);
       
-      
---	move : entity work.from_rod_to_ipbus
---	port map(
---		clk => gck2_clk80,
---		reset => rst_ipb,
---      	
---		parsers_data_in => rod_data,
---		parsers_rd_out => rod_re,
---		parsers_rdy_in => rod_rdy,
---      	
---		ram_we_out => ram_we,
---		ram_waddr_out => ram_addr,
---		ram_data_out => ram_data
---	);
-      
---	ctrlbus: entity work.ctrlbus
---		port map(
---			gck2_clk40_in => gck2_clk40,
---			gck2_clk80_in => gck2_clk80,
---			idelayctrl_refclk300_in => idelayctrl_refclk300,
---			gck2_mmcm_locked_in => gck2_mmcm_locked,
---			CTRLBUS_U1_OUT_P => CTRLBUS_U1_OUT_P,
---			CTRLBUS_U1_OUT_N => CTRLBUS_U1_OUT_N,
---			CTRLBUS_U2_OUT_P => CTRLBUS_U2_OUT_P,
---			CTRLBUS_U2_OUT_N => CTRLBUS_U2_OUT_N,
---			CTRLBUS_U1_IN_P => CTRLBUS_U1_IN_P,
---			CTRLBUS_U1_IN_N => CTRLBUS_U1_IN_N,
---			CTRLBUS_U2_IN_P => CTRLBUS_U2_IN_P,
---			CTRLBUS_U2_IN_N => CTRLBUS_U2_IN_N,
---			ipb_write_U1_in => ipb_write_U1,
---			ipb_read_U1_out => ipb_read_U1,
---			ipb_write_U2_in => ipb_write_U2,
---			ipb_read_U2_out => ipb_read_U2,
---			idelay_value_in => ctrlbus_idelay_value,
---			idelay_load_in => ctrlbus_idelay_load,
---			
---			clk_400_in => clk_400,
---			clk_80_in  => clk_80,
---      		
---			mmcm_clk_80_u1_out => ctrlbus_32_clk,
---			mmcm_clk_400_u1_out => ctrlbus_32_clkx8,
---      		
---			mmcm_clk_80_u2_out => ctrlbus_17_clk,
---			mmcm_clk_400_u2_out => ctrlbus_17_clkx8
---		);
+	ctrlbus: entity work.ctrlbus
+		port map(
+			gck2_clk40_in => gck2_clk40,
+			gck2_clk80_in => gck2_clk80,
+			idelayctrl_refclk300_in => idelayctrl_refclk300,
+			gck2_mmcm_locked_in => gck2_mmcm_locked,
+			CTRLBUS_U1_OUT_P => CTRLBUS_U1_OUT_P,
+			CTRLBUS_U1_OUT_N => CTRLBUS_U1_OUT_N,
+			CTRLBUS_U2_OUT_P => CTRLBUS_U2_OUT_P,
+			CTRLBUS_U2_OUT_N => CTRLBUS_U2_OUT_N,
+			CTRLBUS_U1_IN_P => CTRLBUS_U1_IN_P,
+			CTRLBUS_U1_IN_N => CTRLBUS_U1_IN_N,
+			CTRLBUS_U2_IN_P => CTRLBUS_U2_IN_P,
+			CTRLBUS_U2_IN_N => CTRLBUS_U2_IN_N,
+			ipb_write_U1_in => ipb_write_U1,
+			ipb_read_U1_out => ipb_read_U1,
+			ipb_write_U2_in => ipb_write_U2,
+			ipb_read_U2_out => ipb_read_U2,
+			idelay_value_in => ctrlbus_idelay_value,
+			idelay_load_in => ctrlbus_idelay_load,
+			
+			clk_400_in => clk_400,
+			clk_80_in  => clk_80,
+      		
+			mmcm_clk_80_u1_out => ctrlbus_32_clk,
+			mmcm_clk_400_u1_out => ctrlbus_32_clkx8,
+      		
+			mmcm_clk_80_u2_out => ctrlbus_17_clk,
+			mmcm_clk_400_u2_out => ctrlbus_17_clkx8
+		);
 
 -------------------------------------------------------------------------------
 -- end comment for sim
 -------------------------------------------------------------------------------
 
-
---hola_inst : entity work.hola_lsc_vtx6
---port map(
---	--!!! GK: clock distributed also to ipbus, only P is used with buffered clock !!!
---	MGTREFCLK_P     		=> gte2_clk_125,
---	MGTREFCLK_N     		=> '0',
---	
---	SYS_RST         		=> ddr_rst,
---	CLK_LOCKED      		=> gck2_mmcm_locked,
---	-- S-LINK interface
---	UD              		=> b"00" & ctr,--(others => '0'),
---	URESET_N        		=> ureset_n_sgn,--sys_rst,--not sys_rst,--ila_zegar_lock,
---	UTEST_N         		=> '1',
---	UCTRL_N         		=> '1',
---	UWEN_N          		=> uwen_allowed_n,
---	UCLK            		=> gck2_clk40,
---	LFF_N           		=> LFF_N_sgn,
---	LRL             		=> LRL_sgn,
---	LDOWN_N         		=> LDOWN_N_sgn,
---	-- SFP serial interface
---	TLK_SIN_P       		=> OPTO_KR1_P, --SFP3_RX_P,
---	TLK_SIN_N       		=> OPTO_KR1_N, --SFP3_RX_N,
---	TLK_SOUT_P      		=> OPTO_KT1_P, --SFP3_TX_P,
---	TLK_SOUT_N      		=> OPTO_KT1_N, --SFP3_TX_N,
---	-- LEDs
---	TESTLED_N       		=> open,--GPIO_LED(0),
---	LDERRLED_N      		=> open,--GPIO_LED(1),
---	LUPLED_N        		=> open,--GPIO_LED(2),
---	FLOWCTLLED_N    		=> open,--GPIO_LED(3),
---	ACTIVITYLED_N   		=> open,--GPIO_LED(4),
---	
---	--debbug
---	GTX_RESETDONE_OUT  		=> open,
---	LSC_RST_N_OUT  			=> open,
---	TX_ER_OUT  				=> open,
---	GTX_TXRESETDONE_DEBUG  	=> open,
---	GTX_RESET_DEBUG        	=> open,
---	GTX_CPLLOCK_DEBUG      	=> open,
---	TLK_RXCLK  				=> open 
---);
 
 in_slinkPckBuilder : entity work.slinkPckBuilder
 generic map( 
@@ -817,64 +790,6 @@ end process;
 --One line signal assigmnet
 payload_in_sgn  <= cnt & cnt & cnt & cnt;
 rstCnt_sgn <= '1' when rstCnt = x"00_0000" else '0';
-
---Slink_reset_sync : process (gck2_clk40)
---begin
---	if rising_edge(gck2_clk40) then
---		
---		if (gck2_mmcm_locked = '0') then
---			holaInitCS <= working;
---		else
---			holaInitCS <= holaInitNS;
---		end if;
---		
---		if( holaInitCS = initializing) then
---			uwen_cntr <= uwen_cntr +1;
---		else
---			uwen_cntr <=(others=>'0');
---		end if;
---		
---	end if;
---end process;
---
---Slink_reset : process(holaInitCS, ddr_rst, LDOWN_N_sgn, uwen_cntr)
---begin
---	uwen_allowed_n <= '0';
---	ureset_n_sgn <= '1';
---	
---	case holaInitCS is
---		when working =>
---			if(ddr_rst = '1') then
---				holaInitNS <= reseting;
---			else
---				holaInitNS <= working;
---			end if;
---		when reseting =>
---			uwen_allowed_n <= '1';
---			ureset_n_sgn <= '0';
---			if(LDOWN_N_sgn = '1') then
---				holaInitNS <= initializing;
---			else
---				holaInitNS <= reseting;
---			end if;
---		when initializing =>
---			uwen_allowed_n <= '1';
---				if(uwen_cntr < 5) then 
---					holaInitNS <= initializing;
---				else
---					holaInitNS <= working;
---				end if;
---		when others =>
---			holaInitNS <= working;
---	end case;
---end process;
---
---process(gck2_clk40)
---begin	    
---	if rising_edge(gck2_clk40) then
---		ctr <= ctr + x"1";
---	end if;
---end process;
 
 
 --################### UGLY LINKS MAPPING

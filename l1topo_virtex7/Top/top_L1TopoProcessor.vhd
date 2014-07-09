@@ -165,6 +165,29 @@ begin
 			clk400=>clk400,
 			clk80=>clk80
 		);
+		
+		slaves: entity work.slaves
+		port map(
+			ipb_clk => gck2_clk40, --ipb_clk
+			ipb_rst => rst_ipb,
+			ipb_in => ipb_master_write,
+			ipb_out => ipb_master_read,
+
+			ctrlbus_idelay_value_out => ctrlbus_idelay_value,
+			ctrlbus_idelay_load_out => ctrlbus_idelay_load,
+
+			ctrlbus_locked_in => ctrlbus_locked,
+			
+			--register signal sction:
+			ROD_rewi_reg => ROD_rewi_reg,
+			triggerReg   =>triggerReg,
+
+	        OUT_DATA_reg              => out_data, --data going from rod to ddr component
+	        DATA_VALID_OUT_reg        => data_valid_out, --data valid coming out from l1_topo rod component
+	        SPECIAL_CHARACTER_OUT_reg => special_character_out,
+	        RESET_reg                 => (reset & KINTEX_READY) --reset line status
+		);
+		
 
 greg_ddr_rst <= not ctrlbus_locked or ddr_reset;
 
