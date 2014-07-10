@@ -278,8 +278,10 @@ ila_trg(63 downto 0)  <= test_data;
 ila_trg(71 downto 64) <= data_valid_out;
 ila_trg(72) <= reset;
 ila_trg(73) <= KINTEX_READY;
+ila_trg(74) <= gck2_mmcm_locked;
+ila_trg(75) <= ctrlbus_locked;
 
-ila_trg(255 downto 74) <= (others => '0');
+ila_trg(255 downto 76) <= (others => '0');
 
 end top_TopoVirtex;
 
