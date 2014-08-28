@@ -8,7 +8,8 @@ entity ddr_bank_bridge is
 generic (
 	DELAY_GROUP_NAME : string := "delay_group";
 	AVAILABLE_LVDS_LINES : integer range 0 to 20 := 1;
-	EXCLUDE_DCM_IDELAY_CTRL : boolean
+	EXCLUDE_DCM_IDELAY_CTRL : boolean;
+        VIVADO : boolean := false
 );
 port (
 	GCLK_40_IN         : in std_logic; -- global buffer input
@@ -49,23 +50,42 @@ begin
 	int_clock_gen : if EXCLUDE_DCM_IDELAY_CTRL = FALSE generate
 		attribute IODELAY_GROUP of delay_ctrl_inst : label is DELAY_GROUP_NAME;
 	begin
-	
-		clock_inst : entity work.ddr_clock_src
-		port map
-		(
-			-- Clock in ports
-			CLK_IN1 => GCLK_40_IN,
-			CLKFB_IN => clk_fb,
-			CLKFB_OUT => clk_fb,
-			-- Clock out ports WITHOUT BUFFERS
-			CLK_40_OUT => clk_40_ub,
-			CLK_80_OUT => clk_80_ub,
-			CLK_400_OUT => clk_400_ub,
-			--CLK_300_OUT => open,
-			-- Status and control signals
-			RESET  => '0',
-			LOCKED => DCM_LOCKED_OUT
-		);
+
+          DDR_CLK_ISE: if VIVADO = false generate
+            clock_inst : entity work.ddr_clock_src
+              port map
+              (
+                -- Clock in ports
+	        	CLK_IN1 => GCLK_40_IN,
+	        	CLKFB_IN => clk_fb,
+	        	CLKFB_OUT => clk_fb,
+	        	-- Clock out ports WITHOUT BUFFERS
+	        	CLK_40_OUT => clk_40_ub,
+	        	CLK_80_OUT => clk_80_ub,
+	        	CLK_400_OUT => clk_400_ub,
+	        	--CLK_300_OUT => open,
+	        	-- Status and control signals
+	        	RESET  => '0',
+	        	LOCKED => DCM_LOCKED_OUT
+	        );
+          end generate DDR_CLK_ISE;
+
+          DDR_CLK_VIVADO: if VIVADO = true generate
+--            clock_inst : entity work.ddr_clock_src_vivado
+--		port map
+--		(
+--			-- Clock in ports
+--			CLK_IN1 => GCLK_40_IN,
+--			-- Clock out ports WITHOUT BUFFERS
+--			CLK_40_OUT => clk_40_ub,
+--			CLK_80_OUT => clk_80_ub,
+--			CLK_400_OUT => clk_400_ub,
+--			--CLK_300_OUT => open,
+--			-- Status and control signals
+--			RESET  => '0',
+--			LOCKED => DCM_LOCKED_OUT
+--		);
+          end generate DDR_CLK_VIVADO;
 		
 		clk_80_bufio : BUFIO
 		port map(

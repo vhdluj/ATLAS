@@ -572,18 +572,18 @@ begin
           --with interesting link number
           --(constant value) - this can cause bad
           --timing performance !!!!
-          link_pointer(0)(to_integer(bus_number(0))) = to_unsigned(i, link_pointer(0)(0)'length) or
-          link_pointer(1)(to_integer(bus_number(1))) = to_unsigned(i, link_pointer(0)(0)'length) or
-          link_pointer(2)(to_integer(bus_number(2))) = to_unsigned(i, link_pointer(0)(0)'length) or
-          link_pointer(3)(to_integer(bus_number(3))) = to_unsigned(i, link_pointer(0)(0)'length) or
-          link_pointer(4)(to_integer(bus_number(4))) = to_unsigned(i, link_pointer(0)(0)'length) or
-          link_pointer(5)(to_integer(bus_number(5))) = to_unsigned(i, link_pointer(0)(0)'length) or
-          link_pointer(6)(to_integer(bus_number(6))) = to_unsigned(i, link_pointer(0)(0)'length) or
-          link_pointer(7)(to_integer(bus_number(7))) = to_unsigned(i, link_pointer(0)(0)'length) or
-          link_pointer(8)(to_integer(bus_number(8))) = to_unsigned(i, link_pointer(0)(0)'length) or
-          link_pointer(9)(to_integer(bus_number(9))) = to_unsigned(i, link_pointer(0)(0)'length) or
-          link_pointer(10)(to_integer(bus_number(10))) = to_unsigned(i, link_pointer(0)(0)'length) or
-          link_pointer(11)(to_integer(bus_number(11))) = to_unsigned(i, link_pointer(0)(0)'length)
+          link_pointer(0)(to_integer(bus_number(0))) = to_unsigned(i, link_pointer(0)(0)'length) --or
+--          link_pointer(1)(to_integer(bus_number(1))) = to_unsigned(i, link_pointer(0)(0)'length) or
+--          link_pointer(2)(to_integer(bus_number(2))) = to_unsigned(i, link_pointer(0)(0)'length) or
+--          link_pointer(3)(to_integer(bus_number(3))) = to_unsigned(i, link_pointer(0)(0)'length) or
+--          link_pointer(4)(to_integer(bus_number(4))) = to_unsigned(i, link_pointer(0)(0)'length) or
+--          link_pointer(5)(to_integer(bus_number(5))) = to_unsigned(i, link_pointer(0)(0)'length) or
+--          link_pointer(6)(to_integer(bus_number(6))) = to_unsigned(i, link_pointer(0)(0)'length) or
+--          link_pointer(7)(to_integer(bus_number(7))) = to_unsigned(i, link_pointer(0)(0)'length) or
+--          link_pointer(8)(to_integer(bus_number(8))) = to_unsigned(i, link_pointer(0)(0)'length) or
+--          link_pointer(9)(to_integer(bus_number(9))) = to_unsigned(i, link_pointer(0)(0)'length) or
+--          link_pointer(10)(to_integer(bus_number(10))) = to_unsigned(i, link_pointer(0)(0)'length) or
+--          link_pointer(11)(to_integer(bus_number(11))) = to_unsigned(i, link_pointer(0)(0)'length)
         then
           fifo_data_rd_en(i) <= '1';
           number_of_read_out_fifo_data(i) <= number_of_read_out_fifo_data(i) + 1;

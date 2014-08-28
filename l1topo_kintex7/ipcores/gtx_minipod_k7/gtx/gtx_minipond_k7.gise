@@ -26,27 +26,6 @@
     <file xil_pn:fileType="FILE_USERDOC" xil_pn:name="gtx_minipond_k7/example_design/gtx_minipond_k7_exdes.xcf" xil_pn:origination="imported"/>
   </files>
 
-  <transforms xmlns="http://www.xilinx.com/XMLSchema">
-    <transform xil_pn:end_ts="1404739422" xil_pn:name="TRAN_copyInitialToXSTAbstractSynthesis" xil_pn:start_ts="1404739422">
-      <status xil_pn:value="SuccessfullyRun"/>
-      <status xil_pn:value="ReadyToRun"/>
-    </transform>
-    <transform xil_pn:end_ts="1404739422" xil_pn:name="TRAN_schematicsToHdl" xil_pn:prop_ck="4756277109125878399" xil_pn:start_ts="1404739422">
-      <status xil_pn:value="SuccessfullyRun"/>
-      <status xil_pn:value="ReadyToRun"/>
-    </transform>
-    <transform xil_pn:end_ts="1404739422" xil_pn:name="TRAN_regenerateCores" xil_pn:prop_ck="-1227315887105133696" xil_pn:start_ts="1404739422">
-      <status xil_pn:value="SuccessfullyRun"/>
-      <status xil_pn:value="ReadyToRun"/>
-    </transform>
-    <transform xil_pn:end_ts="1404739422" xil_pn:name="TRAN_SubProjectAbstractToPreProxy" xil_pn:start_ts="1404739422">
-      <status xil_pn:value="SuccessfullyRun"/>
-      <status xil_pn:value="ReadyToRun"/>
-    </transform>
-    <transform xil_pn:end_ts="1404739422" xil_pn:name="TRAN_xawsTohdl" xil_pn:prop_ck="4782273163399517707" xil_pn:start_ts="1404739422">
-      <status xil_pn:value="SuccessfullyRun"/>
-      <status xil_pn:value="ReadyToRun"/>
-    </transform>
-  </transforms>
+  <transforms xmlns="http://www.xilinx.com/XMLSchema"/>
 
 </generated_project>

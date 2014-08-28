@@ -1,3 +1,9 @@
+-- Top-level design for ipbus demo
+--
+-- You must edit this file to set the IP and MAC addresses
+--
+-- Dave Newbold, 16/7/12
+--final
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
@@ -11,22 +17,18 @@ use work.rod_l1_topo_types_const.all;
 entity top_L1TopoController is
 generic (
 	LINKS_NUMBER : integer range 0 to 40 := 8;
-	SIMULATION  : boolean := false
-		  );
+        SIMULATION  : boolean := false;
+        VIVADO : boolean := false
+        );
 port(
-	-- 125 mhz 
 	gt_clkp, gt_clkn: in std_logic;
-	
-	-- ipbus eth
 	gt_txp, gt_txn: out std_logic;
 	gt_rxp, gt_rxn: in std_logic;
-	
-	-- 40 mhz
 	GCK2_IN_P, GCK2_IN_N: in std_logic;
-	
+
 	-- link minipod (3)
 	OPTO_KR1_P, OPTO_KR1_N : in std_logic;
-	OPTO_KT1_P, OPTO_KT1_N : out std_logic;
+	OPTO_KT1_P, OPTO_KT1_N : out std_logic; 
 	
 	CTRLBUS_U1_IN_P, CTRLBUS_U1_IN_N: in std_logic_vector(2 downto 0);
 	CTRLBUS_U2_IN_P, CTRLBUS_U2_IN_N: in std_logic_vector(2 downto 0);
@@ -37,9 +39,8 @@ port(
 	DATA_U2_CTRL_OUT_P, DATA_U2_CTRL_OUT_N : out std_logic;
 	DATA_U1_SYNC_OUT_P, DATA_U1_SYNC_OUT_N : out std_logic;
 	DATA_U2_SYNC_OUT_P, DATA_U2_SYNC_OUT_N : out std_logic;
-	
-	DATA_BANK17_IN_P, DATA_BANK17_IN_N : in std_logic_vector(1 downto 0);
-	DATA_BANK32_IN_P, DATA_BANK32_IN_N : in std_logic_vector(4 downto 0);
+--	DATA_BANK17_IN_P, DATA_BANK17_IN_N : in std_logic_vector(1 downto 0);
+--	DATA_BANK32_IN_P, DATA_BANK32_IN_N : in std_logic_vector(4 downto 0);
 	DATA_BANK18_IN_P, DATA_BANK18_IN_N : in std_logic_vector(7 downto 0);
 	DATA_BANK16_IN_P, DATA_BANK16_IN_N : in std_logic_vector(6 downto 0);
 	
@@ -59,8 +60,8 @@ architecture rtl of top_L1TopoController is
 	constant ddr_lines_on_bank18 : positive := 8;
 	constant ddr_lines_on_bank32 : positive := 5;
 
-	signal clk125_fr, clk125, ipb_clk, clk_locked, locked, eth_locked: std_logic;
-	signal rst_125, rst_ipb, rst_eth, onehz: std_logic;
+	signal clk125_fr, clk125, clk100, ipb_clk, clk_locked, locked, eth_locked: std_logic;
+	signal rst_125, rst_ipb, rst_eth, onehz, rod_receiver_rst: std_logic;
 	signal mac_tx_data, mac_rx_data: std_logic_vector(7 downto 0);
 	signal mac_tx_valid, mac_tx_last, mac_tx_error, mac_tx_ready, mac_rx_valid, mac_rx_last, mac_rx_error: std_logic;
 	signal ipb_master_out : ipb_wbus;
@@ -72,9 +73,10 @@ architecture rtl of top_L1TopoController is
 	signal pcs_pma_status: std_logic_vector(15 downto 0);
 	signal led_speedis1000: std_logic;
 	
-	signal gck2_mmcm_locked: std_logic;
+	signal gck2_mmcm_locked: std_logic := '1';
 	signal gck2_clk40: std_logic;
 	signal gck2_clk80: std_logic;
+   signal gck2_clk200: std_logic;
 	signal idelayctrl_refclk300: std_logic;
 	
 	signal ipb_write_U1, ipb_write_U2: ipb_wbus;
@@ -83,12 +85,14 @@ architecture rtl of top_L1TopoController is
 	signal ctrlbus_idelay_value: std_logic_vector(29 downto 0);
 	signal ctrlbus_idelay_load: std_logic_vector(5 downto 0);
 	
+	signal ddr_clk_80, ddr_clk_400 : std_logic;
+	
 	signal ddr_receivers_synced_bank18 : std_logic_vector(ddr_lines_on_bank18 - 1 downto 0);
 	signal ddr_receivers_synced_bank16 : std_logic_vector(ddr_lines_on_bank16 - 1 downto 0);
 	signal ddr_receivers_synced_bank32 : std_logic_vector(ddr_lines_on_bank32 - 1 downto 0);
 	signal ddr_receivers_synced_bank17 : std_logic_vector(ddr_lines_on_bank17 - 1 downto 0);
 	
-	signal ddr_rst : std_logic;
+	signal ddr_rst, clk_40 : std_logic;
 	signal v_reset : std_logic;
 	
 	signal ctrlbus_32_clk, ctrlbus_32_clkx8 : std_logic;
@@ -97,13 +101,14 @@ architecture rtl of top_L1TopoController is
 	signal ddr_data_from_u2 : std_logic_vector(8 * 8 - 1 downto 0);
 	signal ddr_dv_from_u2 : std_logic_vector(7 downto 0);
 	signal ddr_sync_from_u2 : std_logic_vector(7 downto 0);
-	
+	--for u2
 	signal ddr_data_from_bank16 : std_logic_vector(ddr_lines_on_bank16 * 8 - 1 downto 0);
 	signal ddr_data_from_bank18 : std_logic_vector(ddr_lines_on_bank18 * 8 - 1 downto 0);
 	signal ddr_dv_from_bank16 : std_logic_vector(ddr_lines_on_bank16 - 1 downto 0);
 	signal ddr_dv_from_bank18 : std_logic_vector(ddr_lines_on_bank18 - 1 downto 0);
 	signal ddr_kctrl_from_bank16 : std_logic_vector(ddr_lines_on_bank16 - 1 downto 0);
 	signal ddr_kctrl_from_bank18 : std_logic_vector(ddr_lines_on_bank18 - 1 downto 0);
+	--for u1
 	signal ddr_data_from_bank17 : std_logic_vector(ddr_lines_on_bank17 * 8 - 1 downto 0);
 	signal ddr_data_from_bank32 : std_logic_vector(ddr_lines_on_bank32 * 8 - 1 downto 0);
 	signal ddr_dv_from_bank17 : std_logic_vector(ddr_lines_on_bank17 - 1 downto 0);
@@ -111,15 +116,17 @@ architecture rtl of top_L1TopoController is
 	signal ddr_kctrl_from_bank17 : std_logic_vector(ddr_lines_on_bank17 - 1 downto 0);
 	signal ddr_kctrl_from_bank32 : std_logic_vector(ddr_lines_on_bank32 - 1 downto 0);
 
+
+
 	signal hola_ldown_n : std_logic;
 	
-	signal ros_roi_bus_assignment_sig : in_cntrl_array;
-	signal number_of_slices_out_l     : slice_parameters_array_u;
-	signal lvl0_offset_out_l          : slice_parameters_array_u;
-	signal data_out_l                 : out_data_array;
-	signal data_valid_in_l            : std_logic_vector(NUMBER_OF_OUTPUT_LINKS-1 downto 0);
-	signal type_assignment_in_l       : slice_parameters_array_u := (others => (others => '0'));
-	signal actual_bus_number_out_l    : bus_number_array;
+	
+        signal ros_roi_bus_assignment_sig       : in_cntrl_array;
+        signal number_of_slices_out_l           : slice_parameters_array_u;
+        signal lvl0_offset_out_l                : slice_parameters_array_u;
+        signal data_out_l, data_out_l_synch     : out_data_array;
+        signal data_valid_in_l                  : std_logic_vector(NUMBER_OF_OUTPUT_LINKS-1 downto 0);
+        signal actual_bus_number_out_l          : bus_number_array;
 
 	signal ddr_synced_u1, ddr_synced_u2 : std_logic;
 	signal links_synced_u1, links_synced_u2 : std_logic_vector(LINKS_NUMBER - 1 downto 0);
@@ -190,34 +197,22 @@ architecture rtl of top_L1TopoController is
 	signal ddr_val_load_bank16  : std_logic_vector(ddr_lines_on_bank16 - 1 downto 0);
 	signal ddr_val_out_bank16   : std_logic_vector(ddr_lines_on_bank16 * 5 - 1 downto 0);
 	
-	signal ddr_val              : std_logic_vector(LINKS_NUMBER * 5 - 1 downto 0);
+	signal ddr_val              : std_logic_vector(LINKS_NUMBER * 5 - 1 downto 0):= (others => '0');
 	signal ddr_val_load         : std_logic_vector(LINKS_NUMBER - 1 downto 0);
 	
 	signal clk_400, clk_80, clk_fb, clk_400_ub, clk_80_ub, local_dcm_locked : std_logic;
 	
 	signal ddr_clk_bank18, ddr_clk_bank16 : std_logic;
-	signal icon_control0, icon_control1 : std_logic_vector(35 downto 0);
-	signal ila_trg_u1, ila_trg_u2 : std_logic_vector(254 downto 0);
-	
-	-- SLINK signals
-	
-	signal enable_in_sgn : std_logic  := '0';
-	signal ready_out_sgn : std_logic  := '0';  
-	signal busy_out_sgn      : std_logic  := '0';  
-	signal ureset_in_sgn     : std_logic  := '0';  
-	signal payload_in_sgn 	 : std_logic_vector (31 downto 0)  := (others => '0');
-	signal cnt 				 : std_logic_vector(7 downto 0)  := x"00";
-	signal runNumber_sgn	 : std_logic_vector(23 downto 0)  := x"00_0000";
-	signal numberOfDataEl_sgn	 : std_logic_vector(15 downto 0)  := x"0001";
-	signal pauseCnt : std_logic_vector(31 downto 0)   :=  (others => '0');
-	signal wordsCnt : std_logic_vector(3 downto 0)  := (others => '0');
-	signal rstCnt : std_logic_vector(28 downto 0) := (others => '0');
-	signal rstCnt_sgn : std_logic := '0';
-	
-	type state_type is (idle,reset,prepare2send, send , pause);
-	signal state, n_state : state_type  := idle;
-	-- end of SLINK signals
-	
+   signal start_of_frame_l, end_of_frame_l : std_logic;
+
+   signal slink_ready_in_l, slink_event_ready_out_l : std_logic_vector(NUMBER_OF_OUTPUT_LINKS-1 downto 0);
+   type slink_data_out_array is array (0 to NUMBER_OF_OUTPUT_LINKS-1) of std_logic_vector(31 downto 0);
+   signal slink_data_out_a : slink_data_out_array;
+          
+   type link_number_array is array (0 to NUMBER_OF_OUTPUT_LINKS-1) of std_logic_vector(6 downto 0);
+   signal link_number_l : link_number_array :=(others => (others => '0')); 
+
+
 	signal gte2_clk_125 : std_logic;
 
 begin
@@ -225,240 +220,270 @@ begin
 
 --##################   ROD
 
---SET_DUMMY_ASSIGNMENTS: for i in 0 to ros_roi_bus_assignment_sig'high generate
---  ros_roi_bus_assignment_sig(i) <= std_logic_vector(to_unsigned(i mod 12,ros_roi_bus_assignment_sig(0)'length));
---end generate SET_DUMMY_ASSIGNMENTS;
---
---GENERATE_V1_V2_DDR_TO_ROD: for i in 0 to 0 generate
---  DDR_TO_ROD_INST: entity work.ddr_to_rod
---  port map (
---    RESET                       => ddr_rst,
---    DATA_IN_CLK                 => gck2_clk80, --clk_80,
---    DATA_OUT_CLK                => gck2_clk80, --clk_80,
---    LVL1_FULL_THR               => "11111110",
---    L1_BUSY                     => open,
---    DDR_ROS_ROI_IN_DATA         => ddr_data((i+1)*64-1 downto i*64),
---    DATA_VALID_IN               => ddr_dv(0),
---    SPECIAL_CHAR_IN             => ddr_kctrl(0),
---    OUT_DATA                    => data_out_l,
---    DATA_VALID_OUT              => data_valid_in_l,
---    ACTUAL_BUS_NUMBER_OUT       => actual_bus_number_out_l,
---    NUMBER_OF_SLICES_OUT        => number_of_slices_out_l,
---    LVL0_OFFSET_OUT             => lvl0_offset_out_l,
---    ROS_ROI_BUS_ASSIGNMENT      => ros_roi_bus_assignment_sig,
---    ROS_ROI_BUS_ASSIGNMENT_DONE => not sys_rst,--ROS_ROI_BUS_ASSIGNMENT_DONE,
---    ROS_ROI_OUT_DATA_CNTR       => open,--ROS_ROI_OUT_DATA_CNTR,
---    START_OF_FRAME              => open,
---    END_OF_FRAME                => open);
---end generate GENERATE_V1_V2_DDR_TO_ROD;
---
---
---set_data_assignment: for i in 0 to NUMBER_OF_ROS_ROI_INPUT_BUSES - 1 generate
---  MUON: if (i mod 4) = 0 generate
---    type_assignment_in_l(i) <= to_unsigned(4,4);
---  end generate MUON;
---  SUM: if (i mod 4) = 1 generate
---    type_assignment_in_l(i) <= x"8";
---  end generate SUM;
---  JET: if (i mod 4) = 2 generate
---    type_assignment_in_l(i) <= x"3";
---  end generate JET;
---  ENERGY: if (i mod 4) = 3 generate
---    type_assignment_in_l(i) <= x"2";
---  end generate ENERGY;
---end generate set_data_assignment;
---
---GENERATE_OUTPUT_PARSERS: for i in 0 to 0 generate--NUMBER_OF_OUTPUT_LINKS - 1 generate
---
---  PARSER_WRAPPER_INST: entity work.parser_wrapper
---    generic map (
---      LINK_NUMBER              => i,
---      TOTAL_NUMBER_OF_IN_LINKS => NUMBER_OF_ROS_ROI_INPUT_BUSES) --tot_number_of_links(ros_roi_bus_assignment_sig,i))
---      --ACTIVE_LINKS             => set_active_links(ros_roi_bus_assignment_sig,i))
---
---    port map (
---      CLK_WR_IN          => gck2_clk80, --clk_80,
---      CLK_RD_IN          => gck2_clk80, --clk_80,
---      RESET_IN           => ddr_rst,
---      BC_OFFSET_IN       => std_logic_vector(to_unsigned(3,6)),
---      BC_QTY_IN          => std_logic_vector(to_unsigned(3,6)),
---      DATA_IN            => data_out_l(i),
---      ROS_ROI_BUS_NUMBER => std_logic_vector(actual_bus_number_out_l(i)),
---      DATA_OUT           => rod_data,
---      DATA_RE_IN         => rod_re,
---      DATA_RDY_OUT       => rod_rdy,
---      DATA_VALID_IN      => data_valid_in_l(i));
---  
---end generate GENERATE_OUTPUT_PARSERS;
+SET_DUMMY_ASSIGNMENTS: for i in 0 to ros_roi_bus_assignment_sig'high generate
+  ros_roi_bus_assignment_sig(i) <= (others => '0');--std_logic_vector(to_unsigned(i mod 12,ros_roi_bus_assignment_sig(0)'length));
+end generate SET_DUMMY_ASSIGNMENTS;
 
 
+                       
+GENERATE_V1_V2_DDR_TO_ROD: for i in 0 to 0 generate
+  DDR_TO_ROD_INST: entity work.ddr_to_rod
+    generic map (
+      VIVADO => VIVADO)
+    port map (
+      RESET                       => rod_receiver_rst,
+      DATA_IN_CLK                 => gck2_clk80, --clk_80,
+      DATA_OUT_CLK                => gck2_clk80, --clk_80,
+      LVL1_FULL_THR               => (others => '0'),--x"fe",
+      L1_BUSY                     => open,
+      DDR_ROS_ROI_IN_DATA         => ddr_data_u2((i+1)*64-1 downto i*64),
+      DATA_VALID_IN               => ddr_dv_u2(0),
+      SPECIAL_CHAR_IN             => ddr_kctrl_u2(0),
+      OUT_DATA                    => data_out_l,
+      DATA_VALID_OUT              => data_valid_in_l,
+      ACTUAL_BUS_NUMBER_OUT       => actual_bus_number_out_l,
+      NUMBER_OF_SLICES_OUT        => number_of_slices_out_l,
+      LVL0_OFFSET_OUT             => lvl0_offset_out_l,
+      ROS_ROI_BUS_ASSIGNMENT      => ros_roi_bus_assignment_sig,
+      ROS_ROI_BUS_ASSIGNMENT_DONE => not rod_receiver_rst,--ROS_ROI_BUS_ASSIGNMENT_DONE,
+      ROS_ROI_OUT_DATA_CNTR       => open,--ROS_ROI_OUT_DATA_CNTR,
+      START_OF_FRAME              => start_of_frame_l,
+      END_OF_FRAME                => end_of_frame_l);
+end generate GENERATE_V1_V2_DDR_TO_ROD;
+
+
+SET_SIM_VALUES: if SIMULATION = TRUE generate
+    clk_locked <= '1';
+  end generate SET_SIM_VALUES;                                                   
+                           
+GENERATE_OUPUT_SLINKS: for i in 0 to NUMBER_OF_OUTPUT_LINKS -1 generate
+
+  link_number_l(i)(actual_bus_number_out_l(i)'range) <= std_logic_vector(actual_bus_number_out_l(i));
+  
+  TOB_SLINK_BUILDER_INST: entity work.tob_slink_builder
+    generic map (
+      VIVADO => VIVADO)
+    port map (
+      RESET                 => rod_receiver_rst,
+      CLK                   => gck2_clk80,  --has to be higher !!! 160, 320 ?
+      TOB_DATA_IN           => data_out_l(i),
+      LINK_NUMBER           => link_number_l(i),--std_logic_vector(actual_bus_number_out_l(i)),
+      BCID_OFFSET_IN        => std_logic_vector(lvl0_offset_out_l(to_integer(unsigned(actual_bus_number_out_l(i))))),
+      MAX_OFFSET_IN         => max_offset(lvl0_offset_out_l),--x"5",    --here make a function to calculate it
+      CRATE_ASSIGNMENT      => (others => '0'),
+      DATA_VALID_IN         => data_valid_in_l(i),
+      BEGINNING_OF_DATA     => start_of_frame_l,
+      END_OF_DATA           => end_of_frame_l,
+--      SLINK_PACKET_BUSY     => open,
+      ACTIVE_LINKS_NUMBER   => b"01",--(others => '0'),  --change to real number
+      BUILDER_BUSY          => open,
+      SLINK_CLK             => gck2_clk40,
+      SLINK_DATA_OUT        => slink_data_out_a(i),
+      SLINK_READY_IN        => slink_ready_in_l(i),
+      SLINK_EVENT_READY_OUT => slink_event_ready_out_l(i));
+
+	SLINKPCKBUILDER_INST: entity work.slinkPckBuilder
+    generic map (
+      SIMULATION => SIMULATION)
+    port map (
+      SYSCLK             => gck2_clk40,
+      CLK_LOCKED_IN      => clk_locked,--CLK_LOCKED_IN,
+      --!!! GK: clock distributed also to ipbus, only P is used with buffered clock !!!
+		GT_CLKP            => gte2_clk_125,
+      GT_CLKN            => '0',--
+      URESET_IN          => rod_receiver_rst,
+--      SFP3_TXDIS         => SFP3_TXDIS,
+      GT_RX_N          => OPTO_KR1_N,--'0',--
+      GT_RX_P          => OPTO_KR1_P,--'0',--
+      GT_TX_N          => OPTO_KT1_N,--open,--
+      GT_TX_P          => OPTO_KT1_P,--open,--
+      --from parser to slink
+      ENABLE_IN          => slink_event_ready_out_l(i),
+      READY_OUT          => slink_ready_in_l(i),
+      PAYLOAD_IN         => slink_data_out_a(i),
+      --header words (from IPBUS or TTCrc)
+      MODULE_ID           => x"0001",
+      RUN_TYPE            => x"0f",--0 = physics, 1 = Calibration, 2 = Cosmics, 15=test
+      RUN_NUMBER          => (others => '0'),
+      ECR_ID              => x"00",
+      ROD_L1_ID           => x"00_0000",
+      ROD_BCN             => x"000",
+      TRIGGER_TYPE        => x"00",
+      DETECTOR_EVENT_TYPE => x"0000_0000",
+      --stat data
+      STAT_WORD1_IN       => (others => '0'),
+      STAT_WORD2_IN       => (others => '0')
+      );
+end generate GENERATE_OUPUT_SLINKS;                           
+--GT_TX_DIS(0) <= '0';
+                       
 ddr_synced_u2 <= '1' when (links_synced_u2 = ones) else '0'; -- and rst_ipb = '0') and soft_rst = '0' else '0';
 ddr_synced_u1 <= '1' when (links_synced_u1 = ones) else '0'; -- and rst_ipb = '0') and soft_rst = '0' else '0';
-
 --##################################### END OF ROD
 
-
+rod_receiver_rst <= (not ddr_synced_u2) or not gck2_mmcm_locked; 
 ddr_rst <= not gck2_mmcm_locked; -- or rst_ipb;
 
 v_reset <= '0'; --rst_from_bank18 or rst_from_bank16 or rst_ipb;
 
 ddr_bank18 : entity work.ddr_links_wrapper
 generic map(
-    DELAY_GROUP_NAME     => "bank18_delay_group",
-    AVAILABLE_LVDS_LINES => ddr_lines_on_bank18,
-    EXCLUDE_DCM_IDELAY_CTRL => FALSE,
-	MANUAL_SYNC => TRUE,
-    SIMULATION => SIMULATION
+                DELAY_GROUP_NAME     => "bank18_delay_group",
+                AVAILABLE_LVDS_LINES => ddr_lines_on_bank18,
+                EXCLUDE_DCM_IDELAY_CTRL => FALSE,
+                MANUAL_SYNC => TRUE,
+                SIMULATION => SIMULATION,
+                VIVADO => VIVADO
 )
 port map(
-	GCLK_40_IN         => gck2_clk40,
-	DELAY_CLK_IN       => idelayctrl_refclk300,
-	EXT_DDR_CLK_IN     => '0',
-	EXT_DDR_CLK_X8_IN  => '0',
-	INT_DDR_CLK_OUT    => ddr_clk_bank18,
-    RESET_IN           => ddr_rst,
-   
-    LVDS_IN_P          => DATA_BANK18_IN_P,
-    LVDS_IN_N          => DATA_BANK18_IN_N,
-   
-    LINKS_SYNCED_OUT   => ddr_receivers_synced_bank18,
-	RESET_TRANS_OUT    => open,
-		 
-	DELAY_VALS_IN      => ddr_val_bank18,
-	DELAY_LOAD_IN      => ddr_val_load_bank18,
-	DELAY_VALS_OUT     => ddr_val_out_bank18,
-                   
-    DATA_OUT           => ddr_data_from_bank18,
-    DATA_VALID_OUT     => ddr_dv_from_bank18,
-    DATA_KCTRL_OUT     => ddr_kctrl_from_bank18,
-    
-    DBG_STATE_OUT    => dbg_ddr_state_from18,
-	DBG_REG_DATA_OUT => dbg_ddr_reg_from18,
-	DBG_BITSLIP_OUT  => dbg_ddr_bitslip_from18,
-	DBG_INC_OUT      => dbg_ddr_inc_from18,
-	DBG_PAUSE_OUT    => dbg_ddr_pause_from18,
-	DBG_STEP_OUT     => dbg_ddr_step_from18,
-	DBG_RETRY_OUT    => dbg_ddr_retry_from18
+                GCLK_40_IN         => gck2_clk40,
+                DELAY_CLK_IN       => idelayctrl_refclk300,
+                EXT_DDR_CLK_IN     => '0',
+                EXT_DDR_CLK_X8_IN  => '0',
+                INT_DDR_CLK_OUT    => ddr_clk_bank18,
+                RESET_IN           => ddr_rst,
+                
+                LVDS_IN_P          => DATA_BANK18_IN_P,
+                LVDS_IN_N          => DATA_BANK18_IN_N,
+               
+                LINKS_SYNCED_OUT   => ddr_receivers_synced_bank18,
+                RESET_TRANS_OUT    => rst_from_bank18,
+                
+                DELAY_VALS_IN      => ddr_val_bank18,
+                DELAY_LOAD_IN      => ddr_val_load_bank18,
+                DELAY_VALS_OUT     => ddr_val_out_bank18,
+                               
+                DATA_OUT           => ddr_data_from_bank18,
+                DATA_VALID_OUT     => ddr_dv_from_bank18,
+                DATA_KCTRL_OUT     => ddr_kctrl_from_bank18,
+                
+                DBG_STATE_OUT    => dbg_ddr_state_from18,
+                DBG_REG_DATA_OUT => dbg_ddr_reg_from18,
+                DBG_BITSLIP_OUT  => dbg_ddr_bitslip_from18,
+                DBG_INC_OUT      => dbg_ddr_inc_from18,
+                DBG_PAUSE_OUT    => dbg_ddr_pause_from18,
+                DBG_STEP_OUT     => dbg_ddr_step_from18,
+                DBG_RETRY_OUT    => dbg_ddr_retry_from18
 );
  
 ddr_bank16 : entity work.ddr_links_wrapper
 generic map(
-	DELAY_GROUP_NAME     => "bank16_delay_group",
-	AVAILABLE_LVDS_LINES => ddr_lines_on_bank16,
-	EXCLUDE_DCM_IDELAY_CTRL => FALSE,
-	MANUAL_SYNC => TRUE,
-	SIMULATION => SIMULATION
+                DELAY_GROUP_NAME     => "bank16_delay_group",
+                AVAILABLE_LVDS_LINES => ddr_lines_on_bank16,
+                EXCLUDE_DCM_IDELAY_CTRL => FALSE,
+                MANUAL_SYNC => TRUE,
+                SIMULATION => SIMULATION,
+                VIVADO => VIVADO
 )
 port map(
-	GCLK_40_IN         => gck2_clk40,
-	DELAY_CLK_IN       => idelayctrl_refclk300,
-	EXT_DDR_CLK_IN     => '0',
-	EXT_DDR_CLK_X8_IN  => '0',
-	INT_DDR_CLK_OUT    => ddr_clk_bank16,
-    RESET_IN           => ddr_rst,
-   
-    LVDS_IN_P          => DATA_BANK16_IN_P,
-    LVDS_IN_N          => DATA_BANK16_IN_N,
-   
-    LINKS_SYNCED_OUT   => ddr_receivers_synced_bank16,
-	RESET_TRANS_OUT    => open,           
-	
-	DELAY_VALS_IN      => ddr_val_bank16,
-	DELAY_LOAD_IN      => ddr_val_load_bank16,
-	DELAY_VALS_OUT     => ddr_val_out_bank16,                    
-			
-    DATA_OUT           => ddr_data_from_bank16,
-    DATA_VALID_OUT     => ddr_dv_from_bank16,
-    DATA_KCTRL_OUT     => ddr_kctrl_from_bank16,
-    
-    DBG_STATE_OUT    => dbg_ddr_state_from16,
-	DBG_REG_DATA_OUT => dbg_ddr_reg_from16,
-	DBG_BITSLIP_OUT  => dbg_ddr_bitslip_from16,
-	DBG_INC_OUT      => dbg_ddr_inc_from16,
-	DBG_PAUSE_OUT    => dbg_ddr_pause_from16,
-	DBG_STEP_OUT     => dbg_ddr_step_from16,
-	DBG_RETRY_OUT    => dbg_ddr_retry_from16
+                GCLK_40_IN         => gck2_clk40,
+                DELAY_CLK_IN       => idelayctrl_refclk300,
+                EXT_DDR_CLK_IN     => '0',
+                EXT_DDR_CLK_X8_IN  => '0',
+                INT_DDR_CLK_OUT    => ddr_clk_bank16,
+                RESET_IN           => ddr_rst,
+               
+                LVDS_IN_P          => DATA_BANK16_IN_P,
+                LVDS_IN_N          => DATA_BANK16_IN_N,
+               
+                LINKS_SYNCED_OUT   => ddr_receivers_synced_bank16,
+                RESET_TRANS_OUT    => rst_from_bank16,           
+                
+                DELAY_VALS_IN      => ddr_val_bank16,
+                DELAY_LOAD_IN      => ddr_val_load_bank16,
+                DELAY_VALS_OUT     => ddr_val_out_bank16,                    
+                
+                DATA_OUT           => ddr_data_from_bank16,
+                DATA_VALID_OUT     => ddr_dv_from_bank16,
+                DATA_KCTRL_OUT     => ddr_kctrl_from_bank16,
+                
+                DBG_STATE_OUT    => dbg_ddr_state_from16,
+                DBG_REG_DATA_OUT => dbg_ddr_reg_from16,
+                DBG_BITSLIP_OUT  => dbg_ddr_bitslip_from16,
+                DBG_INC_OUT      => dbg_ddr_inc_from16,
+                DBG_PAUSE_OUT    => dbg_ddr_pause_from16,
+                DBG_STEP_OUT     => dbg_ddr_step_from16,
+                DBG_RETRY_OUT    => dbg_ddr_retry_from16
 );
 
-ddr_bank32 : entity work.ddr_links_wrapper -- resources shared with ctrlbus U1
-generic map(
-	DELAY_GROUP_NAME     => "bank32_delay_group",
-	AVAILABLE_LVDS_LINES => ddr_lines_on_bank32,
-	EXCLUDE_DCM_IDELAY_CTRL => TRUE,
-	MANUAL_SYNC => TRUE,
-    SIMULATION => SIMULATION
-)
-port map(
-	GCLK_40_IN         => gck2_clk40,
-	DELAY_CLK_IN       => idelayctrl_refclk300,
-	EXT_DDR_CLK_IN     => ctrlbus_32_clk,
-	EXT_DDR_CLK_X8_IN  => ctrlbus_32_clkx8,
-	RESET_IN           => ddr_rst,
-	
-	LVDS_IN_P          => DATA_BANK32_IN_P,
-	LVDS_IN_N          => DATA_BANK32_IN_N,
-	
-	LINKS_SYNCED_OUT   => ddr_receivers_synced_bank32,
-	RESET_TRANS_OUT    => open,       
-				
-	DELAY_VALS_IN      => (others => '0'),
-	DELAY_LOAD_IN      => (others => '0'),
-	DELAY_VALS_OUT     => open,                    
-			
-    DATA_OUT           => ddr_data_from_bank32,
-    DATA_VALID_OUT     => ddr_dv_from_bank32,
-    DATA_KCTRL_OUT     => ddr_kctrl_from_bank32,
-    
-    DBG_STATE_OUT    => dbg_ddr_state_from32,
-	DBG_REG_DATA_OUT => dbg_ddr_reg_from32,
-	DBG_BITSLIP_OUT  => dbg_ddr_bitslip_from32,
-	DBG_INC_OUT      => dbg_ddr_inc_from32,
-	DBG_PAUSE_OUT    => dbg_ddr_pause_from32,
-	DBG_STEP_OUT     => dbg_ddr_step_from32,
-	DBG_RETRY_OUT    => dbg_ddr_retry_from32
-);
+--ddr_bank32 : entity work.ddr_links_wrapper -- connected to ctrlbus U1
+--generic map(
+--	DELAY_GROUP_NAME     => "bank32_delay_group",
+--	AVAILABLE_LVDS_LINES => ddr_lines_on_bank32,
+--	EXCLUDE_DCM_IDELAY_CTRL => TRUE
+--)
+--port map(
+--	GCLK_40_IN         => gck2_clk40,
+--	DELAY_CLK_IN       => idelayctrl_refclk300,
+--	EXT_DDR_CLK_IN     => ctrlbus_32_clk,
+--	EXT_DDR_CLK_X8_IN  => ctrlbus_32_clkx8,
+--	RESET_IN           => ddr_rst,
+--	
+--	LVDS_IN_P          => DATA_BANK32_IN_P,
+--	LVDS_IN_N          => DATA_BANK32_IN_N,
+--	
+--	LINKS_SYNCED_OUT   => ddr_receivers_synced_bank32,
+--	RESET_TRANS_OUT    => open,
+--	
+--	DATA_OUT           => open,
+--	DATA_VALID_OUT     => open
+--);
+--
+--ddr_bank17 : entity work.ddr_links_wrapper -- connected to ctrlbus U2
+--generic map(
+--	DELAY_GROUP_NAME     => "bank17_delay_group",
+--	AVAILABLE_LVDS_LINES => ddr_lines_on_bank17,
+--	EXCLUDE_DCM_IDELAY_CTRL => TRUE
+--)
+--port map(
+--	GCLK_40_IN         => gck2_clk40,
+--	DELAY_CLK_IN       => idelayctrl_refclk300,
+--	EXT_DDR_CLK_IN     => ctrlbus_17_clk,
+--	EXT_DDR_CLK_X8_IN  => ctrlbus_17_clkx8,
+--	RESET_IN           => ddr_rst,
+--	
+--	LVDS_IN_P          => DATA_BANK17_IN_P,
+--	LVDS_IN_N          => DATA_BANK17_IN_N,
+--	
+--	LINKS_SYNCED_OUT   => ddr_receivers_synced_bank17,
+--	RESET_TRANS_OUT    => open,
+--	
+--	DATA_OUT           => open,
+--	DATA_VALID_OUT     => open
+--);
 
-ddr_bank17 : entity work.ddr_links_wrapper -- resources shared with ctrlbus U2
-generic map(
-	DELAY_GROUP_NAME     => "bank17_delay_group",
-	AVAILABLE_LVDS_LINES => ddr_lines_on_bank17,
-	EXCLUDE_DCM_IDELAY_CTRL => TRUE,
-	MANUAL_SYNC => TRUE,
-    SIMULATION => SIMULATION
-)
-port map(
-	GCLK_40_IN         => gck2_clk40,
-	DELAY_CLK_IN       => idelayctrl_refclk300,
-	EXT_DDR_CLK_IN     => ctrlbus_17_clk,
-	EXT_DDR_CLK_X8_IN  => ctrlbus_17_clkx8,
-	RESET_IN           => ddr_rst,
-	
-	LVDS_IN_P          => DATA_BANK17_IN_P,
-	LVDS_IN_N          => DATA_BANK17_IN_N,
-	
-	LINKS_SYNCED_OUT   => ddr_receivers_synced_bank17,
-	RESET_TRANS_OUT    => open,
-	
-	DELAY_VALS_IN      => (others => '0'),
-	DELAY_LOAD_IN      => (others => '0'),
-	DELAY_VALS_OUT     => open,                    
-			
-    DATA_OUT           => ddr_data_from_bank17,
-    DATA_VALID_OUT     => ddr_dv_from_bank17,
-    DATA_KCTRL_OUT     => ddr_kctrl_from_bank17,
-    
-    DBG_STATE_OUT    => dbg_ddr_state_from17,
-	DBG_REG_DATA_OUT => dbg_ddr_reg_from17,
-	DBG_BITSLIP_OUT  => dbg_ddr_bitslip_from17,
-	DBG_INC_OUT      => dbg_ddr_inc_from17,
-	DBG_PAUSE_OUT    => dbg_ddr_pause_from17,
-	DBG_STEP_OUT     => dbg_ddr_step_from17,
-	DBG_RETRY_OUT    => dbg_ddr_retry_from17
-);
+
+--hola_inst : entity work.hola_lsc_vtx6
+--  port map(
+--        MGTREFCLK_P     => clk125_fr,
+--        MGTREFCLK_N     => '0',
+--        SYS_RST         => sys_rst,
+--        -- S-LINK interface
+--        UD              => (others => '0'),
+--        URESET_N        => '1',
+--        UTEST_N         => '1',
+--        UCTRL_N         => '1',
+--        UWEN_N          => '0',
+--        UCLK            => clk125_fr,
+--        LFF_N           => open,
+--        LRL             => open,
+--        LDOWN_N         => hola_ldown_n,
+--        -- SFP serial interface
+--        TLK_SIN_P       => SFP3_RX_P,
+--        TLK_SIN_N       => SFP3_RX_N,
+--        TLK_SOUT_P      => SFP3_TX_P,
+--        TLK_SOUT_N      => SFP3_TX_N,
+--        -- LEDs
+--        TESTLED_N       => LED_OUT(1),
+--        LDERRLED_N      => LED_OUT(2),
+--        LUPLED_N        => LED_OUT(3),
+--        FLOWCTLLED_N    => LED_OUT(5),
+--        ACTIVITYLED_N   => LED_OUT(6)
+--        );
 
 vrst_u1_buf : obufds port map( I =>  v_reset, O => DATA_U1_CTRL_OUT_P, OB => DATA_U1_CTRL_OUT_N);
-vrst_u2_buf : obufds port map( I =>  v_reset, O => DATA_U2_CTRL_OUT_P, OB => DATA_U2_CTRL_OUT_N);
 vsyn_u1_buf : obufds port map( I =>  ddr_synced_u1, O => DATA_U1_SYNC_OUT_P, OB => DATA_U1_SYNC_OUT_N);
+vrst_u2_buf : obufds port map( I =>  v_reset, O => DATA_U2_CTRL_OUT_P, OB => DATA_U2_CTRL_OUT_N);
 vsyn_u2_buf : obufds port map( I =>  ddr_synced_u2, O => DATA_U2_SYNC_OUT_P, OB => DATA_U2_SYNC_OUT_N);
 
 --	DCM clock generation for internal bus, ethernet
@@ -480,7 +505,26 @@ SIM_CLOCK: if SIMULATION generate
     wait for 1.666 ns;
   end process DELAY_CLK;
   rst_ipb <= '0';
+  
   gck2_mmcm_locked <= not rst_from_bank18;
+
+  GC80_CLOCK: process
+  begin  -- process CLOCK
+    gck2_clk80 <= '1';
+    wait for 6.25 ns;
+    gck2_clk80 <= '0';
+    wait for 6.25 ns;
+  end process GC80_CLOCK;
+
+  GC320_CLOCK: process
+  begin  -- process CLOCK
+    gck2_clk200 <= '1';
+    wait for 2.5 ns;
+    gck2_clk200 <= '0';
+    wait for 2.5 ns;
+  end process GC320_CLOCK;
+
+  
 end generate SIM_CLOCK;
         -----------------------------------------------------------------------
         -- comment for sim
@@ -530,9 +574,8 @@ end generate SIM_CLOCK;
 -------------------------------------------------------------------------------
 -- comment for sim
 -------------------------------------------------------------------------------
------- Ethernet MAC core and PHY interface
-----
-
+---- Ethernet MAC core and PHY interface
+--
 	refclk_ibufds_i : IBUFDS_GTE2
 	port map (
 		O     => gte2_clk_125,
@@ -540,9 +583,9 @@ end generate SIM_CLOCK;
 		CEB   => '0',
 		I     => gt_clkp,
 		IB    => gt_clkn
-	);
+	);  
 
-                         
+
 	eth: entity work.eth_7s_sgmii
 		port map(
 			--!!! GK: clock distributed also to slink, only P is used with buffered clock !!!
@@ -570,8 +613,6 @@ end generate SIM_CLOCK;
 			pcs_pma_status => pcs_pma_status,
 			ExternalPhyChip_reset_out => phy_reset
 		);
-
-
       
 	PHY_RESET_OUT_N <= not phy_reset;
       
@@ -605,7 +646,7 @@ end generate SIM_CLOCK;
 
 	mac_addr <= X"000A3501F610";
 	--ip_addr <= X"865D828B"; --134.93.130.139
-	ip_addr <= X"898A5121"; --137.138.81.33  --X"898A5114"; --137.138.81.20
+	ip_addr <= X"898A5121"; --137.138.81.33
 
 
 -- ipbus slaves live in the entity below, and can expose top-level ports
@@ -624,6 +665,7 @@ end generate SIM_CLOCK;
       	rst_out => sys_rst,
       	pkt_rx => pkt_rx,
       	pkt_tx => pkt_tx,
+
       	
 		ipb_write_U1_out => ipb_write_U1,
 		ipb_read_U1_in => ipb_read_U1,
@@ -633,10 +675,11 @@ end generate SIM_CLOCK;
 		ctrlbus_idelay_value_out => ctrlbus_idelay_value,
 		ctrlbus_idelay_load_out => ctrlbus_idelay_load,
       	
-		soft_rst_out 		=> soft_rst,
+      	
+		soft_rst_out => soft_rst,
 			
-		DELAY_VALS_OUT   	=> ddr_val,
-		DELAY_LOAD_OUT   	=> ddr_val_load,
+		DELAY_VALS_OUT   => ddr_val,
+		DELAY_LOAD_OUT   => ddr_val_load,
       		
       	DBG_LINKS_SYNCED_IN_U1 => links_synced_u1,
 		DBG_STATE_IN_U1     	=> dbg_ddr_state_u1,
@@ -660,6 +703,21 @@ end generate SIM_CLOCK;
 		ROD_RAM_WE_IN 		=> ram_we,
 		ROD_RAM_ADDR_IN 	=> ram_addr,
 		ROD_RAM_DATA_IN 	=> ram_data
+	);
+      
+      
+	move : entity work.from_rod_to_ipbus
+	port map(
+		clk => gck2_clk80,
+		reset => rst_ipb,
+      	
+		parsers_data_in => rod_data,
+		parsers_rd_out => rod_re,
+		parsers_rdy_in => rod_rdy,
+      	
+		ram_we_out => ram_we,
+		ram_waddr_out => ram_addr,
+		ram_data_out => ram_data
 	);
       
 	ctrlbus: entity work.ctrlbus
@@ -692,134 +750,11 @@ end generate SIM_CLOCK;
 			mmcm_clk_80_u2_out => ctrlbus_17_clk,
 			mmcm_clk_400_u2_out => ctrlbus_17_clkx8
 		);
-
 -------------------------------------------------------------------------------
 -- end comment for sim
 -------------------------------------------------------------------------------
 
 
-in_slinkPckBuilder : entity work.slinkPckBuilder
-generic map( 
-			SIMULATION => 0
-)
-port map(sysClk             => gck2_clk40,
-	     CLK_LOCKED_IN      => gck2_mmcm_locked,
-	     
-	     	--!!! GK: clock distributed also to ipbus, only P is used with buffered clock !!!
-	     gt_clkp            => gte2_clk_125,
-	     gt_clkn            => '0',
-	     
-	     PHY_RESET_N        => '1', -- NOT USED INSIDE
-	     SFP3_TXDIS         => open,  -- NOT USED INSIDE
-	     SFP3_LOS           => '0', -- NOT USED INSIDE
-	     SFP3_RX_N          => OPTO_KR1_N, --SFP3_RX_N,
-	     SFP3_RX_P          => OPTO_KR1_P, --SFP3_RX_P,
-	     SFP3_TX_N          => OPTO_KT1_N, --SFP3_TX_N,
-	     SFP3_TX_P          => OPTO_KT1_P, --SFP3_TX_P,
-	     enable_in          => enable_in_sgn,
-	     ready_out          => ready_out_sgn,
-	     busy_out           => busy_out_sgn,
-	     ureset_in          => ureset_in_sgn,
-	     headerSize         => x"0000_0009", --nine words in the header exluding control word
-	     minorFormatVersion => x"1002",
-	     subDetId           => x"91",
-	     moduleId           => x"0001",
-	     runType            => b"0000_1111", --0 = physics, 1 = Calibration, 2 = Cosmics, 15=test
-	     runNumber          => runNumber_sgn,
-	     ECRID              => x"00",
-	     ROD_L1ID           => x"00_0000",
-	     ROD_BCN            => x"000",
-	     triggerType        => x"00",
-	     detectorEventType  => x"0000_0000",
-	     numberOfStatEl     => b"00",
-	     numberOfDataEl     => numberOfDataEl_sgn,
-	     statBlockPos       => '1',
-	     statWord1_in       => x"0000_0000",
-	     statWord2_in       => x"0000_0000",
-	     payload_in         => payload_in_sgn
-);
-
-FSM_sync : process(gck2_clk40) 
-begin
-	if rising_edge(gck2_clk40) then
-		rstCnt <= rstCnt + 1;
-		if(gck2_mmcm_locked = '0' or rstCnt_sgn = '1') then
-			state <= idle;
-		else
-			state  <= n_state;
-		end if;
-		if(state = send) then
-			numberOfDataEl_sgn  <= numberOfDataEl_sgn + 1;
-		elsif(state = pause) then
-			numberOfDataEl_sgn <= numberOfDataEl_sgn;
-		else
-			numberOfDataEl_sgn  <= x"0001";
-		end if;
-		if(state = pause) then
-			pauseCnt  <=  pauseCnt + 1;
-		else
-			pauseCnt  <= (others  => '0');
-		end if;
-		if(state = send) then
-			wordsCnt  <= wordsCnt -1;
-		else
-			wordsCnt  <= x"4";  --we send 4 words
-		end if;
-	end if;
-end process;
-
-FSM : process(ready_out_sgn,wordsCnt,pauseCnt,busy_out_sgn, runNumber_sgn, state)
-begin
-enable_in_sgn  <= '0';
-ureset_in_sgn  <= '0';
-runNumber_sgn  <= runNumber_sgn;
-	case state is 
-		when idle =>
-			n_state <= reset;
-			ureset_in_sgn  <= '1';
-		when reset =>
-			if (busy_out_sgn = '0') then	
-				n_state  <= prepare2Send;
-			else
-				n_state  <= reset;
-			end if;
-		when prepare2Send => 
-			enable_in_sgn <= '1';
-			if (ready_out_sgn = '1') then
-				n_state  <= send;
-			else
-				n_state  <= prepare2Send;
-			end if;		
-		when send =>
-			enable_in_sgn <= '1';
-			if(ready_out_sgn = '1' and wordsCnt >0 ) then
-				n_state  <= send;
-			else
-				n_state  <= pause;
-			end if;
-		when pause =>
-			if(pauseCnt > 100000 and busy_out_sgn = '0') then
-				n_state   <= prepare2Send;
-			else
-				n_state  <= pause; 
-			end if;			
-	end case;
-end process;
-
-
-
-
-DataGenerator : process (gck2_clk40)
-begin
-	if rising_edge ( gck2_clk40 ) then
-		cnt  <=  cnt + 1;
-	end if;
-end process;
-
-
---One line signal assigmnet
-payload_in_sgn  <= cnt & cnt & cnt & cnt;
-rstCnt_sgn <= '1' when rstCnt = x"00_0000" else '0';
 
 
 --################### UGLY LINKS MAPPING
@@ -1050,58 +985,4 @@ ddr_val_load_bank18(5)  <= ddr_val_load(5);
 ddr_val_load_bank18(6)  <= ddr_val_load(6);
 ddr_val_load_bank18(7)  <= ddr_val_load(7);
 
-
---##################################
-
-
-icon : entity work.cs_icon
-PORT map(
-    CONTROL0 => icon_control0,
-    CONTROL1 => icon_control1
-);
-    
-ila0 : entity work.cs_ila
-PORT map(
-    CONTROL => icon_control0,
-    CLK     => idelayctrl_refclk300,
-    TRIG0   => ila_trg_u2
-);
-
-ila1 : entity work.cs_ila
-PORT map(
-    CONTROL => icon_control1,
-    CLK     => idelayctrl_refclk300,
-    TRIG0   => ila_trg_u1
-);
-
-ila_trg_u2(63 downto 0)   <= ddr_data_u2;
-ila_trg_u2(71 downto 64)  <= ddr_dv_u2;
-ila_trg_u2(79 downto 72)  <= ddr_kctrl_u2;
-ila_trg_u2(87 downto 80)  <= links_synced_u2;
-
---ila_trg(254)            <= LDOWN_N_sgn;
---ila_trg(253 downto 251) <= uwen_cntr;
---ila_trg(250)            <= uwen_allowed_n;
---ila_trg(249)            <= ureset_n_sgn;
---ila_trg(248)            <= LFF_N_sgn;
---ila_trg(247 downto 244) <= LRL_sgn;
-
-ila_trg_u2(254) <= enable_in_sgn;
-ila_trg_u2(253) <= ready_out_sgn;
-ila_trg_u2(252) <= busy_out_sgn;
-ila_trg_u2(251) <= ureset_in_sgn;
-
-ila_trg_u2(250 downto 88) <= (others => '0'); 
-
-
-ila_trg_u1(63 downto 0)   <= ddr_data_u1;
-ila_trg_u1(71 downto 64)  <= ddr_dv_u1;
-ila_trg_u1(79 downto 72)  <= ddr_kctrl_u1;
-ila_trg_u1(87 downto 80)  <= links_synced_u1;
-
-ila_trg_u1(254 downto 88) <= (others => '0');
-
-	
 end rtl;
-
- 

@@ -60,7 +60,7 @@ end jet_parser;
 architecture Behavioral of jet_parser is
 
 --FIFO which will store incoming data
-COMPONENT tob_buffer_128x512
+COMPONENT tob_buffer_128x512 
   PORT  (
     rst : IN STD_LOGIC;
     wr_clk : IN STD_LOGIC;

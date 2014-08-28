@@ -9,7 +9,7 @@ use UNISIM.VComponents.all;
 entity ddr_input_module is
 generic (
 	MANUAL_SYNC : boolean := FALSE;
-    SIMULATION : boolean := FALSE);
+   SIMULATION : boolean := FALSE);
 port(
 	RESET_IN          : in std_logic;
 	DCM_DDR_CLK_IN    : in std_logic;
@@ -168,56 +168,56 @@ begin
 	
 	MANUAL_SYNC_GEN : if (MANUAL_SYNC = TRUE) generate
 	
-		ALIGN_MACHINE : process(align_current_state, CTRL_READY_IN, bitslips_ctr, pause_ctr, synced, local_valid, local_data)
-		begin
-				state <= x"0";
-		
-				case align_current_state is
-			  
-						when IDLE =>
-								state <= x"1";
-								if (CTRL_READY_IN = '1') then
-									  align_next_state <= PAUSE_A_WHILE;
-								else
-									  align_next_state <= IDLE;
-								end if;
-							  
-						when PAUSE_A_WHILE =>
-								state <= x"2";
-								if (pause_ctr = 0) then
-									  align_next_state <= ALIGNED;
-								else
-									  align_next_state <= PAUSE_A_WHILE;
-								end if;
-					  
-						when ALIGNED =>
-								state <= x"d";
-								align_next_state <= MATCH_WINDOW;
-							  
-						when MATCH_WINDOW =>
-								state <= x"e";
-								if (synced = '1') then
-									  align_next_state <= LINK_READY;
-								elsif (bitslips_ctr = 9) then
-									  align_next_state <= IDLE;
-								else
-									  align_next_state <= MATCH_WINDOW;
-								end if;
-							  
-						when LINK_READY =>
-								state <= x"f";
-								if (local_valid = '0') then
-									if (local_data = x"bc") then
-										align_next_state <= LINK_READY;
-									else	
-										align_next_state <= IDLE;
-									end if;
-								else
-									align_next_state <= LINK_READY;
-								end if;
-			  
-				end case;
-		end process ALIGN_MACHINE;
+          ALIGN_MACHINE : process(align_current_state, CTRL_READY_IN, bitslips_ctr, pause_ctr, synced, local_kctrl, local_valid, local_data)
+          begin
+            state <= x"0";
+
+            case align_current_state is
+              
+              when IDLE =>
+                state <= x"1";
+                if (CTRL_READY_IN = '1') then
+                  align_next_state <= PAUSE_A_WHILE;
+                else
+                  align_next_state <= IDLE;
+                end if;
+                
+              when PAUSE_A_WHILE =>
+                state <= x"2";
+                if (pause_ctr = 0) then
+                  align_next_state <= ALIGNED;
+                else
+                  align_next_state <= PAUSE_A_WHILE;
+                end if;
+                
+              when ALIGNED =>
+                state            <= x"d";
+                align_next_state <= MATCH_WINDOW;
+                
+              when MATCH_WINDOW =>
+                state <= x"e";
+                if (synced = '1') then
+                  align_next_state <= LINK_READY;
+                elsif (bitslips_ctr = 9) then
+                  align_next_state <= IDLE;
+                else
+                  align_next_state <= MATCH_WINDOW;
+                end if;
+                
+              when LINK_READY =>
+                state <= x"f";
+                --if (local_valid = '0') then
+                --  if (local_data = x"bc") then
+                --    align_next_state <= LINK_READY;
+                --  else
+                --    align_next_state <= IDLE;
+                --  end if;
+                --else
+                  align_next_state <= LINK_READY;
+                --end if;
+                
+            end case;
+          end process ALIGN_MACHINE;
 	
 	end generate MANUAL_SYNC_GEN;
 	
