@@ -128,6 +128,12 @@ signal greg_ddr_rst : std_logic;
 	 
 signal control0, control1 : std_logic_vector(35 downto 0);
 signal trg : std_logic_vector(255 downto 0);
+
+signal test_ctr : std_logic_vector(7 downto 0);
+signal test_data : std_logic_vector(63 downto 0);
+
+signal icon_control0, icon_control1 : std_logic_vector(35 downto 0);
+signal ila_trg : std_logic_vector(255 downto 0);
 	 
 begin
 
@@ -159,8 +165,41 @@ begin
 			clk400=>clk400,
 			clk80=>clk80
 		);
+		
+		slaves: entity work.slaves
+		port map(
+			ipb_clk => gck2_clk40, --ipb_clk
+			ipb_rst => rst_ipb,
+			ipb_in => ipb_master_write,
+			ipb_out => ipb_master_read,
+
+			ctrlbus_idelay_value_out => ctrlbus_idelay_value,
+			ctrlbus_idelay_load_out => ctrlbus_idelay_load,
+
+			ctrlbus_locked_in => ctrlbus_locked,
+			
+			--register signal sction:
+			ROD_rewi_reg => ROD_rewi_reg,
+			triggerReg   =>triggerReg,
+
+	        OUT_DATA_reg              => out_data, --data going from rod to ddr component
+	        DATA_VALID_OUT_reg        => data_valid_out, --data valid coming out from l1_topo rod component
+	        SPECIAL_CHARACTER_OUT_reg => special_character_out,
+	        RESET_reg                 => (reset & KINTEX_READY) --reset line status
+		);
+		
 
 greg_ddr_rst <= not ctrlbus_locked or ddr_reset;
+
+process(clk80)
+begin
+	if rising_edge(clk80) then
+		test_ctr <= test_ctr + x"1";
+	end if;
+end process;
+		
+test_data <= test_ctr & test_ctr & test_ctr & test_ctr & test_ctr & test_ctr & test_ctr & test_ctr;
+data_valid_out <= (others => '1') when KINTEX_READY = '1' else (others => '0');
 
 	--Wrapper initialization______________________________________
     TransmittersWrapperInst :  entity work.TransmittersWrapper
@@ -170,7 +209,7 @@ greg_ddr_rst <= not ctrlbus_locked or ddr_reset;
     	port map(RESET         => reset, --greg_ddr_rst,
     		     CLK_BIT_IN     => clk400,
     		     CLK_WORD_IN    => clk80, --gck2_clk80,--clk80
-    		     DATA_IN        => out_data,--dataIn,             --out_data vector comming out form 'l1topo_to_ddr'
+    		     DATA_IN        => test_data, --out_data,--dataIn,             --out_data vector comming out form 'l1topo_to_ddr'
     		     DATA_VALID_IN  => data_valid_out,--dataValidIn,  --data_valid_out sgn comming out from 'l1topo_to_ddr'
     		     DATA_KCTRL_IN  => special_character_out,--dataKctrlIn,
     		     DATA_PIN_P_OUT => CTRLBUS_P,
@@ -208,23 +247,41 @@ greg_ddr_rst <= not ctrlbus_locked or ddr_reset;
     LED_OUT <= ctrlbus_locked;
     rst_ipb <= not gck2_mmcm_locked;
     MMCX_U30 <= triggerReg(0);-- or MMCX_U30_PIN;
+    
+    
+    
+    
+    
+    
+icon : entity work.cs_icon
+PORT map(
+    CONTROL0 => icon_control0,
+    CONTROL1 => icon_control1
+);
 
-	
-  my_icon : entity work.cs_icon
-  port map (
-    CONTROL0 => CONTROL0); 
-   
- my_ila : entity work.cs_ils
-  port map (
-    CONTROL => CONTROL0,
-    CLK => gck2_clk40,
-    TRIG0 => trg);  
+ila0 : entity work.cs_ila
+PORT map(
+    CONTROL => icon_control0,
+    CLK     => idelayctrl_refclk300,
+    TRIG0   => ila_trg
+);
 
-trg(0) <= reset;
-trg(1) <= gck2_mmcm_locked;
-trg(2) <= ddr_reset;
-trg(3) <= ctrlbus_locked;
-trg(4) <= greg_ddr_rst;
+ila1 : entity work.cs_ila
+PORT map(
+    CONTROL => icon_control1,
+    CLK     => idelayctrl_refclk300,
+    TRIG0   => (others => '0')
+);
+
+
+ila_trg(63 downto 0)  <= test_data;
+ila_trg(71 downto 64) <= data_valid_out;
+ila_trg(72) <= reset;
+ila_trg(73) <= KINTEX_READY;
+ila_trg(74) <= gck2_mmcm_locked;
+ila_trg(75) <= ctrlbus_locked;
+
+ila_trg(255 downto 76) <= (others => '0');
 
 end top_TopoVirtex;
 

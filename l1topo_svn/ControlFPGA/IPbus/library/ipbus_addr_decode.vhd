@@ -34,7 +34,7 @@ package body ipbus_addr_decode is
 			sel := 3; -- pkt_ctr / base 0x00000008 / mask 0xc000300f
 		elsif std_match(addr, "00----------------01------------") then
 			sel := 4; -- ram / base 0x00001000 / mask 0xc000300f
-		elsif std_match(addr, "00----------------10--------000-") then
+		elsif std_match(addr, "00----------------10------------") then
 			sel := 5; -- pram / base 0x00002000 / mask 0xc000300f
 		elsif std_match(addr, "00----------------11--------0000") then
 			sel := 6; -- delay_value / base 0x00003000 / mask 0xc000300f

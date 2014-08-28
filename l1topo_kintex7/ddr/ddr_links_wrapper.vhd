@@ -85,7 +85,7 @@ begin
 		DATA_LINES_OUT       => local_data_lines,
 		
 		DELAY_VALS_IN      	 => DELAY_VALS_IN,
-		DELAY_VALS_OUT        => DELAY_VALS_OUT,
+		DELAY_VALS_OUT       => DELAY_VALS_OUT,
 		DELAY_LOAD_IN      	 => DELAY_LOAD_IN,
 		
 		DELAY_INC_IN         => local_delay_inc,
@@ -129,7 +129,7 @@ begin
 			DATA_VALID_OUT    => local_valid(i),
 			SYNCED_OUT        => local_synced(i),
                         
-         DBG_STATE_OUT     => DBG_STATE_OUT((i + 1) * 4 - 1 downto i * 4),
+         	DBG_STATE_OUT     => DBG_STATE_OUT((i + 1) * 4 - 1 downto i * 4),
 			DBG_REG_DATA_OUT  => DBG_REG_DATA_OUT((i + 1) * 10 - 1 downto i * 10),
 			DBG_BITSLIP_OUT   => DBG_BITSLIP_OUT((i + 1) * 4 - 1 downto i * 4),
 			DBG_INC_OUT       => DBG_INC_OUT((i + 1) * 8 - 1 downto i * 8),
@@ -140,9 +140,9 @@ begin
 
 		LINKS_SYNCED_OUT(i) <= local_synced(i);
                 
-		DATA_OUT((i + 1) * 8 - 1 downto i * 8) <= local_data((i + 1) * 8 - 1 downto i * 8);
+		DATA_OUT((i + 1) * 8 - 1 downto i * 8) <= local_enc_data((i + 1) * 8 - 1 downto i * 8);
 		DATA_VALID_OUT(i) <= local_valid(i);
-      DATA_KCTRL_OUT(i) <= local_ktrl(i);
+        DATA_KCTRL_OUT(i) <= local_ktrl(i);
                 
 	end generate lvds_gen;
 

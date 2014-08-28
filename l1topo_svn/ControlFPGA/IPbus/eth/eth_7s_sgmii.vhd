@@ -90,12 +90,14 @@ architecture rtl of eth_7s_sgmii is
 
 begin
 	
-	ibuf0: IBUFDS_GTE2 port map(
-		i => gt_clkp,
-		ib => gt_clkn,
-		o => clkin,
-		ceb => '0'
-	);
+--	ibuf0: IBUFDS_GTE2 port map(
+--		i => gt_clkp,
+--		ib => gt_clkn,
+--		o => clkin,
+--		ceb => '0'
+--	);
+
+	clkin <= gt_clkp;
 	
 	bufg_fr: BUFG port map(
 		i => clkin,
