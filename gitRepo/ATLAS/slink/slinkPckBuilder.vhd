@@ -14,7 +14,8 @@
 --
 -- Revision: 
 -- Revision 0.01 - File Created
--- Additional Comments: 
+-- Additional Comments:new version for git
+
 --
 ----------------------------------------------------------------------------------
 library IEEE;
