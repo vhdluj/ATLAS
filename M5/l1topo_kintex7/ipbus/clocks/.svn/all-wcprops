@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/clocks
+END
+clocks_7s_serdes.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/clocks/clocks_7s_serdes.vhd
+END
+clock_div.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/clocks/clock_div.vhd
+END
+clocks.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/clocks/clocks.vhd
+END
