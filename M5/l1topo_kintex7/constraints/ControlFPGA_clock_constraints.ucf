@@ -13,29 +13,23 @@ NET "GCK1_IN_N" IOSTANDARD = LVDS_25;
 TIMESPEC TS_global_clock = PERIOD "global_clock" 24.95 ns;
 TIMESPEC TS_global_clock1 = PERIOD "global_clock1" 24.95 ns;
 
-#Created by Constraints Editor (xc7k325t-fbg900-2) - 2014/09/10
-NET "GENERATE_OUPUT_SLINKS[0].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/gtx_txoutclk" TNM_NET = GENERATE_OUPUT_SLINKS[0].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/gtx_txoutclk;
+NET "rod_with_slink/GENERATE_OUPUT_SLINKS[0].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/gtx_txoutclk" TNM_NET = GENERATE_OUPUT_SLINKS[0].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/gtx_txoutclk;
 TIMESPEC TS_GENERATE_OUPUT_SLINKS_0__SLINKPCKBUILDER_INST_CompInst_hola_inst_tlk_wrapper_k7_1_gtx_txoutclk = PERIOD "GENERATE_OUPUT_SLINKS[0].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/gtx_txoutclk" 8 ns HIGH 50%;
 
-#NET "ipb/eth/eth_gt_txoutclk_unbuffered" TNM_NET = "eth_gt_txoutclk_tnm";
-#TIMESPEC TS_txoutclk = PERIOD "eth_gt_txoutclk_tnm" 16 ns;
+NET "ipb/eth/eth_gt_txoutclk_unbuffered" TNM_NET = "eth_gt_txoutclk_tnm";
+TIMESPEC TS_txoutclk = PERIOD "eth_gt_txoutclk_tnm" 16 ns;
 
-#NET "eth/txoutclk" TNM_NET = "txoutclk";
-#TIMESPEC TS_txoutclk = PERIOD "txoutclk" 16 ns;
-#NET "clocks/rst" TIG;
-#NET "clocks/nuke_i" TIG;
-NET "gt_clkp" TNM_NET = "gt_clk";
-NET "gt_clkp" LOC = C8;
-NET "gt_clkp" DIFF_TERM = "TRUE";
-NET "gt_clkn" LOC = C7;
-NET "gt_clkn" DIFF_TERM = "TRUE";
+NET "MGT5_CLK_P" TNM_NET = "gt_clk";
+NET "MGT5_CLK_P" LOC = C8;
+NET "MGT5_CLK_P" DIFF_TERM = "TRUE";
+NET "MGT5_CLK_N" LOC = C7;
+NET "MGT5_CLK_N" DIFF_TERM = "TRUE";
 
 TIMESPEC TS_gt_clk = PERIOD "gt_clk" 8 ns;
 
-#Created by Constraints Editor (xc7k325t-fbg900-2) - 2014/09/08
 NET "L1A_TO_U2_OUT_N" OFFSET = OUT 12 ns AFTER "GCK2_IN_N";
 NET "L1A_TO_U2_OUT_P" OFFSET = OUT 12 ns AFTER "GCK2_IN_N";
-#Created by Constraints Editor (xc7k325t-fbg900-2) - 2014/09/08
+
 INST "TTC_BCNT_IN<0>" TNM = ttc_time_group;
 INST "TTC_BCNT_IN<1>" TNM = ttc_time_group;
 INST "TTC_BCNT_IN<2>" TNM = ttc_time_group;
