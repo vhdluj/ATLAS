@@ -1,0 +1,213 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    16:05:52 08/29/2014 
+-- Design Name: 
+-- Module Name:    ipbusBridge_deserializer - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+library UNISIM;
+use UNISIM.VComponents.all;
+
+use work.decode_8b10b_pkg.all;
+
+
+entity ipbusBridge_deserializer is
+    port( 
+		sysclk			: in  std_logic;
+		serialclk 		: in  std_logic;
+		parallelclk 	: in  std_logic;
+		pll_locked 	: in  std_logic;
+		serialData 		: in  std_logic;
+		idelayValueIn 	: in  std_logic_vector(4 downto 0);
+		idelayload 		: in  std_logic;
+		idelayValueOut : out std_logic_vector(4 downto 0);
+		bitslip			: in  std_logic;
+		decodedData 	: out std_logic_vector(7 downto 0);
+		charIsK 			: out std_logic;
+		codeErr 			: out std_logic
+		
+	);
+	
+end ipbusBridge_deserializer;
+
+
+
+
+architecture Behavioral of ipbusBridge_deserializer is
+
+	attribute shreg_extract: string;
+
+	signal reset: std_logic;
+
+	signal delayedData: std_logic;
+	
+	signal iddr_d1, iddr_d2: std_logic;
+	
+	signal dataShiftReg: std_logic_vector(9 downto 0);
+	
+	signal deserialisedDataBuffer: std_logic_vector(18 downto 0);
+	attribute shreg_extract of deserialisedDataBuffer: signal is "no";
+	
+	signal bitslipCounter: std_logic_vector(3 downto 0);
+	
+	signal synchronisedData: std_logic_vector(9 downto 0);
+	
+	signal charNotInterpretable: std_logic;
+	signal dispErr: std_logic;
+
+	attribute IODELAY_GROUP : string;
+	attribute IODELAY_GROUP of ipbusBridge_idelay: label is "bank14_iodelaygroup";
+	
+	
+	
+begin
+
+
+	reset <= not pll_locked;
+
+
+ipbusBridge_idelay : IDELAYE2
+	generic map (
+		CINVCTRL_SEL           => "FALSE",            -- TRUE, FALSE
+		DELAY_SRC              => "IDATAIN",        -- IDATAIN, DATAIN
+		HIGH_PERFORMANCE_MODE  => "FALSE",             -- TRUE, FALSE
+		IDELAY_TYPE            => "VARIABLE",          -- FIXED, VARIABLE, or VAR_LOADABLE
+		IDELAY_VALUE           => 9,                -- 0 to 31
+		REFCLK_FREQUENCY       => 200.0,
+		PIPE_SEL               => "FALSE",
+		SIGNAL_PATTERN         => "DATA"           -- CLOCK, DATA
+	)
+	port map (
+		IDATAIN                => serialData, -- Driven by IOB
+		DATAOUT                => delayedData,
+		
+		C                      => sysclk,
+		LD                     => '0', --idelayLoad,
+		CNTVALUEIN             => "00000", --idelayValueIn, --IN_DELAY_TAP_IN,
+		CNTVALUEOUT            => idelayValueOut, --IN_DELAY_TAP_OUT,
+		
+		--unused ports
+		DATAIN                 => '0', -- Data from FPGA logic
+		CE                     => idelayload, --IN_DELAY_DATA_CE,
+		INC                    => '1', --IN_DELAY_DATA_INC,
+		REGRST                 => '0',
+		LDPIPEEN               => '0',
+		CINVCTRL               => '0'
+	);
+
+
+
+
+
+
+
+IDDR_inst : IDDR
+		generic map (
+		DDR_CLK_EDGE => "SAME_EDGE_PIPELINED", -- "OPPOSITE_EDGE", "SAME_EDGE"
+		-- or "SAME_EDGE_PIPELINED"
+		INIT_Q1 => '0', -- Initial value of Q1: '0' or '1'
+		INIT_Q2 => '0', -- Initial value of Q2: '0' or '1'
+		SRTYPE => "SYNC") -- Set/Reset type: "SYNC" or "ASYNC"
+		port map (
+		Q1 => iddr_d1, -- 1-bit output for positive edge of clock
+		Q2 => iddr_d2, -- 1-bit output for negative edge of clock
+		C => serialclk,
+		-- 1-bit clock input
+		CE => '1', -- 1-bit clock enable input
+		D => delayedData,
+		-- 1-bit DDR data input
+		R => reset,
+		-- 1-bit reset
+		S => '0'
+		-- 1-bit set
+		);
+
+
+
+
+
+	process(serialclk) begin
+		if rising_edge(serialclk) then
+			dataShiftReg(0) <= iddr_d2;
+			dataShiftReg(1) <= iddr_d1;
+			dataShiftReg(9 downto 2) <= dataShiftReg(7 downto 0);
+		end if;
+	end process;
+	
+	
+
+
+	process(parallelclk) 
+		variable pointer: natural;
+	begin
+		if rising_edge(parallelclk) then
+			deserialisedDataBuffer(9 downto 0) <= dataShiftReg;
+			deserialisedDataBuffer(18 downto 10) <= deserialisedDataBuffer(8 downto 0);
+						
+			if bitslip='1' then 
+				if bitslipCounter="1001" then bitslipCounter <= "0000";
+				else bitslipCounter <= std_logic_vector( unsigned(bitslipCounter) +1 );
+				end if;
+			else bitslipCounter <= bitslipCounter;
+			end if;
+		
+			pointer := to_integer( unsigned(bitslipCounter) );
+			synchronisedData <= deserialisedDataBuffer(pointer+9 downto pointer);
+		
+
+		end if;
+	end process;
+
+
+
+
+
+
+
+
+
+decoder: entity work.decode_8b10b_lut_base 
+	generic map(
+		C_HAS_CODE_ERR => 1,
+		C_HAS_DISP_ERR => 1
+	)
+	port map(
+		CLK => parallelclk,
+		DIN => synchronisedData,
+		DOUT => decodedData,
+		KOUT => charIsK,
+		CE => '1',
+		CODE_ERR => charNotInterpretable,
+		DISP_ERR => dispErr,
+		ND => open,
+		RUN_DISP => open,
+		SYM_DISP => open
+	);
+
+
+	codeErr <= charNotInterpretable or dispErr;
+
+
+
+	
+	
+
+end Behavioral;
+

@@ -24,7 +24,7 @@ port(
 	-- ipbus ethernet
 	VME_EXT_RX_P, VME_EXT_RX_N	: in std_logic; --mgtxrx3_118 rj45 mezzanine X0Y15
 	VME_EXT_TX_P, VME_EXT_TX_N	: out std_logic; --mgtxtx3_118 rj45 mezzanine X0Y15
-	PHY_RESET_OUT_N 			: out std_logic;
+	PHY_RESET_OUT_N 				: out std_logic;
 	
 	-- ros minipod fiber
 	OPTO_KT1_P, OPTO_KT1_N	: out std_logic; --mgtxtx0_117 minipod line 8  X0Y8
@@ -44,7 +44,7 @@ port(
 	TTC_RESET_OUT		: out std_logic;
 	TTC_EVT_H_STR_IN	: in std_logic;
 	TTC_L1A_IN			: in std_logic;
-	TTC_BCNT_STR_IN		: in std_logic;
+	TTC_BCNT_STR_IN	: in std_logic;
 	TTC_EVT_L_STR_IN	: in std_logic;
 	TTC_BCNT_IN			: in std_logic_vector(11 downto 0);
 
@@ -84,7 +84,6 @@ architecture rtl of top_L1TopoController is
 	signal rst_from_bank18  : std_logic;
 
 	signal ttc_rst : std_logic;
-	signal l1a : std_logic;
 
 	signal start_of_frame_l, end_of_frame_l : std_logic;
 
@@ -121,6 +120,8 @@ architecture rtl of top_L1TopoController is
 	signal ttc_bcid : std_logic_vector(11 downto 0);
 	signal ttc_evtid : std_logic_vector(23 downto 0);
 	
+	signal rod_dbg : std_logic_vector(255 downto 0);
+	
 
 begin
 
@@ -152,7 +153,7 @@ PORT map(
     TRIG0   => ila_trg_1
 );
 
-ila_trg_0(0) <= l1a; 
+ila_trg_0(0) <= ttc_l1a; 
 ila_trg_0(1) <= l1_busy_l;
 ila_trg_0(2) <= builder_busy_l;
 ila_trg_0(3) <= ddr_dv_u2(0);
@@ -163,7 +164,7 @@ ila_trg_0(70) <= slink_event_ready_out_l(0);
 ila_trg_0(71) <= slink_ready_in_l(0);
 ila_trg_0(103 downto 72) <= slink_data_out_a(0);
 ila_trg_0(183 downto 104) <= data_out_l(0)(79 downto 0);
-ila_trg_0(231 downto 184) <= slink_status;
+ila_trg_0(231 downto 184) <= rod_dbg(47 downto 0);
 ila_trg_0(247 downto 246) <= std_logic_vector(actual_bus_number_out_l(0));
 ila_trg_0(251 downto 248) <= std_logic_vector(number_of_slices_out_l(0));
 ila_trg_0(255 downto 252) <= std_logic_vector(lvl0_offset_out_l(0));
@@ -174,19 +175,27 @@ ila_trg_0(233) <= lff_n;
 ila_trg_0(234) <= ldown_n;
 ila_trg_0(245 downto 235) <= (others => '0');
 
-ila_trg_1(0) <= l1a;
-ila_trg_1(1) <= start_of_frame_l;
-ila_trg_1(2) <= dbg_tx_en;
-ila_trg_1(3) <= dbg_tx_er;
-ila_trg_1(19 downto 4) <= dbg_txd;
-ila_trg_1(35 downto 20) <= dbg_rxd;
-ila_trg_1(36) <= dbg_rx_dv;
-ila_trg_1(37) <= dbg_rx_er;
-ila_trg_1(38) <= end_of_frame_l;
-ila_trg_1(39) <= ila_trg_0(187);
-ila_trg_1(71 downto 40) <= ila_trg_0(228 downto 197);
-ila_trg_1(72) <= ila_trg_0(185);
-ila_trg_1(255 downto 73) <= (others => '0');
+ila_trg_1(0) <= clk_locked;
+ila_trg_1(1) <= eth_locked;
+ila_trg_1(2) <= rod_rst;
+ila_trg_1(3) <= slink_rst;
+ila_trg_1(4) <= ddr_synced_u2;
+ila_trg_1(5) <= rst_extphy;
+ila_trg_1(245 downto 6) <= (others => '0');
+
+--ila_trg_1(0) <= l1a;
+--ila_trg_1(1) <= start_of_frame_l;
+--ila_trg_1(2) <= dbg_tx_en;
+--ila_trg_1(3) <= dbg_tx_er;
+--ila_trg_1(19 downto 4) <= dbg_txd;
+--ila_trg_1(35 downto 20) <= dbg_rxd;
+--ila_trg_1(36) <= dbg_rx_dv;
+--ila_trg_1(37) <= dbg_rx_er;
+--ila_trg_1(38) <= end_of_frame_l;
+--ila_trg_1(39) <= ila_trg_0(187);
+--ila_trg_1(71 downto 40) <= ila_trg_0(228 downto 197);
+--ila_trg_1(72) <= ila_trg_0(185);
+--ila_trg_1(255 downto 73) <= (others => '0');
 
 
 
@@ -218,15 +227,15 @@ port map(
 	OPTO_KR1_P       => OPTO_KR1_P,
 	OPTO_KT1_N       => OPTO_KT1_N,
 	OPTO_KT1_P       => OPTO_KT1_P,
-	SLINK_LFF_N_OUT  => open,
-	SLINK_DOWN_N_OUT => open,
+	SLINK_LFF_N_OUT  => lff_n,
+	SLINK_DOWN_N_OUT => ldown_n,
 	
 	L1A_IN           => ttc_l1a,
 	BCID_IN          => ttc_bcid,
 	EVTID_IN         => ttc_evtid,
 	
 	BUSY_FROM_U2_IN  => busy_from_u2,
-	DEBUG_OUT        => open
+	DEBUG_OUT        => rod_dbg
 );
 
 rod_rst <= (not ddr_synced_u2) or not clk_locked;
@@ -274,7 +283,7 @@ end process;
 
 TTC_RESET_OUT <= ttc_rst;
 
-l1a_u2_buf : OBUFDS port map ( I => l1a, O => L1A_TO_U2_OUT_P, OB => L1A_TO_U2_OUT_N);
+l1a_u2_buf : OBUFDS port map ( I => ttc_l1a, O => L1A_TO_U2_OUT_P, OB => L1A_TO_U2_OUT_N);
 
 --##################   DDR
 
@@ -282,11 +291,11 @@ ddr_rst <= not locked;
 
 ddr_u2 : entity work.ddr_u2_wrapper
 generic map(
-	SIMULATION		=> SIMULATION,
-	VIVADO			=> VIVADO
+	SIMULATION			=> SIMULATION,
+	VIVADO				=> VIVADO
 )
 port map(
-	GCK40_IN			=> gck2_clk40,
+	GCK40_IN				=> gck2_clk40,
 	DELAY_CTRL_CLK_IN	=> sysclk200,
 	DDR_RST_IN			=> ddr_rst,
 		
@@ -295,7 +304,7 @@ port map(
 	DATA_BANK16_IN_P	=> DATA_BANK16_IN_P,
 	DATA_BANK16_IN_N	=> DATA_BANK16_IN_N,
 	
-	DATA_OUT			=> ddr_data_u2,
+	DATA_OUT				=> ddr_data_u2,
 	DATA_DV_OUT			=> ddr_dv_u2,
 	DATA_KCTRL_OUT		=> ddr_kctrl_u2,
 	
@@ -381,14 +390,14 @@ MGT5_CLK_BUFG: BUFG
 
 clk: entity work.clocks
 port map(
-	gck1				=> gck1,
-	gck2				=> gck2,
+	gck1					=> gck1,
+	gck2					=> gck2,
 	sysclk40_out		=> gck2_clk40,
 	sysclk80_out		=> gck2_clk80,
 	sysclk200_out		=> sysclk200,
 	sysclk400_out		=> sysclk400,
 	
-	eth_gt_txoutclk		=> eth_gt_txoutclk,
+	eth_gt_txoutclk	=> eth_gt_txoutclk,
 	ethclk62_5_out		=> ethclk62_5,
 	ethclk125_out		=> ethclk125,
 	

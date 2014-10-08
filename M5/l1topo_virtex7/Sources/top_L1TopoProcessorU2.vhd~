@@ -1,0 +1,503 @@
+----------------------------------------------------------------------------------
+-- Company: Johannes Gutenberg-Universit�t Mainz
+-- Engineer: Christian Kahra
+-- 
+-- Create Date: 14.07.2014 16:06:32
+-- Design Name: L1TopoProcessor
+-- Module Name: top_L1TopoProcessor - Behavioral
+-- Project Name: Atlas Level-1 Topological Processor
+-- Target Devices: 
+-- Tool Versions: Vivado 14.2
+-- Description: top module
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use work.L1TopoDataTypes.all;
+use work.L1TopoFunctions.all;
+use work.L1TopoGTConfiguration.all;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+library UNISIM;
+use UNISIM.VComponents.all;
+
+entity top_L1TopoProcessor is
+    Port ( 
+        GCK1_P, GCK1_N: in std_logic;
+        GCK2_P, GCK2_N: in std_logic;
+        
+        RxP : in std_logic_vector(MGTHigh downto MGTLow);
+        RxN : in std_logic_vector(MGTHigh downto MGTLow);
+        TxP : out std_logic_vector(TxMGTHigh downto TxMGTLow);
+        TxN : out std_logic_vector(TxMGTHigh downto TxMGTLow);
+        MgtRefClk0P,MgtRefClk0N: in std_logic_vector(QuadMax downto QuadLow);--usually 160.32 MHz                      
+        MgtRefClk1P,MgtRefClk1N: in std_logic_vector(QuadMax downto QuadLow);--usually 160.32 MHz
+                
+        
+        
+        
+        CTRLBUS_P_27, CTRLBUS_N_27: in std_logic;
+        CTRLBUS_P_29, CTRLBUS_N_29: in std_logic;
+        CTRLBUS_P_31, CTRLBUS_N_31: in std_logic;
+        CTRLBUS_P_32, CTRLBUS_N_32: in std_logic;
+        CTRLBUS_P_34, CTRLBUS_N_34: in std_logic;
+        
+        CTRLBUS_P_21, CTRLBUS_N_21: out std_logic;
+        CTRLBUS_P_22, CTRLBUS_N_22: out std_logic;
+        CTRLBUS_P_23, CTRLBUS_N_23: out std_logic;
+        CTRLBUS_P_24, CTRLBUS_N_24: in std_logic;
+        CTRLBUS_P_25, CTRLBUS_N_25: in std_logic;
+        CTRLBUS_P_26, CTRLBUS_N_26: in std_logic;
+        CTRLBUS_P_28, CTRLBUS_N_28: in std_logic;
+        CTRLBUS_P_40, CTRLBUS_N_40: in std_logic
+        
+--        EXT_V7_P_02, EXT_V7_N_02: out std_logic;
+--        EXT_V7_P_03, EXT_V7_N_03: out std_logic;
+--        EXT_V7_P_04, EXT_V7_N_04: out std_logic;
+--        EXT_V7_P_05, EXT_V7_N_05: out std_logic;
+--        EXT_V7_P_06, EXT_V7_N_06: out std_logic;
+--        EXT_V7_P_07, EXT_V7_N_07: out std_logic;
+--        EXT_V7_P_08, EXT_V7_N_08: out std_logic;
+--        EXT_V7_P_09, EXT_V7_N_09: out std_logic;
+--        EXT_V7_P_10, EXT_V7_N_10: out std_logic;
+--        EXT_V7_P_11, EXT_V7_N_11: out std_logic;
+--        EXT_V7_P_12, EXT_V7_N_12: out std_logic;
+--        EXT_V7_P_13, EXT_V7_N_13: out std_logic;
+--        EXT_V7_P_14, EXT_V7_N_14: out std_logic;
+--        EXT_V7_P_15, EXT_V7_N_15: out std_logic;
+--        EXT_V7_P_16, EXT_V7_N_16: out std_logic;
+--        EXT_V7_P_17, EXT_V7_N_17: out std_logic
+        
+    );
+end top_L1TopoProcessor;
+
+architecture Behavioral of top_L1TopoProcessor is
+
+    signal gck1: std_logic;
+    signal gck2: std_logic;
+    signal sysclk40 : std_logic;
+    signal sysclk80 : std_logic;
+    signal sysclk160: std_logic;
+    signal sysclk200: std_logic;
+    signal sysclk320: std_logic;
+    signal clockBus : std_logic_vector(3 downto 0);
+    
+    signal gck_mmcm_locked: std_logic;
+
+    signal ctrlbus_in,  ctrlbus_in_p,  ctrlbus_in_n : std_logic_vector(4 downto 0);
+    signal ctrlbus_out, ctrlbus_out_p, ctrlbus_out_n: std_logic_vector(2 downto 0);
+    
+--    signal ttc, ttc_p, ttc_n: std_logic;
+--    signal L1Accept, ttc_bunchcounter_reset, ttc_broadcast_01xxxx: std_logic; 
+
+--    signal results: std_logic_vector(31 downto 0);
+--    signal ctp, ctp_p, ctp_n: std_logic_vector(15 downto 0);
+
+    signal idelay_inc, idelay_inc_p, idelay_inc_n: std_logic_vector(4 downto 0);
+    
+
+    signal receivedData128BitFromDeserialisers : arraySLV128(MGTHigh downto MGTLow);
+    signal muxedData128BitToAlgorithms         : arraySLV128(MGTHigh downto MGTLow);
+        
+
+    signal ChannelControl  : arraySLV32(MGTHigh downto MGTLow);
+	signal QuadControl     : arraySLV32(QuadHigh downto QuadLow);
+	signal ChannelStatus   : arraySLV32(MGTHigh downto MGTLow);
+	signal DataShift40MHz  : arraySLV3(MGTHigh downto MGTLow);
+	signal CRCErrorCounter : arraySLV32(MGTHigh downto MGTLow);
+
+
+    signal GtTxData    : arraySLV32(TxMGTHigh downto TxMGTLow);
+    signal GtTxCharIsK : arraySLV4(TxMGTHigh downto TxMGTLow);
+
+    signal spyData36BitFromMGTs:  arraySLV36(MGTHigh downto MGTLow);
+    signal enablePlaybackOfMGTs:  std_logic;
+    signal playbackData36BitFakingMGTs:  arraySLV36(MGTHigh downto MGTLow);
+     
+    
+    
+    
+    signal enablePlaybackOfDeserialisers:  std_logic;
+    signal playbackData128BitFakingDeserialisers:  arraySLV128(MGTHigh downto MGTLow);
+    
+    
+    signal SortParameters: ParameterSpace(NumberOfSortAlgorithms - 1 downto 0);
+    signal AlgoParameters: ParameterSpace(NumberOfAlgorithms - 1 downto 0);
+    
+    
+    --algo ports                            
+    signal emTOBs    :  ClusterArray(InputWidthEM  - 1 downto 0);
+    signal tauTOBs   :  ClusterArray(InputWidthTau - 1 downto 0);
+    signal jetTOBs   :  JetArray    (InputWidthJet - 1 downto 0);
+    signal muTOBs    :  MuonArray   (InputWidthMU  - 1 downto 0);
+    signal signed_Ex :  std_logic_vector(14 downto 0);
+    signal signed_Ey :  std_logic_vector(14 downto 0);
+    
+    signal AlgoResults:  std_logic_vector(NumberOfResultBits - 1 downto 0);
+    signal AlgoOverflow: std_logic_vector(NumberOfOverflowBits - 1 downto 0);
+    
+    
+    signal spyData32BitFromAlgos: std_logic_vector(31 downto 0);
+    signal enablePlaybackOfAlgos: std_logic;
+    signal playbackData32BitFakingAlgos: std_logic_vector(31 downto 0);
+    
+
+begin
+
+
+--input mapping
+
+    idelay_inc_p(0) <= CTRLBUS_P_27;
+    idelay_inc_n(0) <= CTRLBUS_P_27;
+    idelay_inc_p(1) <= CTRLBUS_P_29;
+    idelay_inc_n(1) <= CTRLBUS_P_29;
+    idelay_inc_p(2) <= CTRLBUS_P_31;
+    idelay_inc_n(2) <= CTRLBUS_P_31;
+    idelay_inc_p(3) <= CTRLBUS_P_32;
+    idelay_inc_n(3) <= CTRLBUS_P_32;
+    idelay_inc_p(4) <= CTRLBUS_P_34;
+    idelay_inc_n(4) <= CTRLBUS_P_34;
+
+
+
+    ctrlbus_in_p(0)  <= CTRLBUS_P_24;
+	ctrlbus_in_n(0)  <= CTRLBUS_N_24;
+	ctrlbus_in_p(1)  <= CTRLBUS_P_25;
+	ctrlbus_in_n(1)  <= CTRLBUS_N_25;
+	ctrlbus_in_p(2)  <= CTRLBUS_P_26;
+	ctrlbus_in_n(2)  <= CTRLBUS_N_26;
+	ctrlbus_in_p(3)  <= CTRLBUS_P_28;
+    ctrlbus_in_n(3)  <= CTRLBUS_N_28;
+    ctrlbus_in_p(4)  <= CTRLBUS_P_40;
+    ctrlbus_in_n(4)  <= CTRLBUS_N_40;
+
+
+
+
+--input buffer
+
+GCK1_IBUFGDS: IBUFGDS
+	port map(
+		I  => GCK1_P,
+		IB => GCK1_N,
+		O  => gck1
+);
+
+
+GCK2_IBUFGDS: IBUFGDS
+	port map(
+		I  => GCK2_P,
+		IB => GCK2_N,
+		O  => gck2
+);
+
+
+CTRLBUS_IN_IBUFDS_GEN: for i in 4 downto 0 generate
+	CTRLBUS_IN_IBUFDS: IBUFDS
+		port map(
+			I  => ctrlbus_in_p(i),
+			IB => ctrlbus_in_n(i),
+			O  => ctrlbus_in(i)
+		);
+	end generate;
+
+
+--TTC_IBUFDS: IBUFDS
+--    port map(
+--        I => ttc_p,
+--        IB => ttc_n,
+--        O => ttc
+--    );
+
+IDELAY_INC_IBUFDS_GEN: for i in 4 downto 0 generate
+    IDELAY_INC_IBUFDS: IBUFDS
+        port map(
+            I => idelay_inc_p(i),
+            IB => idelay_inc_n(i),
+            O => idelay_inc(i)
+        );
+end generate;
+
+
+
+
+
+--sub modules
+
+clk: entity work.clocks
+	port map(
+		gck1			=> gck1,
+		gck2			=> gck2,
+		sysclk40_out	=> sysclk40,
+		sysclk80_out	=> sysclk80,
+		sysclk160_out	=> sysclk160,
+		sysclk200_out	=> sysclk200,
+		sysclk320_out	=> sysclk320,
+		
+		gck_mmcm_locked_out => gck_mmcm_locked
+	); 
+
+
+    clockBus(0) <= sysclk40;--40MHz
+	clockBus(1) <= sysclk80;--80MHz
+	clockBus(2) <= sysclk160;--160MHz
+	clockBus(3) <= sysclk320;--320MHz
+
+
+
+ipb: entity work.extended_ipbus
+    port map(
+        sysclk40 => sysclk40,
+        sysclk80 => sysclk80,
+        sysclk160 => sysclk160,
+        sysclk200 => sysclk200,
+        
+        gck_mmcm_locked => gck_mmcm_locked,
+        
+        ctrlbus_in => ctrlbus_in,
+        ctrlbus_out => ctrlbus_out,
+                
+        idelay_inc => idelay_inc,
+        
+        
+        ChannelControl => ChannelControl,
+        QuadControl => QuadControl,
+        ChannelStatus => ChannelStatus,
+        DataShift40MHz => DataShift40MHz,
+        CRCErrorCounter => CRCErrorCounter,
+        
+        GtTxData => GtTxData,
+        GtTxCharIsK => GtTxCharIsK,
+        
+        
+        spyData36BitFromMGTs => spyData36BitFromMGTs,
+        enablePlaybackOfMGTs => enablePlaybackOfMGTs,
+        playbackData36BitFakingMGTs => playbackData36BitFakingMGTs,
+        
+        spyData128BitFromDeserialisers => receivedData128BitFromDeserialisers,
+        enablePlaybackOfDeserialisers => enablePlaybackOfDeserialisers,
+        playbackData128BitFakingDeserialisers => playbackData128BitFakingDeserialisers,
+        
+        
+        
+        SortParameters => SortParameters,
+        AlgoParameters => AlgoParameters,
+        
+        
+        spyData32BitFromAlgos => spyData32BitFromAlgos,
+        enablePlaybackOfAlgos => enablePlaybackOfAlgos,
+        playbackData32BitFakingAlgos => playbackData32BitFakingAlgos
+        
+        
+    );
+
+
+
+
+
+GT_Inout_I: entity work.GT_Inout
+    Port map
+	(
+	--physical connection to FPGA pins
+	RxP => RxP,
+	RxN => RxN,
+	TxP => TxP,
+	TxN => TxN,
+	MgtRefClk0P => MgtRefClk0P,
+	MgtRefClk0N => MgtRefClk0N,
+	MgtRefClk1P => MgtRefClk1P,
+	MgtRefClk1N => MgtRefClk1N,
+
+	--internal FPGA clock signals after MMCM
+	UsrClkIn => sysclk320,
+	UsrClk2In => sysclk320,
+	SYSCLK40 => sysclk40,
+	clockBus => clockBus,
+	
+	--GT transmitter signals
+	GtTxData => GtTxData,
+	GtTxCharIsK => GtTxCharIsK,
+
+	--IP Bus/VIO related signals
+	ChannelControl => ChannelControl,
+	QuadControl => QuadControl,
+	ChannelStatus => ChannelStatus,
+	DataShift40MHz => DataShift40MHz,
+	CRCError_Amount	=>CRCErrorCounter,
+	
+	--Data for algorithms (and CRC)--> this are the only signals needed for algorithms
+	Data128 => receivedData128BitFromDeserialisers,
+	
+	--Debug ports, leave open when you do not want to debug and want to save some logic resources
+--	Charisk128 => Charisk128,--
+--	GtRxData => GtRxData,--
+--	GtRxCharIsK => GtRxCharIsK,--
+--	Data128AndChariK128_Just_Done => Data128AndChariK128_Just_Done,--
+--	CrcError => CrcError,--
+--	CRC_Just_Done => CRC_Just_Done,--
+	
+	spyData36BitFromMGTs => spyData36BitFromMGTs,
+    enablePlaybackOfMGTs => enablePlaybackOfMGTs,
+    playbackData36BitFakingMGTs => playbackData36BitFakingMGTs
+	
+	);
+
+
+
+    muxedData128BitToAlgorithms <= receivedData128BitFromDeserialisers when enablePlaybackOfDeserialisers='0' else playbackData128BitFakingDeserialisers;
+
+
+
+
+    ----make data ready to be used by alg.
+    
+    ----JET_TOBs
+    -- Avago(Quad): AV2(113, 114, 115), AV3(116, 117, 118) 
+    -- AV4(119), AV6(213, 214, 215), AV7(216, 217, 218), AV4(219)
+    --JET_GEN: for MGT in 24-1 downto 0 generate begin
+    JET_GEN: for MGT in 12 downto 12 generate begin
+        jetTOBs( 4*MGT + 0 ) <= DeserialisedData_to_JetTOB(muxedData128BitToAlgorithms(MGT)(127 downto 100), '0');
+        jetTOBs( 4*MGT + 1 ) <= DeserialisedData_to_JetTOB(muxedData128BitToAlgorithms(MGT)(99 downto 72), '0');
+        jetTOBs( 4*MGT + 2 ) <= DeserialisedData_to_JetTOB(muxedData128BitToAlgorithms(MGT)(71 downto 44), '0');
+        jetTOBs( 4*MGT + 3 ) <= DeserialisedData_to_JetTOB(muxedData128BitToAlgorithms(MGT)(43 downto 16), '0');
+    end generate JET_GEN;
+    
+    
+    -- AV6(213, 214, 215)
+    --EM_GEN: for MGT in 40-1 downto 28 generate
+    EM_GEN: for MGT in 20 downto 20 generate
+        constant emMGT: natural := MGT-28;
+        --constant emMGT: natural := MGT-31;
+    begin
+        emTOBs( 5*emMGT + 0 ) <= DeserialisedData_to_ClusterTOB(muxedData128BitToAlgorithms(MGT)(127 downto 105), "00");
+        emTOBs( 5*emMGT + 1 ) <= DeserialisedData_to_ClusterTOB(muxedData128BitToAlgorithms(MGT)(104 downto 82), "00");
+        emTOBs( 5*emMGT + 2 ) <= DeserialisedData_to_ClusterTOB(muxedData128BitToAlgorithms(MGT)(81 downto 59), "00");
+        emTOBs( 5*emMGT + 3 ) <= DeserialisedData_to_ClusterTOB(muxedData128BitToAlgorithms(MGT)(58 downto 36), "00");
+        emTOBs( 5*emMGT + 4 ) <= DeserialisedData_to_ClusterTOB(muxedData128BitToAlgorithms(MGT)(35 downto 13), "00");
+    end generate EM_GEN;
+    
+    
+    -- AV7(216, 217, 218)
+    --TAU_GEN: for MGT in 52-1 downto 40 generate
+    TAU_GEN: for MGT in 28 downto 28 generate
+        --constant tauMGT: natural := MGT-40;
+        constant tauMGT: natural := MGT-28;
+    begin
+        tauTOBs( 5*tauMGT + 0 ) <= DeserialisedData_to_ClusterTOB(muxedData128BitToAlgorithms(MGT)(127 downto 105), "00");
+        tauTOBs( 5*tauMGT + 1 ) <= DeserialisedData_to_ClusterTOB(muxedData128BitToAlgorithms(MGT)(104 downto 82), "00");
+        tauTOBs( 5*tauMGT + 2 ) <= DeserialisedData_to_ClusterTOB(muxedData128BitToAlgorithms(MGT)(81 downto 59), "00");
+        tauTOBs( 5*tauMGT + 3 ) <= DeserialisedData_to_ClusterTOB(muxedData128BitToAlgorithms(MGT)(58 downto 36), "00");
+        tauTOBs( 5*tauMGT + 4 ) <= DeserialisedData_to_ClusterTOB(muxedData128BitToAlgorithms(MGT)(35 downto 13), "00");
+    end generate TAU_GEN;
+    
+    
+--    -- AV4(119)
+--    --MU_GEN : for MGT in 28-1 downto 24 generate
+--    MU_GEN : for MGT in 36-1 downto 32 generate
+--        --constant muMGT: natural := MGT-24;
+--        constant muMGT: natural := MGT-32;
+--    begin
+--        muTOBs( 4*muMGT + 0 ) <= DeserialisedData_to_MyonTOB(muxedData128BitToAlgorithms(MGT)(127 downto 120));
+--        muTOBs( 4*muMGT + 1 ) <= DeserialisedData_to_MyonTOB(muxedData128BitToAlgorithms(MGT)(119 downto 112));
+--        muTOBs( 4*muMGT + 2 ) <= DeserialisedData_to_MyonTOB(muxedData128BitToAlgorithms(MGT)(111 downto 104));
+--        muTOBs( 4*muMGT + 3 ) <= DeserialisedData_to_MyonTOB(muxedData128BitToAlgorithms(MGT)(103 downto 96));
+--    end generate MU_GEN;
+    
+    
+    
+    -- AV4(219)
+    signed_Ey(14 downto 8)<=  muxedData128BitToAlgorithms(36)(78  downto 72  );  --24
+    signed_Ey(7 downto 0) <=  muxedData128BitToAlgorithms(36)(51  downto 44  );                 
+    signed_Ex             <=  muxedData128BitToAlgorithms(36)(26  downto 12  );
+
+
+
+    
+algo: entity work.L1TopoAlgorithms
+    port map(
+        ClockBus => ClockBus,
+        JetTobArray => jetTOBs,
+        EmTobArray => emTOBs,
+        TauTobArray => tauTOBs,
+        signedEx => signed_Ex,
+        signedEy => signed_Ey,
+        AlgoParameters => AlgoParameters,
+        SortParameters => SortParameters,
+        Results => AlgoResults,
+        Overflow => AlgoOverflow
+    );
+
+
+
+
+
+
+
+--output buffer
+
+CTRLBUS_OUT_OBUFDS_GEN: for i in 2 downto 0 generate
+	CTRLBUS_OUT_OBUFDS: OBUFDS
+		port map(
+			I  => ctrlbus_out(i),
+			O  => ctrlbus_out_p(i),
+			OB => ctrlbus_out_n(i)
+		);
+	end generate;
+
+
+--RESULTS_ODDR_OBUFDS_GEN: for i in 15 downto 0 generate begin
+
+--    results(i) <= '0';
+--    results(16+i) <= '0';
+
+--  RESULTS_ODDR: ODDR
+--    generic map(
+--      DDR_CLK_EDGE => "OPPOSITE_EDGE", -- "OPPOSITE_EDGE" or "SAME_EDGE" 
+--      INIT => '0',   -- Initial value for Q port ('1' or '0')
+--      SRTYPE => "SYNC") -- Reset Type ("ASYNC" or "SYNC")
+--    port map (
+--      Q => ctp(i),   -- 1-bit DDR output
+--      C => sysclk40,    -- 1-bit clock input
+--      CE => '1',  -- 1-bit clock enable input   
+--      D1 => results(i),  -- 1-bit data input (positive edge)
+--      D2 => results(16+i),  -- 1-bit data input (negative edge)
+--      R => '0',    -- 1-bit reset input
+--      S => '0'     -- 1-bit set input
+--    );
+    
+    
+--  RESULTS_OBUFDS: OBUFDS
+--    port map(
+--        I => ctp(i),
+--        O => ctp_p(i),
+--        OB => ctp_n(i)
+--    );
+    
+--end generate;
+
+
+
+--output mapping
+
+    CTRLBUS_P_21 <= ctrlbus_out_p(0);
+	CTRLBUS_N_21 <= ctrlbus_out_n(0);
+	CTRLBUS_P_22 <= ctrlbus_out_p(1);
+	CTRLBUS_N_22 <= ctrlbus_out_n(1);
+	CTRLBUS_P_23 <= ctrlbus_out_p(2);
+	CTRLBUS_N_23 <= ctrlbus_out_n(2);
+
+
+end Behavioral;

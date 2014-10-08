@@ -1,0 +1,16 @@
+Copyright 1986-2014 Xilinx, Inc. All Rights Reserved.
+-----------------------------------------------------------------------------------
+| Tool Version : Vivado v.2014.2 (win64) Build 932637 Wed Jun 11 13:33:10 MDT 2014
+| Date         : Wed Oct 08 12:41:10 2014
+| Host         : Grzegorz-THINK running 64-bit major release  (build 9200)
+| Command      : upgrade_ip
+| Device       : xc7vx485tffg1927-2
+-----------------------------------------------------------------------------------
+
+Upgrade Log for IP 'ring_buffer_128b_256W'
+
+1. Summary
+----------
+
+SUCCESS in the upgrade of ring_buffer_128b_256W (xilinx.com:ip:blk_mem_gen:8.2) to (Rev. 1)
+

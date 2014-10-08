@@ -1,0 +1,1 @@
+rxdata : std_logic_vector(31 downto 0),charisk : std_logic_vector(3 downto 0),ber_reset : std_logic(Null  Null)

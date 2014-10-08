@@ -1,0 +1,163 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 15.07.2014 12:06:08
+-- Design Name: 
+-- Module Name: extended_ipbus - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+use work.ipbus.all;
+use work.L1TopoDataTypes.all;
+use work.L1TopoGTConfiguration.all;
+
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity ipbusBridge is
+    Port (
+        sysclk40: in std_logic;
+        sysclk80: in std_logic;
+        sysclk160: in std_logic;
+        sysclk200: in std_logic;
+        gck_mmcm_locked: in std_logic;
+        ctrlbus_in: in std_logic_vector(4 downto 0);
+        ctrlbus_out: out std_logic_vector(2 downto 0);
+        
+        ttcBridgeControl: out std_logic_vector(9 downto 0);
+        ttcBridgeStatus: in std_logic_vector(12 downto 0);
+                
+        ChannelControl: out arraySLV32(MGTHigh downto MGTLow);
+        QuadControl: out arraySLV32(QuadHigh downto QuadLow);
+        ChannelStatus: in arraySLV32(MGTHigh downto MGTLow);
+        DataShift40MHz: out  arraySLV3(MGTHigh downto MGTLow);--+-25 ns delay, do not expect this to work for large delays
+        CRCErrorCounter: in arraySLV32(MGTHigh downto MGTLow);
+                
+        --GT transmitter signals
+        GtTxData: out  arraySLV32(TxMGTHigh downto TxMGTLow);
+        GtTxCharIsK: out  arraySLV4(TxMGTHigh downto TxMGTLow);
+        
+        spyData36BitFromMGTs: in arraySLV36(MGTHigh downto MGTLow);
+        enablePlaybackOfMGTs: out std_logic;
+        playbackData36BitFakingMGTs: out arraySLV36(MGTHigh downto MGTLow);
+        
+        spyData128BitFromDeserialisers: in arraySLV128(MGTHigh downto MGTLow);
+        enablePlaybackOfDeserialisers: out std_logic;
+        playbackData128BitFakingDeserialisers: out arraySLV128(MGTHigh downto MGTLow);
+        
+        
+        SortParameters: out ParameterSpace(NumberOfSortAlgorithms - 1 downto 0);
+        AlgoParameters: out ParameterSpace(NumberOfAlgorithms - 1 downto 0);
+        
+        spyData32BitFromAlgos: in std_logic_vector(31 downto 0);
+        enablePlaybackOfAlgos: out std_logic;
+        playbackData32BitFakingAlgos: out std_logic_vector(31 downto 0)
+        
+        
+--        datasource: in std_logic_vector(35 downto 0);
+--        results: in std_logic_vector(31 downto 0)
+        
+    );
+end ipbusBridge;
+
+architecture Behavioral of ipbusBridge is
+
+    signal ipb_rst: std_logic;
+    signal ipb_master_write: ipb_wbus;
+    signal ipb_master_read: ipb_rbus;
+    signal ctrlbus_locked, ctrlbus_error: std_logic;
+    
+--    signal idelay_counter_0 :  std_logic_vector(4 downto 0);
+--    signal idelay_counter_1 :  std_logic_vector(4 downto 0);
+--    signal idelay_counter_2 :  std_logic_vector(4 downto 0);
+--    signal idelay_counter_3 :  std_logic_vector(4 downto 0);
+--    signal idelay_counter_4 :  std_logic_vector(4 downto 0);
+    
+begin
+
+
+
+ctrlbus: entity work.ctrlbus
+    port map(
+        sysclk40 => sysclk40,
+        sysclk80 => sysclk80,
+        sysclk200 => sysclk200,
+        
+        ipb_read_in => ipb_master_read,
+        ctrlbus_out => ctrlbus_out,
+                        
+        ctrlbus_in => ctrlbus_in,
+        ipb_write_out => ipb_master_write,
+        ctrlbus_locked_out => ctrlbus_locked
+    );
+
+
+
+
+    ipb_rst <= not gck_mmcm_locked;
+    ctrlbus_error <= not ctrlbus_locked;
+
+slaves: entity work.slaves
+    port map(
+        sysclk40 => sysclk40,
+        sysclk80 => sysclk80,
+        sysclk160 => sysclk160,
+        ipb_rst => ipb_rst,
+        ipb_in => ipb_master_write,
+        ipb_out => ipb_master_read,
+        
+        ctrlbus_error => ctrlbus_error,
+        
+        ttcBridgeControl => ttcBridgeControl,
+        ttcBridgeStatus => ttcBridgeStatus,
+
+        ChannelControl => ChannelControl,
+        QuadControl => QuadControl,
+        ChannelStatus => ChannelStatus,
+        DataShift40MHz => DataShift40MHz,
+        CRCErrorCounter => CRCErrorCounter,
+
+        GtTxData => GtTxData,
+        GtTxCharIsK => GtTxCharIsK,
+        
+        spyData36BitFromMGTs => spyData36BitFromMGTs,
+        enablePlaybackOfMGTs => enablePlaybackOfMGTs,
+        playbackData36BitFakingMGTs => playbackData36BitFakingMGTs,
+        
+        spyData128BitFromDeserialisers => spyData128BitFromDeserialisers,
+        enablePlaybackOfDeserialisers => enablePlaybackOfDeserialisers,
+        playbackData128BitFakingDeserialisers => playbackData128BitFakingDeserialisers,
+        
+        SortParameters => SortParameters,
+        AlgoParameters => AlgoParameters,
+        
+        spyData32BitFromAlgos => spyData32BitFromAlgos,
+        enablePlaybackOfAlgos => enablePlaybackOfAlgos,
+        playbackData32BitFakingAlgos => playbackData32BitFakingAlgos
+        
+    );
+
+
+end Behavioral;

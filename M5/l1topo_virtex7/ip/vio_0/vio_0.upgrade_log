@@ -1,0 +1,45 @@
+Copyright 1986-2014 Xilinx, Inc. All Rights Reserved.
+-----------------------------------------------------------------------------------
+| Tool Version : Vivado v.2014.2 (win64) Build 928826 Thu Jun  5 18:21:07 MDT 2014
+| Date         : Thu Jul 10 21:04:58 2014
+| Host         : WETAP137 running 64-bit Service Pack 1  (build 7601)
+| Command      : upgrade_ip
+| Device       : xc7vx485tffg1927-2
+-----------------------------------------------------------------------------------
+
+Upgrade Log for IP 'vio_0'
+
+1. Summary
+----------
+
+SUCCESS in the update of vio_0 (xilinx.com:ip:vio:3.0 (Rev. 3)) to current project options.
+
+
+
+
+
+
+Copyright 1986-2014 Xilinx, Inc. All Rights Reserved.
+-----------------------------------------------------------------------------------
+| Tool Version : Vivado v.2014.2 (win64) Build 928826 Thu Jun  5 18:21:07 MDT 2014
+| Date         : Thu Jun 12 11:47:00 2014
+| Host         : WETAP137 running 64-bit Service Pack 1  (build 7601)
+| Command      : upgrade_ip
+| Device       : xc7vx690tffg1927-3
+-----------------------------------------------------------------------------------
+
+Upgrade Log for IP 'vio_0'
+
+1. Summary
+----------
+
+SUCCESS in the upgrade of vio_0 (xilinx.com:ip:vio:3.0) from (Rev. 2) to (Rev. 3)
+
+2. Interface Information
+------------------------
+
+Detected external interface differences while upgrading IP 'vio_0'.
+
+
+-upgrade has added interface 'signal_clock'
+

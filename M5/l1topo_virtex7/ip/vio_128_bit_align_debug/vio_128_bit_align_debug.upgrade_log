@@ -1,0 +1,16 @@
+Copyright 1986-2014 Xilinx, Inc. All Rights Reserved.
+-----------------------------------------------------------------------------------
+| Tool Version : Vivado v.2014.2 (win64) Build 928826 Thu Jun  5 18:21:07 MDT 2014
+| Date         : Thu Jul 10 21:05:26 2014
+| Host         : WETAP137 running 64-bit Service Pack 1  (build 7601)
+| Command      : upgrade_ip
+| Device       : xc7vx485tffg1927-2
+-----------------------------------------------------------------------------------
+
+Upgrade Log for IP 'vio_128_bit_align_debug'
+
+1. Summary
+----------
+
+SUCCESS in the update of vio_128_bit_align_debug (xilinx.com:ip:vio:3.0 (Rev. 3)) to current project options.
+

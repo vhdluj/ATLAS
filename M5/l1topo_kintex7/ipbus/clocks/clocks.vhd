@@ -242,115 +242,115 @@ SYSCLK400_BUFG: BUFG
 
 
 
---ETH_MMCM: MMCME2_ADV
---   generic map (
---      BANDWIDTH => "OPTIMIZED",      -- Jitter programming (OPTIMIZED, HIGH, LOW)
---      COMPENSATION => "ZHOLD",       -- ZHOLD, BUF_IN, EXTERNAL, INTERNAL
---		
---      CLKIN1_PERIOD => 16.00,
---		
---      REF_JITTER1 => 0.01, -- REF_JITTER: Reference input jitter in UI (0.000-0.999).
---      
---		
---		--VCO Freq: 1000 MHz
---		CLKFBOUT_MULT_F => 16.0,        -- Multiply value for all CLKOUT (2.000-64.000).
---      CLKFBOUT_PHASE => 0.0,         -- Phase offset in degrees of CLKFB (-360.000-360.000).
---      
---		DIVCLK_DIVIDE => 1,            -- Master division value (1-106)
---		
---		-- CLKOUT0_DIVIDE - CLKOUT6_DIVIDE: Divide amount for CLKOUT (1-128)
---      CLKOUT0_DIVIDE_F => 16.0,       -- Divide amount for CLKOUT0 (1.000-128.000).
---		CLKOUT1_DIVIDE => 8,
---      CLKOUT2_DIVIDE => 1,
---      CLKOUT3_DIVIDE => 1,
---      CLKOUT4_DIVIDE => 1,
---      CLKOUT5_DIVIDE => 1,
---      CLKOUT6_DIVIDE => 1,
---      
---      -- CLKOUT0_DUTY_CYCLE - CLKOUT6_DUTY_CYCLE: Duty cycle for CLKOUT outputs (0.01-0.99).
---      CLKOUT0_DUTY_CYCLE => 0.5,
---      CLKOUT1_DUTY_CYCLE => 0.5,
---      CLKOUT2_DUTY_CYCLE => 0.5,
---      CLKOUT3_DUTY_CYCLE => 0.5,
---      CLKOUT4_DUTY_CYCLE => 0.5,
---      CLKOUT5_DUTY_CYCLE => 0.5,
---      CLKOUT6_DUTY_CYCLE => 0.5,
---		
---      -- CLKOUT0_PHASE - CLKOUT6_PHASE: Phase offset for CLKOUT outputs (-360.000-360.000).
---      CLKOUT0_PHASE => 0.0,
---      CLKOUT1_PHASE => 0.0,
---      CLKOUT2_PHASE => 0.0,
---      CLKOUT3_PHASE => 0.0,
---      CLKOUT4_PHASE => 0.0,
---      CLKOUT5_PHASE => 0.0,
---      CLKOUT6_PHASE => 0.0,
---      
---		CLKFBOUT_USE_FINE_PS => FALSE,
---      CLKOUT0_USE_FINE_PS => FALSE,
---      CLKOUT1_USE_FINE_PS => FALSE,
---      CLKOUT2_USE_FINE_PS => FALSE,
---      CLKOUT3_USE_FINE_PS => FALSE,
---      CLKOUT4_USE_FINE_PS => FALSE,
---      CLKOUT5_USE_FINE_PS => FALSE,
---      CLKOUT6_USE_FINE_PS => FALSE, 
---		
---		CLKOUT4_CASCADE => FALSE,      -- Cascade CLKOUT4 counter with CLKOUT6 (FALSE, TRUE)
---      STARTUP_WAIT => FALSE,         -- Delays DONE until MMCM is locked (FALSE, TRUE)
---      		
---      SS_EN => "FALSE",              -- Enables spread spectrum (FALSE, TRUE)
---      SS_MODE => "CENTER_HIGH",      -- CENTER_HIGH, CENTER_LOW, DOWN_HIGH, DOWN_LOW
---      SS_MOD_PERIOD => 10000        -- Spread spectrum modulation period (ns) (VALUES)
---      
---   )
---	
---   port map (
---      
---		CLKIN1 => eth_gt_txoutclk,
---      
---		CLKFBOUT => eth_mmcm_feedback_unbuffered,
---		CLKFBIN	=> eth_mmcm_feedback,
---		
---		CLKOUT0 => ethclk62_5_unbuffered,
---      CLKOUT1 => ethclk125_unbuffered,
---		
---		LOCKED => eth_mmcm_locked,             -- 1-bit output: LOCK
---		
---		CLKINSEL => '1',         -- 1-bit input: Clock select, High=CLKIN1 Low=CLKIN2
---		--unused ports
---		
---		CLKIN2 => '0',
---		CLKOUT0B => open,
---      CLKOUT1B => open,
---      CLKOUT2 	=> open,
---      CLKOUT2B => open,
---      CLKOUT3 	=> open,
---      CLKOUT3B => open,
---      CLKOUT4 	=> open,
---      CLKOUT5 	=> open,
---      CLKOUT6 	=> open,
---      
---		CLKFBOUTB => open,       -- 1-bit output: Inverted CLKFBOUT
---		
---		CLKFBSTOPPED => open, -- 1-bit output: Feedback clock stopped
---      CLKINSTOPPED => open, -- 1-bit output: Input clock stopped
---		
---		PWRDWN => '0',             -- 1-bit input: Power-down
---      RST => '0',                   -- 1-bit input: Reset
---				
---      DO => open,                     -- 16-bit output: DRP data
---      DRDY => open,                 -- 1-bit output: DRP ready
---      DADDR => "0000000",               -- 7-bit input: DRP address
---      DCLK => '0',                 -- 1-bit input: DRP clock
---      DEN => '0',                   -- 1-bit input: DRP enable
---      DI => X"0000",                     -- 16-bit input: DRP data
---      DWE => '0',                   -- 1-bit input: DRP write enable
---		
---      PSDONE => open,             -- 1-bit output: Phase shift done
---      PSCLK => '0',               -- 1-bit input: Phase shift clock
---      PSEN => '0',                 -- 1-bit input: Phase shift enable
---      PSINCDEC => '0'         -- 1-bit input: Phase shift increment/decrement
---		
---   );
+ETH_MMCM: MMCME2_ADV
+   generic map (
+      BANDWIDTH => "OPTIMIZED",      -- Jitter programming (OPTIMIZED, HIGH, LOW)
+      COMPENSATION => "ZHOLD",       -- ZHOLD, BUF_IN, EXTERNAL, INTERNAL
+		
+      CLKIN1_PERIOD => 16.00,
+		
+      REF_JITTER1 => 0.01, -- REF_JITTER: Reference input jitter in UI (0.000-0.999).
+      
+		
+		--VCO Freq: 1000 MHz
+		CLKFBOUT_MULT_F => 16.0,        -- Multiply value for all CLKOUT (2.000-64.000).
+      CLKFBOUT_PHASE => 0.0,         -- Phase offset in degrees of CLKFB (-360.000-360.000).
+      
+		DIVCLK_DIVIDE => 1,            -- Master division value (1-106)
+		
+		-- CLKOUT0_DIVIDE - CLKOUT6_DIVIDE: Divide amount for CLKOUT (1-128)
+      CLKOUT0_DIVIDE_F => 16.0,       -- Divide amount for CLKOUT0 (1.000-128.000).
+		CLKOUT1_DIVIDE => 8,
+      CLKOUT2_DIVIDE => 1,
+      CLKOUT3_DIVIDE => 1,
+      CLKOUT4_DIVIDE => 1,
+      CLKOUT5_DIVIDE => 1,
+      CLKOUT6_DIVIDE => 1,
+      
+      -- CLKOUT0_DUTY_CYCLE - CLKOUT6_DUTY_CYCLE: Duty cycle for CLKOUT outputs (0.01-0.99).
+      CLKOUT0_DUTY_CYCLE => 0.5,
+      CLKOUT1_DUTY_CYCLE => 0.5,
+      CLKOUT2_DUTY_CYCLE => 0.5,
+      CLKOUT3_DUTY_CYCLE => 0.5,
+      CLKOUT4_DUTY_CYCLE => 0.5,
+      CLKOUT5_DUTY_CYCLE => 0.5,
+      CLKOUT6_DUTY_CYCLE => 0.5,
+		
+      -- CLKOUT0_PHASE - CLKOUT6_PHASE: Phase offset for CLKOUT outputs (-360.000-360.000).
+      CLKOUT0_PHASE => 0.0,
+      CLKOUT1_PHASE => 0.0,
+      CLKOUT2_PHASE => 0.0,
+      CLKOUT3_PHASE => 0.0,
+      CLKOUT4_PHASE => 0.0,
+      CLKOUT5_PHASE => 0.0,
+      CLKOUT6_PHASE => 0.0,
+      
+		CLKFBOUT_USE_FINE_PS => FALSE,
+      CLKOUT0_USE_FINE_PS => FALSE,
+      CLKOUT1_USE_FINE_PS => FALSE,
+      CLKOUT2_USE_FINE_PS => FALSE,
+      CLKOUT3_USE_FINE_PS => FALSE,
+      CLKOUT4_USE_FINE_PS => FALSE,
+      CLKOUT5_USE_FINE_PS => FALSE,
+      CLKOUT6_USE_FINE_PS => FALSE, 
+		
+		CLKOUT4_CASCADE => FALSE,      -- Cascade CLKOUT4 counter with CLKOUT6 (FALSE, TRUE)
+      STARTUP_WAIT => FALSE,         -- Delays DONE until MMCM is locked (FALSE, TRUE)
+      		
+      SS_EN => "FALSE",              -- Enables spread spectrum (FALSE, TRUE)
+      SS_MODE => "CENTER_HIGH",      -- CENTER_HIGH, CENTER_LOW, DOWN_HIGH, DOWN_LOW
+      SS_MOD_PERIOD => 10000        -- Spread spectrum modulation period (ns) (VALUES)
+      
+   )
+	
+   port map (
+      
+		CLKIN1 => eth_gt_txoutclk,
+      
+		CLKFBOUT => eth_mmcm_feedback_unbuffered,
+		CLKFBIN	=> eth_mmcm_feedback,
+		
+		CLKOUT0 => ethclk62_5_unbuffered,
+      CLKOUT1 => ethclk125_unbuffered,
+		
+		LOCKED => eth_mmcm_locked,             -- 1-bit output: LOCK
+		
+		CLKINSEL => '1',         -- 1-bit input: Clock select, High=CLKIN1 Low=CLKIN2
+		--unused ports
+		
+		CLKIN2 => '0',
+		CLKOUT0B => open,
+      CLKOUT1B => open,
+      CLKOUT2 	=> open,
+      CLKOUT2B => open,
+      CLKOUT3 	=> open,
+      CLKOUT3B => open,
+      CLKOUT4 	=> open,
+      CLKOUT5 	=> open,
+      CLKOUT6 	=> open,
+      
+		CLKFBOUTB => open,       -- 1-bit output: Inverted CLKFBOUT
+		
+		CLKFBSTOPPED => open, -- 1-bit output: Feedback clock stopped
+      CLKINSTOPPED => open, -- 1-bit output: Input clock stopped
+		
+		PWRDWN => '0',             -- 1-bit input: Power-down
+      RST => '0',                   -- 1-bit input: Reset
+				
+      DO => open,                     -- 16-bit output: DRP data
+      DRDY => open,                 -- 1-bit output: DRP ready
+      DADDR => "0000000",               -- 7-bit input: DRP address
+      DCLK => '0',                 -- 1-bit input: DRP clock
+      DEN => '0',                   -- 1-bit input: DRP enable
+      DI => X"0000",                     -- 16-bit input: DRP data
+      DWE => '0',                   -- 1-bit input: DRP write enable
+		
+      PSDONE => open,             -- 1-bit output: Phase shift done
+      PSCLK => '0',               -- 1-bit input: Phase shift clock
+      PSEN => '0',                 -- 1-bit input: Phase shift enable
+      PSINCDEC => '0'         -- 1-bit input: Phase shift increment/decrement
+		
+   );
 
 	eth_mmcm_locked_out <= eth_mmcm_locked;
 
