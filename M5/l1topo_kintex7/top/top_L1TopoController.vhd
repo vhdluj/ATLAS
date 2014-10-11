@@ -43,10 +43,17 @@ port(
 	-- ttcrx
 	TTC_RESET_OUT		: out std_logic;
 	TTC_EVT_H_STR_IN	: in std_logic;
-	TTC_L1A_IN			: in std_logic;
+	TTC_L1A_IN			: in std_logic; -- line 43
 	TTC_BCNT_STR_IN	: in std_logic;
 	TTC_EVT_L_STR_IN	: in std_logic;
 	TTC_BCNT_IN			: in std_logic_vector(11 downto 0);
+	TTC_EVTCNTRRST_IN : in std_logic; -- line 45
+	TTC_BCNRST_IN     : in std_logic; -- line 46
+	TTC_BRCST_IN      : in std_logic_vector(5 downto 0);
+	TTC_BCSTR1_IN     : in std_logic;
+	TTC_BCSTR2_IN     : in std_logic;
+	
+	TTC_U2_OUT_P, TTC_U2_OUT_N : out std_logic;
 
 	-- u2 diverse
 	DATA_U2_SYNC_OUT_P, DATA_U2_SYNC_OUT_N	: out std_logic;
@@ -121,6 +128,11 @@ architecture rtl of top_L1TopoController is
 	signal ttc_evtid : std_logic_vector(23 downto 0);
 	
 	signal rod_dbg : std_logic_vector(255 downto 0);
+	
+	signal test_ctr : std_logic_vector(31 downto 0);
+	
+	signal ttc_out : std_logic_vector(1 downto 0);
+	signal fakeTTCBroadcast : std_logic;
 	
 
 begin
@@ -262,9 +274,23 @@ port map(
 		
 	--output signals
 	TTC_RESET_OUT		=> ttc_rst,
-	L1A_OUT				=> ttc_l1a, --level 1 accepted. Main trigger
+	L1A_OUT				=> open, --ttc_l1a, --level 1 accepted. Main trigger
 	BCID_OUT				=> ttc_bcid, --BCID is other name for BCN (bunch crossing number)
 	EVTID_OUT			=> open --ttc_evtid
+);
+
+ttc: entity work.ttc_serializer
+port map(
+	sysclk40 => gck2_clk40,
+	sysclk80 => gck2_clk80,
+	ttc_L1Accept => TTC_L1A_IN,
+	ttc_EventCounterReset => TTC_EVTCNTRRST_IN,
+	ttc_BunchCounterReset => TTC_BCNRST_IN,
+	ttc_BroadcastStrobe1 => TTC_BCSTR1_IN,
+	ttc_BroadcastStrobe2 => TTC_BCSTR2_IN,
+	ttc_Broadcast => TTC_BRCST_IN,
+	fakeTTCBroadcast => fakeTTCBroadcast,
+	ttc_out => ttc_out
 );
 
 -- GK temporary fix of evtid 
@@ -283,7 +309,22 @@ end process;
 
 TTC_RESET_OUT <= ttc_rst;
 
+process(gck2_clk40)
+begin
+	if rising_edge(gck2_clk40) then
+		if (clk_locked = '0') then
+			test_ctr <= (others => '0');
+		else
+			test_ctr <= test_ctr + x"1";
+		end if;
+	end if;
+end process;
+
+ttc_l1a <= '1' when test_ctr(23 downto 0) = x"111111" else '0';
+
 l1a_u2_buf : OBUFDS port map ( I => ttc_l1a, O => L1A_TO_U2_OUT_P, OB => L1A_TO_U2_OUT_N);
+
+ttc_u2_buf : OBUFDS port map ( I  => ttc_out(1), O  => TTC_U2_OUT_P, OB => TTC_U2_OUT_N);
 
 --##################   DDR
 
@@ -455,7 +496,7 @@ port map(
 	ctrlbus_u1_out => ctrlbus_u1_out,
 	ctrlbus_u2_out => ctrlbus_u2_out,
 	
-	fakeTTCBroadcast => open,
+	fakeTTCBroadcast => fakeTTCBroadcast,
 	
 	debugIPBus => open,
 	debugIPBusBridgeU2 => open

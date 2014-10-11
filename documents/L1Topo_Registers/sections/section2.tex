@@ -1,0 +1,200 @@
+
+\section{Processor U1 Programming Model}
+\label{section_2}
+
+\begin {table}[H]
+\caption {Relative processors sub-addresses for Algorithms}
+\label{tab_low_reg_control}
+\begin{tabular}{|l|l|}
+\hline
+Register Name & Register sub-address \\
+\hline
+CtrlbusErrorCounter & 0x0001 \\
+TestRAM & 0x1000 size=0x400 \\ 
+PlaybackSpyControl  & 0x0010 \\ 
+PlaybackCharIsKFakingMGTs & 0x0011 \\ 
+PlaybackSpyDataOfMGTs & 0x80000 size=20000 \\ 
+SpyCharIsKFromMGTs & 0x012 \\ 
+PlaybackSpyDataOfDeserialisers & 0xA0000 size=20000 \\ 
+PlaybackSpyDataOfAlgoResults & 0x400" size=400 \\
+QuadControl & 0x0020 size=0x20 \\ 
+ChannelControl & 0x0080 size=0x80 \\ 
+ChannelStatus & 0x0100 size=0x80 \\ 
+DataDelay & 0x0180 size=0x80 \\ 
+CRCErrorCounter & 0x0200 size=0x80 \\ 
+FPGA\_T   &  xxxxxxxxx \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{CtrlbusErrorCounter}
+Error counter of the IPbus controller-processor connection
+
+\subsection{TestRAM}
+
+\subsection{PlaybackSpyControl}
+Playback and spy control.
+%
+
+\subsection{PlaybackCharIsKFakingMGTs}
+CharIsK data (4bit) to use while IPbus write-transactions on the PlaybackSpyDataOfMGTs.
+%
+\begin {table}[H]
+\begin{center}
+\caption {XXX}
+\label{reg_PlaybackSpyControl}
+\begin{tabular}{|l|l|l|l|} 
+\hline
+\textbf{bit} & \textbf{R/W}  & \textbf{Function} & \textbf{Comments}\\
+\hline
+0& R/W & CharIsK bit 1 &  \\
+\hline
+1& R/W & CharIsK bit 2 &  \\
+\hline
+2& R/W &CharIsK bit 3  &  \\
+\hline
+3& R/W & CharIsK bit 4 &  \\
+\hline
+4& R/W & &  \\
+\hline
+5-32 & R/W & Reserved & Reserved \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\subsection{PlaybackSpyDataOfMGTs}
+Data to playback or spied data of the MGTs. address bits[16:10] select the MGT, [9:0] select the blockram address ([9:2] select out of the 256 128bit datawords, [1:0] the 128bit dataword in 32bit units (MSB downto LSB)).
+%
+\begin {table}[H]
+\begin{center}
+\caption {XXX}
+\label{reg_PlaybackSpyControl}
+\begin{tabular}{|l|l|l|l|} 
+\hline
+\textbf{bit} & \textbf{R/W}  & \textbf{Function} & \textbf{Comments}\\
+\hline
+0-1 & R/W & select the blockram address  & [1:0] the 128bit dataword in 32bit units (MSB downto LSB) \\
+\hline
+2-9 & R/W & select the blockram address & [9:2] select out of the 256 128bit datawords  \\
+\hline
+\hline
+10-32 & R/W & Reserved & Reserved \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\subsection{SpyCharIsKFromMGTs}
+CharIsK data (4bit) spied while the last read transaction on the PlaybackSpyDataOfMGTs.
+
+\subsection{PlaybackSpyDataOfDeserialisers}
+Data to playback or spied data of the deserialiseres. address bits[16:10] select the deserialiser channel, [9:0] select the blockram address ([9:2] select out of the 256 128bit datawords, [1:0] the 128bit dataword in 32bit units (MSB downto LSB)).
+
+\subsection{PlaybackSpyDataOfAlgoResults}
+Data to playback or spied data of the L1Topo-Algorithms. address bits[9:0] select the 32bit dataword.
+
+\subsection{QuadControl}
+Control registers of the MGT-Quads.
+
+\subsection{ChannelControl}
+Control registers of the MGT-Channels.
+
+\subsection{ChannelStatus}
+Status registers of the MGT-Channels.
+
+\subsection{DataDelay}
+DataDelay (2bit) controls the shift registers for the received data. Data will be delayed by 2**DataDelay bunch ticks.
+
+\subsection{CRCErrorCounter}
+Error counter of the CRC check of the received data.
+
+%
+\begin {table}[H]
+\caption {Relative processors sub-addresses for Algorithms} 
+\label{tab_low_reg}
+\begin{tabular}{|l|l|}
+\hline
+Register Name & Register Address \\
+\hline
+ClusterSortEM\_minEt & 0x20000000 \\ 
+ClusterSortEM\_isoMask & 0x20000001 \\ 
+ClusterSortEM\_minEta & 0x20000002 \\ 
+ClusterSortEM\_maxEta & 0x20000003 \\ 
+ClusterSortTau\_minEt & 0x20000004 \\ 
+ClusterSortTau\_isoMask & 0x20000005 \\ 
+ClusterSortTau\_minEta & 0x20000006 \\ 
+ClusterSortTau\_maxEta & 0x20000007 \\ 
+JetSortAll\_minEt & 0x20000008 \\ 
+JetSortAll\_minEta & 0x20000009 \\ 
+JetSortAll\_maxEta & 0x2000000a \\ 
+EtCut\_J25\_minEt & 0x2000000b \\ 
+DeltaPhiIncl1\_JJ16\_minEt & 0x2000000c \\ 
+DeltaPhiIncl1\_JJ16\_minPhi & 0x2000000d \\ 
+DeltaPhiIncl1\_JJ16\_maxPhi & 0x2000000e \\ 
+DeltaEtaIncl1\_JJ10\_minEt & 0x2000000f \\ 
+DeltaEtaIncl1\_JJ10\_minPhi & 0x20000010 \\ 
+DeltaEtaIncl1\_JJ10\_maxPhi & 0x20000011 \\ 
+JetHT\_HT200\_minEt & 0x20000012 \\ 
+JetHT\_HT200\_minEta & 0x20000013 \\ 
+JetHT\_HT200\_maxEta & 0x20000014 \\ 
+JetHT\_HT200\_minSum & 0x20000015 \\ 
+EtCut\_EM25\_minEt & 0x20000016 \\ 
+DeltaPhiIncl1\_EMEM16\_minEt & 0x20000017 \\ 
+DeltaPhiIncl1\_EMEM16\_minPhi & 0x20000018 \\ 
+DeltaPhiIncl1\_EMEM16\_maxPhi & 0x20000019 \\ 
+DeltaEtaIncl1\_EMEM10\_minEt & 0x2000001a \\ 
+DeltaEtaIncl1\_EMEM10\_minPhi & 0x2000001b \\ 
+DeltaEtaIncl1\_EMEM10\_maxPhi & 0x2000001c \\ 
+EtCut\_Tau25\_minEt & 0x2000001d \\ 
+DeltaPhiIncl1\_TauTau16\_minEt & 0x2000001e \\ 
+DeltaPhiIncl1\_TauTau16\_minPhi & 0x2000001f \\ 
+DeltaPhiIncl1\_TauTau16\_maxPhi & 0x20000020 \\ 
+DeltaEtaIncl1\_TauTau10\_minEt & 0x20000021 \\ 
+DeltaEtaIncl1\_TauTau10\_minPhi & 0x20000022 \\ 
+DeltaEtaIncl1\_TauTau10\_maxPhi & 0x20000023 \\ 
+MEtCut\_XE25\_minEt & 0x20000024 \\ 
+\hline
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+ \item ClusterSortEM\_minEt: ClusterSort EM. Minimum Et threshold.
+ \item ClusterSortEM\_isoMask: ClusterSort EM. Isolation mask
+ \item ClusterSortEM\_minEta : ClusterSort EM. Minimum Eta cut.
+ \item ClusterSortEM\_maxEta : ClusterSort EM. Maximum Eta cut.
+ \item ClusterSortTau\_minEt : ClusterSort Tau. Minimum Et threshold.
+ \item ClusterSortTau\_isoMask : ClusterSort Tau. Isolation mask.
+ \item ClusterSortTau\_minEta : ClusterSort Tau. Minimum Eta cut.
+ \item ClusterSortTau\_maxEta : ClusterSort Tau. Maximum Eta cut.
+ \item JetSortAll\_minEt : JetSort All. Minimum Et threshold.
+ \item JetSortAll\_minEta : JetSort All. Minimum Eta cut.
+ \item JetSortAll\_maxEta : JetSort All. Maximum Eta cut.
+ \item EtCut\_J25\_minEt : EtCut J25. Minimum Et threshold.
+ \item DeltaPhiIncl1\_JJ16\_minEt : DeltaPhiIncl1 JJ16. Minimum Et threshold.
+ \item DeltaPhiIncl1\_JJ16\_minPhi : DeltaPhiIncl1 JJ16. Minimum Phi cut.
+ \item DeltaPhiIncl1\_JJ16\_maxPhi : DeltaPhiIncl1 JJ16. Maximum Phi cut.
+ \item DeltaEtaIncl1\_JJ10\_minEt : DeltaEtaIncl1 JJ10. Minimum Et threshold.
+ \item DeltaEtaIncl1\_JJ10\_minPhi : DeltaEtaIncl1 JJ10. Minimum Eta cut.
+ \item DeltaEtaIncl1\_JJ10\_maxPhi : DeltaEtaIncl1 JJ10. Maximum Eta cut.
+ \item JetHT\_HT200\_minEt : JetHT HT200. Minimum Et threshold.
+ \item JetHT\_HT200\_minEta : JetHT HT200. Minimum Eta cut.
+ \item JetHT\_HT200\_maxEta : JetHT HT200. Maximum Eta cut.
+ \item JetHT\_HT200\_minSum : JetHT HT200. Minimum Sum threshold.
+ \item EtCut\_EM25\_minEt : EtCut EM25. Minimum Et threshold.
+ \item DeltaPhiIncl1\_EMEM16\_minEt : DeltaPhiIncl1 EMEM16. Minimum Et threshold.
+ \item DeltaPhiIncl1\_EMEM16\_minPhi : DeltaPhiIncl1 EMEM16. Minimum Phi cut.
+ \item DeltaPhiIncl1\_EMEM16\_maxPhi : DeltaPhiIncl1 EMEM16. Maximum Phi cut.
+ \item DeltaEtaIncl1\_EMEM10\_minEt : DeltaEtaIncl1 EMEM10. Minimum Et threshold.
+ \item DeltaEtaIncl1\_EMEM10\_minPhi : DeltaEtaIncl1 EMEM10. Minimum Eta cut.
+ \item DeltaEtaIncl1\_EMEM10\_maxPhi : DeltaEtaIncl1 EMEM10. Maximum Eta cut.
+ \item EtCut\_Tau25\_minEt : EtCut Tau25. Minimum Et threshold.
+\end{itemize}
+
+
+
+%
+\end{document}
+

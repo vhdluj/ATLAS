@@ -1,0 +1,994 @@
+
+
+\section{Control FPGA Programming Model}
+\label{section_1}
+
+%
+\begin {table}[H]
+\begin{center}
+\caption {Control FPGA addresses offsets}
+\label{tab_top_reg}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+Offset (hex)& Type & Name & Size(bytes) & Comments \\
+\hline
+0x00000001 & R&Firmware\_Version& 4 & \\
+\hline
+0x00000002 & R &General\_Status& 4 & \\
+\hline
+0x00000004 & RW &General\_Control& 4 & \\
+\hline
+0x00000008 & RW&TTC\_Forwarding\_Control& 4 & \\
+\hline
+0x00000010 & RW&I2C\_Data\_Out& 4 & \\
+\hline
+0x00000011 & R&I2C\_Error& 4 & \\
+\hline
+0x00000012 & RW&I2C\_Address& 4 & \\
+\hline
+0x00000013 & RW&I2C\_WriteEnable& 4 & \\
+\hline
+0x00000014 & RW&I2C\_Pointer& 4 & \\
+\hline
+0x00000015 & RW&I2C\_Data\_In& 4 & \\
+\hline
+0x00000016 & RW&I2C\_Bus\_Select& 4 & \\
+\hline
+0x00000020 & R&SGMII\_Phy\_Error\_Counter& 4&  \\
+\hline
+0x00000021 & R&Ethernet\_MAC\_Error\_Counter& 4 & \\
+\hline
+0x00000022 & R&CTRL\_BUS\_U1\_ErrorCounter& 4 & \\
+\hline
+0x00000023 & R&CTRL\_BUS\_U2\_Error\_Counter& 4 & \\
+\hline
+0x00000024 & R&I2C\_Error\_Counter& 4 & \\
+\hline
+0x00000100 & RW&ROD\_Infrastructure& 128 & sub-space offset \\
+\hline
+0x00001000 & RW&Test\_RAM& 1024 & sub-space offset \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+%
+
+
+
+\subsection{Firmware Version}
+
+\begin {table}[H]
+\begin{center}
+\caption {Firmware Version}
+\label{reg_4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-2 & FW version \\
+\hline
+2-31& Unused  \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+
+\subsection{General\_Control}
+General control register of the ControlFPGA.
+
+\begin {table}[H]
+\begin{center}
+\caption {Firmware Version}
+\label{reg_4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-5 & ?? \\
+\hline
+5-31& Unused  \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+%
+\begin{itemize}
+\item \textbf{Bit 0}: ...
+\item \textbf{Bit 1-2}: ...
+\item \textbf{Bit 2-32}: unused
+\end{itemize}
+
+
+\subsection{SGMII\_Phy\_Error\_Counter}
+ErrorCounter for the SGMII Phy (errors in the 8b10b encoded data).
+%
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.45\textheight]{/afs/cern.ch/user/e/esimioni/workspace/Talks/images/IPbus_errors.png}
+    \caption{IPBus error counters}
+    \label{IPB_err}
+\end{figure}
+%
+\begin {table}[H]
+\begin{center}
+\caption {Firmware Version}
+\label{reg_4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-7 & SGMII error counter\\
+\hline
+8-15 & MAC error counter \\
+\hline
+16-32 & unused \\
+\end{tabular}
+\end{center}
+\end{table}
+%
+\begin{itemize}
+\item \textbf{Bit 0}:...
+\end{itemize}
+%
+\subsection{TTC\_Forwarding\_Control}
+Control register for the TTC forwarding.
+
+\subsection{I2C}
+The various I2C registers are here described.
+
+\subsection{Ethernet\_MAC\_Error\_Counter}
+ErrorCounter for the Ethernet MAC (unsuccessful frame reception -> assertion of the rx\_axis\_mac\_tuser signal). Errors in the SGMII Phy will also lead to errors in the MAC.
+
+\subsection{CTRL\_BUS\_U1\_ErrorCounter}
+ErrorCounter for the incoming IPbus lines from the U1 processor (errors in the 8b10b encoded data).
+
+\subsection{CTRL\_BUS\_U2\_Error\_Counter}
+
+
+\subsection{ROD\_Infrastructure}
+%
+\begin {table}[H]
+\begin{center}
+\caption {ROD control and status registers for Run Control}
+\label{rod_control_run}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Offset (hex)& Type & Register Name & Size(bytes)\\
+\hline
+0x00000000 & RW & Ov\_Busy & 4 \\
+\hline
+0x00000001 & RW & Gen\_L1A & 4 \\
+\hline
+0x00000002 & RW & Run\_Type\_Nbr & 4 \\
+\hline
+0x00000003 & RW & Trg\_Type & 4 \\
+\hline
+0x00000004 & RW & Level1ID\_Gen & 4 \\
+\hline
+0x00000005 & W & Run\_Reset & 4 \\
+\hline
+0x00000006 & R & ROD\_Sys\_Fw\_Ver & 4 \\
+\hline
+0x00000007-0A & R & Run\_Gen\_Dbg & 16 \\
+\hline
+0x0000000A-0F & RW & Run\_Reserved & unused \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin {table}[H]
+\begin{center}
+\caption {ROD control and status registers for ROD Control}
+\label{rod_control_rod}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Offset (hex)& Type & Register Name & Size(bytes)\\
+\hline
+0x00000010 & W & ROD\_Reset & 4 \\
+\hline
+0x00000011-12 & RW & Fifo\_Thr & 8 \\
+\hline
+0x00000013 & RW & Busy\_Idle\_Fr\_Conf & 4 \\
+\hline
+0x00000014-1C & RW & Hist\_Conf & 32 \\
+\hline
+0x0000001D-021 & R & TOB\_Ctr & 16 \\
+\hline
+0x00000022-026 & R & Err\_Ctr & 16 \\
+\hline
+0x00000026-029 & R & ROD\_Gen\_Dbg & 16 \\
+\hline
+0x0000002A & R & Busy\_Idle\_Fr & 4 \\
+\hline
+0x0000002B-033 & R & ROD\_Hist & 32 \\
+\hline
+0x00000034-03E & R & ROD\_Fifo\_Fill & 40 \\
+\hline
+0x0000003F & RW & ROD\_Reserved & unused \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin {table}[H]
+\begin{center}
+\caption {ROD control and status registers for DDR-GTX Control}
+\label{rod_control_ddrgtx}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Offset (hex)& Type & Register Name & Size(bytes)\\
+\hline
+0x00000040 & W & Link\_Reset & 4 \\
+\hline
+0x00000041 & RW & Link\_Enable & 4 \\
+\hline
+0x00000042-43 & RW & IDelays & 8 \\
+\hline
+0x00000044 & R & Syn\_Status & 4 \\
+\hline
+0x00000045-4D & R & Byte\_Ctr & 32 \\
+\hline
+0x0000004E-056 & R & Err\_Ctr & 32 \\
+\hline
+0x00000057-5B & R & DDR\_Gen\_Dbg & 16 \\
+\hline
+0x0000005B-5F & RW & DDR\_Reserved & unused \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin {table}[H]
+\begin{center}
+\caption {ROD control and status registers for S-Link}
+\label{rod_control_slink}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Offset (hex)& Type & Register Name & Size(bytes)\\
+\hline
+0x00000030 & W & Slink\_Reset & 4 \\
+\hline
+0x00000031 & RW & Slink\_Enable & 4 \\
+\hline
+0x00000032 & RW & Format\_ROS\_Ver & 4 \\
+\hline
+0x00000033 & RW & Format\_ROIB\_Ver & 4 \\
+\hline
+0x00000034 & RW & SubDet\_Module\_ID & 4 \\
+\hline
+0x00000035 & RW & Busy\_Idle\_Fr\_Conf & 4 \\
+\hline
+0x00000036 & R & Slink\_Status & 4 \\
+\hline
+0x00000037 & R & Busy\_Idle\_Fr & 4 \\
+\hline
+0x00000038-3F & RW & Slink\_Reserved & unused \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+
+\subsubsection{Ov\_Busy}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-2 & ?? \\
+\hline
+3-16 & ??  \\
+\hline
+17-31 & unused \\
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item DIAGNOSTICS REGISTER: Enables overwriting existing BUSY status in certain places of the system.
+\end{itemize}
+
+
+
+\subsubsection{Gen\_L1A}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0 & Enable internal L1A generation \\
+\hline
+1 & 0 - random, 1 - fixed frequency  \\
+\hline
+2-3 & unused \\
+\hline
+4-31 & frequency (at sysclk counts) \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item DIAGNOSTICS REGISTER: Enables the internal L1A signal generation at a given frequency
+\end{itemize}
+
+
+
+\subsubsection{Run\_Type\_Nbr}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-23 & Run Number \\
+\hline
+24-31 & Run Type  \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item Sets the Run Number and Run Type fields for Slink packet headers
+\end{itemize}
+
+
+
+\subsubsection{Trg\_Type}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0 & 0 - Trigger Type from TTC, 1 - Trigger Type from IPBus \\
+\hline
+1-7 & Reserved  \\
+\hline
+8-15 & Trigger Type value \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item Enables the trigger type to be provided via slow control with a given value
+\end{itemize}
+
+
+
+\subsubsection{Level1ID\_Gen}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0 & 0 - L1AID from TTC, 1 - L1AID from internal counter \\
+\hline
+1 & 0 - Fixed internal value, 1 - Incremented \\
+\hline
+2-7 & Reserved \\
+\hline
+8-31 & L1AID initial value for internal counting  \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item Enables the trigger type to be provided via slow control with a given value
+\end{itemize}
+
+
+
+
+\subsubsection{Run\_Reset}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0 & Reset Pulse \\
+\hline
+1-31 & Reserved  \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item Resets all the ROD infrastructure components (ROD, DDRs, Slink)
+\end{itemize}
+
+
+
+\subsubsection{ROD\_Sys\_Fw\_Ver}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-31 & Firmware version number \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item Firmware version number for the ROD infrastructure
+\end{itemize}
+
+
+
+
+\subsubsection{Run\_Gen\_Dbg}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-31 & Debug word 0 \\
+\hline
+32-63 & Debug word 1 \\
+\hline
+64-95 & Debug word 2 \\
+\hline
+96-127 & Debug word 3 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item DIAGNOSTICS REGISTER: General debugging words for the ROD infrastructure
+\end{itemize}
+
+
+
+
+\subsubsection{Link\_Reset}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0 & ROD DDR Reset Pulse \\
+\hline
+1-31 & Reserved \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item Resets the ROD DDR links
+\end{itemize}
+
+
+
+
+\subsubsection{Link\_Enable}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0 & DDR Link 0 \\
+\hline
+1 & DDR Link 1 \\
+\hline
+2 & DDR Link 2 \\
+\hline
+3 & DDR Link 3 \\
+\hline
+4 & DDR Link 4 \\
+\hline
+5 & DDR Link 5 \\
+\hline
+6 & DDR Link 6 \\
+\hline
+7 & DDR Link 7 \\
+\hline
+8-31 & Reserved \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item Enables or disables a given ROD DDR Link (0 - disable, 1 - enable)
+\end{itemize}
+
+
+
+
+\subsubsection{IDelays}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-4 & Delay value for Link 0 \\
+\hline
+5-7 & Reserved \\
+\hline
+8-12 & Delay value for Link 1 \\
+\hline
+13-15 & Reserved \\
+\hline
+16-20 & Delay value for Link 2 \\
+\hline
+21-23 & Reserved \\
+\hline
+24-28 & Delay value for Link 3 \\
+\hline
+29-31 & Reserved \\
+\hline
+32-36 & Delay value for Link 4 \\
+\hline
+37-39 & Reserved \\
+\hline
+40-44 & Delay value for Link 5 \\
+\hline
+45-47 & Reserved \\
+\hline
+48-52 & Delay value for Link 6 \\
+\hline
+53-55 & Reserved \\
+\hline
+56-60 & Delay value for Link 7 \\
+\hline
+61-63 & Reserved \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item DIAGNOSTICS REGISTER: IDelay values for individual ROD DDR links
+\end{itemize}
+
+
+
+\subsubsection{Syn\_Status}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-3 & Synchronization status for Link 0 \\
+\hline
+4-7 & Synchronization status for Link 1 \\
+\hline
+8-11 & Synchronization status for Link 2 \\
+\hline
+12-15 & Synchronization status for Link 3 \\
+\hline
+16-19 & Synchronization status for Link 4 \\
+\hline
+20-23 & Synchronization status for Link 5 \\
+\hline
+24-27 & Synchronization status for Link 6 \\
+\hline
+28-31 & Synchronization status for Link 7 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item DIAGNOSTICS REGISTER: Synchronization status for individual ROD DDR links
+\end{itemize}
+
+
+
+
+\subsubsection{Byte\_Ctr}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-15 & Bytes counter for Link 0 \\
+\hline
+15-31 & Bytes counter for Link 1 \\
+\hline
+32-47 & Bytes counter for Link 2 \\
+\hline
+48-63 & Bytes counter for Link 3 \\
+\hline
+64-79 & Bytes counter for Link 4 \\
+\hline
+80-95 & Bytes counter for Link 5 \\
+\hline
+96-111 & Bytes counter for Link 6 \\
+\hline
+112-123 & Bytes counter for Link 7 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item DIAGNOSTICS REGISTER: Transmitted bytes counters for individual ROD DDR links
+\end{itemize}
+
+
+
+\subsubsection{Err\_Ctr}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-15 & Error counter for Link 0 \\
+\hline
+15-31 & Error counter for Link 1 \\
+\hline
+32-47 & Error counter for Link 2 \\
+\hline
+48-63 & Error counter for Link 3 \\
+\hline
+64-79 & Error counter for Link 4 \\
+\hline
+80-95 & Error counter for Link 5 \\
+\hline
+96-111 & Error counter for Link 6 \\
+\hline
+112-123 & Error counter for Link 7 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item Invalid characters received counters for individual ROD DDR links
+\end{itemize}
+
+
+
+\subsubsection{DDR\_Gen\_Dbg}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-31 & Debug word 0 \\
+\hline
+32-63 & Debug word 1 \\
+\hline
+64-95 & Debug word 2 \\
+\hline
+96-127 & Debug word 3 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item DIAGNOSTICS REGISTER: General debugging words for the ROD DDR
+\end{itemize}
+
+
+
+
+\subsubsection{Slink\_Reset}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0 & Slink to ROS Reset Pulse \\
+\hline
+1 & Slink to ROIB Reset Pulse \\
+\hline
+2-31 & Reserved \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item Resets the individual Slink connections
+\end{itemize}
+
+
+
+\subsubsection{Slink\_Enable}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0 & Slink to ROS Enable \\
+\hline
+1 & Slink to ROIB Enable \\
+\hline
+2-31 & Reserved \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item Enables or disables a given SLink connection (0 - disable, 1 - enable)
+\end{itemize}
+
+
+
+\subsubsection{Format\_ROS\_Ver}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-15 & Minor Format Version \\
+\hline
+16-31 & Major Format Version \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item Sets the format versions for the SLink connection to ROS
+\end{itemize}
+
+
+
+\subsubsection{Format\_ROIB\_Ver}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-15 & Minor Format Version \\
+\hline
+16-31 & Major Format Version \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item Sets the format versions for the SLink connection to ROIB
+\end{itemize}
+
+
+
+
+\subsubsection{SubDet\_Module\_ID}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-7 & Subdetector ID \\
+\hline
+8-15 & Reserved \\
+\hline
+16-31 & Module ID \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item Sets the Subdetector ID and Module ID for the SLink connections
+\end{itemize}
+
+
+
+
+\subsubsection{Busy\_Idle\_Fr\_Conf}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-31 & Time period \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item DIAGNOSTICS REGISTER: Sets the time period for the calculation of Busy and Idle fractions of Slink connections (at sysclk ticks)
+\end{itemize}
+
+
+
+\subsubsection{Slink\_Status}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0 & ROS Slink down \\
+\hline
+1 & ROS Slink fifo full \\
+\hline
+2 & ROS Slink link present \\
+\hline
+3 & Reserved \\
+\hline
+4 & ROIB Slink down \\
+\hline
+5 & ROIB Slink fifo full \\
+\hline
+6 & ROIB Slink link present \\
+\hline
+7-31 & Reserved \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item Shows the status of the Slink connections to the subsystems
+\end{itemize}
+
+
+
+
+\subsubsection{Busy\_Idle\_Fr}
+
+\begin {table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{bit} & \textbf{Function} \\
+\hline
+0-15 & ROS Slink Busy time Fraction \\
+\hline
+16-31 & ROIB Slink Busy time Fraction \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{itemize}
+\item DIAGNOSTICS REGISTER: Shows the activity fraction of the Slink connections to the subsystems
+\end{itemize}
+
+
+
+
+
+
+
+
+\subsection{ROD\_Processor\_Infrastructure}
+%
+\begin {table}[H]
+\begin{center}
+\caption {ROD control and status registers for Run Control}
+\label{rod_control_run}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Offset (hex)& Type & Register Name & Size(bytes)\\
+\hline
+0x00000000 & RW & Ov\_Busy & 4 \\
+\hline
+0x00000001 & RW & ROD\_Fw\_Ver & 4 \\
+\hline
+0x00000002-03 & RW & ROD\_Dbg & 8 \\
+\hline
+0x00000004-0F & RW & Run\_Reserved & unused \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin {table}[H]
+\begin{center}
+\caption {ROD control and status registers for ROD Control}
+\label{rod_control_run}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Offset (hex)& Type & Register Name & Size(bytes)\\
+\hline
+0x00000000 & W & ROD\_Reset & 4 \\
+\hline
+0x00000001 & RW & ROD\_Slices & 4 \\
+\hline
+0x00000002 & RW & ROD\_Offsets & 4 \\
+\hline
+0x00000003 & RW & ROD\_Delays & 4 \\
+\hline
+0x00000004-0D & R & ROD\_Fifo\_Fill & 40 \\
+\hline
+0x0000000E-0F & RW & ROD\_Dbg & 8 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+
+
+\subsection{I2C\_Error\_Counter}
+ErrorCounter for the I2C bus.
+
+
+
+
+
+\subsection{Test\_RAM: Test RAM}
+
+
+

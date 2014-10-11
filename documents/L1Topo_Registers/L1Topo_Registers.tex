@@ -1,0 +1,82 @@
+\documentclass[14pt]{lhcbnote}
+\usepackage[toc,page]{appendix}
+\usepackage{graphicx}
+\usepackage{comment}
+\usepackage{xcolor,colortbl}
+
+\title{L1Topo Programming Model}
+\author{Various {\address[BGADD]{J.G.Universiteat Mainz,Germany}}
+%\author{Andreas Ebling{\address[BGADD]{J.G.Universiteat Mainz,Germany}}
+%\author{Eduard Simioni{\address[BGADD]{J.G.Universiteat Mainz,Germany}}
+%with a different address
+%New Author{\address[NEWADD]{His address}%
+%with the same address
+%Other Author{\addressmark[BGADD]}}
+}
+
+\doctyp{Technical Note}
+\dociss{1}
+\docrev{0}
+\docref{}
+\doccre{February 13, 2014}
+\docmod{\today}
+\usepackage{float}
+\restylefloat{table}
+
+\begin{document}
+
+\section{Abstract}
+L1Topo is a new L1 Trigger subsystem consisting of 
+a single ATCA crate initially equipped with two (max three) ATCA modules. 
+L1Topo register definition is here defined.
+U. Schaefer, J. Schaffer, M. Simon, S. Artz, M. Palka, G. Korcyl, C. Kahra,
+and E. Simioni etc....
+
+%\maketitle
+%The registers name and address are defined in Tabs.\ref{tab_top_reg},\ref{tab_low_reg}. The full register name will be in the following format:
+%\begin{center}
+%L1Topo[x].U[y].[RegisterName],
+%\end{center}
+%where:
+%\begin{itemize}
+%\item [x] = 1,2,3 (L1Topo board).
+%\item [y] = 1,2,3 (FPGA). U1 and U2 are the processor FPGAs and U3 is the control FPGA.
+%\end{itemize}
+%
+\section{L1Topo Register Map}
+The register map is identical for all L1Topo modules with their firmware variants. It contains addresses
+managed by IPbus link with address space per FPGAs. 
+
+\begin {table}[H]
+\begin{center}
+\caption {FPGAs addresses}
+\label{top_level_addresses}
+\begin{tabular}{|l|l|l|}
+\hline
+address(hex) & FPGA  & Function\\
+\hline
+0x00000000 & Processor\_U3 & Control \\
+0x80000000 & Processor\_U1 & Topo Algorithms processor \\
+0xC0000000 & Processor\_U2 & Topo Algorithms processor \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+In this document the definition of the registers address follow the hierarchy in Tab.\ref{top_level_addresses}. 
+Sect.\ref{section_1} describes the registers definition for the Control FPGA. Sect.\ref{section_2} 
+and \ref{section_3} describes the registers definition for the algorithms processors FPGA.
+Sub-spaces are further defined.\\
+The definiton of registers follow the L1Calo guidelines.
+
+% Control FPGA registers space
+\include{sections/section1}
+
+% U1 registers space
+\include{sections/section2}
+
+% U2 registers space
+\include{sections/section3}
+%
+\end{document}
+
