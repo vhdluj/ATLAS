@@ -8,5 +8,35 @@
 <!-- Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved.    -->
 
 <messages>
+<msg type="info" file="ProjectMgmt" num="1061" ><arg fmt="%s" index="1">Parsing VHDL file &quot;C:/Users/Paulek/Desktop/ProgramyPawel/XIL/ATLAS_repo/l1topo_kintex7/ipcores/gtx_minipod_k7/gtx/gtx_minipond_k7/example_design/gtx_minipond_k7_exdes.vhd&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1061" ><arg fmt="%s" index="1">Parsing VHDL file &quot;C:/Users/Paulek/Desktop/ProgramyPawel/XIL/ATLAS_repo/l1topo_kintex7/ipcores/gtx_minipod_k7/gtx/gtx_minipond_k7/example_design/gtx_minipond_k7_gt_frame_check.vhd&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1061" ><arg fmt="%s" index="1">Parsing VHDL file &quot;C:/Users/Paulek/Desktop/ProgramyPawel/XIL/ATLAS_repo/l1topo_kintex7/ipcores/gtx_minipod_k7/gtx/gtx_minipond_k7/example_design/gtx_minipond_k7_gt_frame_gen.vhd&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1061" ><arg fmt="%s" index="1">Parsing VHDL file &quot;C:/Users/Paulek/Desktop/ProgramyPawel/XIL/ATLAS_repo/l1topo_kintex7/ipcores/gtx_minipod_k7/gtx/gtx_minipond_k7/example_design/gtx_minipond_k7_gt_usrclk_source.vhd&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1061" ><arg fmt="%s" index="1">Parsing VHDL file &quot;C:/Users/Paulek/Desktop/ProgramyPawel/XIL/ATLAS_repo/l1topo_kintex7/ipcores/gtx_minipod_k7/gtx/gtx_minipond_k7/example_design/gtx_minipond_k7_init.vhd&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1061" ><arg fmt="%s" index="1">Parsing VHDL file &quot;C:/Users/Paulek/Desktop/ProgramyPawel/XIL/ATLAS_repo/l1topo_kintex7/ipcores/gtx_minipod_k7/gtx/gtx_minipond_k7/example_design/gtx_minipond_k7_recclk_monitor.vhd&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1061" ><arg fmt="%s" index="1">Parsing VHDL file &quot;C:/Users/Paulek/Desktop/ProgramyPawel/XIL/ATLAS_repo/l1topo_kintex7/ipcores/gtx_minipod_k7/gtx/gtx_minipond_k7/example_design/gtx_minipond_k7_rx_startup_fsm.vhd&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1061" ><arg fmt="%s" index="1">Parsing VHDL file &quot;C:/Users/Paulek/Desktop/ProgramyPawel/XIL/ATLAS_repo/l1topo_kintex7/ipcores/gtx_minipod_k7/gtx/gtx_minipond_k7/example_design/gtx_minipond_k7_sync_block.vhd&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1061" ><arg fmt="%s" index="1">Parsing VHDL file &quot;C:/Users/Paulek/Desktop/ProgramyPawel/XIL/ATLAS_repo/l1topo_kintex7/ipcores/gtx_minipod_k7/gtx/gtx_minipond_k7/example_design/gtx_minipond_k7_tx_startup_fsm.vhd&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1061" ><arg fmt="%s" index="1">Parsing VHDL file &quot;C:/Users/Paulek/Desktop/ProgramyPawel/XIL/ATLAS_repo/l1topo_kintex7/ipcores/gtx_minipod_k7/gtx/gtx_minipond_k7_gt.vhd&quot; into library work</arg>
+</msg>
+
 </messages>
 

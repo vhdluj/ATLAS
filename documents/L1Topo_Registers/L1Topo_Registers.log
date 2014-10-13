@@ -1,23 +1,27 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9) (preloaded format=pdflatex 2013.9.16)  10 OCT 2014 18:36
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=latex 2014.10.12)  13 OCT 2014 14:03
 entering extended mode
 **L1Topo_Registers.tex
-(C:\Users\Grzegorz\Desktop\L1Topo_Registers\L1Topo_Registers.tex
+
+(C:\Users\Paulek\Desktop\ProgramyPawel\XIL\ATLAS_repo\documents\L1Topo_Register
+s\L1Topo_Registers.tex
 LaTeX2e <2011/06/27>
 Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
 abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
 croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, ga
-lician, german, german-x-2012-05-30, greek, gujarati, hindi, hungarian, iceland
+lician, german, german-x-2013-05-26, greek, gujarati, hindi, hungarian, iceland
 ic, indonesian, interlingua, irish, italian, kannada, kurmanji, latin, latvian,
  lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerman, n
-german-x-2012-05-30, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
+german-x-2013-05-26, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
 ian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swissgerm
 an, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, usengl
 ishmax, welsh, loaded.
-(C:\Users\Grzegorz\Desktop\L1Topo_Registers\lhcbnote.cls
+
+(C:\Users\Paulek\Desktop\ProgramyPawel\XIL\ATLAS_repo\documents\L1Topo_Register
+s\lhcbnote.cls
 Document Class: lhcbnote 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\article.cls"
+("C:\Program Files (x86)\MiKTex\tex\latex\base\article.cls"
 Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\size10.clo"
+("C:\Program Files (x86)\MiKTex\tex\latex\base\size10.clo"
 File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
@@ -32,45 +36,38 @@ File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 )
-(C:\Users\Grzegorz\Desktop\L1Topo_Registers\lhcb-ext.sty))
-(C:\Users\Grzegorz\Desktop\L1Topo_Registers\lhcb.sty
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\a4wide\a4wide.sty"
+(C:\Users\Paulek\Desktop\ProgramyPawel\XIL\ATLAS_repo\documents\L1Topo_Register
+s\lhcb-ext.sty))
+(C:\Users\Paulek\Desktop\ProgramyPawel\XIL\ATLAS_repo\documents\L1Topo_Register
+s\lhcb.sty ("C:\Program Files (x86)\MiKTex\tex\latex\a4wide\a4wide.sty"
 Package: a4wide 1994/08/30
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\ntgclass\a4.sty"
+("C:\Program Files (x86)\MiKTex\tex\latex\ntgclass\a4.sty"
 Package: a4 2004/04/15 v1.2g A4 based page layout
 ))
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\epsfig.sty"
+("C:\Program Files (x86)\MiKTex\tex\latex\graphics\epsfig.sty"
 Package: epsfig 1999/02/16 v1.7a (e)psfig emulation (SPQR)
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
+("C:\Program Files (x86)\MiKTex\tex\latex\graphics\graphicx.sty"
 Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
+("C:\Program Files (x86)\MiKTex\tex\latex\graphics\keyval.sty"
 Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
 \KV@toks@=\toks14
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
+("C:\Program Files (x86)\MiKTex\tex\latex\graphics\graphics.sty"
 Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\trig.sty"
+("C:\Program Files (x86)\MiKTex\tex\latex\graphics\trig.sty"
 Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
+("C:\Program Files (x86)\MiKTex\tex\latex\00miktex\graphics.cfg"
 File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
 )
-Package graphics Info: Driver file: pdftex.def on input line 91.
+Package graphics Info: Driver file: dvips.def on input line 91.
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def"
-File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
-
-("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty"
-Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
-)
-("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
-Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
-)
-\Gread@gobject=\count87
+("C:\Program Files (x86)\MiKTex\tex\latex\graphics\dvips.def"
+File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
 ))
 \Gin@req@height=\dimen103
 \Gin@req@width=\dimen104
@@ -80,31 +77,30 @@ Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
 )
 \backindent=\skip43
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\palatino.sty"
+("C:\Program Files (x86)\MiKTex\tex\latex\psnfss\palatino.sty"
 Package: palatino 2005/04/12 PSNFSS-v9.2a (SPQR) 
 )
-\c@address=\count88
+\c@address=\count87
 \headwidth=\dimen107
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\appendix\appendix.sty"
+("C:\Program Files (x86)\MiKTex\tex\latex\appendix\appendix.sty"
 Package: appendix 2009/09/02 v1.2b extra appendix facilities
-\c@@pps=\count89
-\c@@ppsavesec=\count90
-\c@@ppsaveapp=\count91
+\c@@pps=\count88
+\c@@ppsavesec=\count89
+\c@@ppsaveapp=\count90
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\comment\comment.sty"
+("C:\Program Files (x86)\MiKTex\tex\latex\comment\comment.sty"
 \CommentStream=\write3
 
 Excluding comment 'comment')
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\xcolor\xcolor.sty"
+("C:\Program Files (x86)\MiKTex\tex\latex\xcolor\xcolor.sty"
 Package: xcolor 2007/01/21 v2.11 LaTeX color extensions (UK)
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
+("C:\Program Files (x86)\MiKTex\tex\latex\00miktex\color.cfg"
 File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
-Package xcolor Info: Driver file: pdftex.def on input line 225.
+Package xcolor Info: Driver file: dvips.def on input line 225.
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1337.
-Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1341.
 Package xcolor Info: Model `RGB' extended on input line 1353.
 Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1355.
 Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1356.
@@ -113,10 +109,10 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1358.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1359.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1360.
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\colortbl\colortbl.sty"
+("C:\Program Files (x86)\MiKTex\tex\latex\colortbl\colortbl.sty"
 Package: colortbl 2012/02/13 v1.0a Color table columns (DPC)
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\tools\array.sty"
+("C:\Program Files (x86)\MiKTex\tex\latex\tools\array.sty"
 Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
 \col@sep=\dimen108
 \extrarowheight=\dimen109
@@ -127,9 +123,9 @@ Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
 \everycr=\toks16
 \minrowclearance=\skip46
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\float\float.sty"
+("C:\Program Files (x86)\MiKTex\tex\latex\float\float.sty"
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count92
+\c@float@type=\count91
 \float@exts=\toks17
 \float@box=\box26
 \@float@everytoks=\toks18
@@ -137,8 +133,10 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 )
 \@float@every@table=\toks19
 
-(C:\Users\Grzegorz\Desktop\L1Topo_Registers\L1Topo_Registers.aux
-(C:\Users\Grzegorz\Desktop\L1Topo_Registers\sections/section1.aux
+(C:\Users\Paulek\Desktop\ProgramyPawel\XIL\ATLAS_repo\documents\L1Topo_Register
+s\L1Topo_Registers.aux
+(C:\Users\Paulek\Desktop\ProgramyPawel\XIL\ATLAS_repo\documents\L1Topo_Register
+s\sections/section1.aux
 
 LaTeX Warning: Label `reg_4' multiply defined.
 
@@ -151,7 +149,9 @@ LaTeX Warning: Label `rod_control_run' multiply defined.
 
 LaTeX Warning: Label `rod_control_run' multiply defined.
 
-) (C:\Users\Grzegorz\Desktop\L1Topo_Registers\sections/section2.aux
+)
+(C:\Users\Paulek\Desktop\ProgramyPawel\XIL\ATLAS_repo\documents\L1Topo_Register
+s\sections/section2.aux
 
 LaTeX Warning: Label `reg_PlaybackSpyControl' multiply defined.
 
@@ -169,25 +169,12 @@ LaTeX Font Info:    ... okay on input line 26.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 26.
 LaTeX Font Info:    ... okay on input line 26.
 LaTeX Font Info:    Try loading font information for OT1+ppl on input line 26.
- ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ot1ppl.fd"
+ ("C:\Program Files (x86)\MiKTex\tex\latex\psnfss\ot1ppl.fd"
 File: ot1ppl.fd 2001/06/04 font definitions for OT1/ppl.
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
-[Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count93
-\scratchdimen=\dimen110
-\scratchbox=\box28
-\nofMPsegments=\count94
-\nofMParguments=\count95
-\everyMPshowfont=\toks20
-\MPscratchCnt=\count96
-\MPscratchDim=\dimen111
-\MPnumerator=\count97
-\makeMPintoPDFobject=\count98
-\everyMPtoPDFconversion=\toks21
-)
 LaTeX Font Info:    Try loading font information for OT1+phv on input line 28.
- ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ot1phv.fd"
+
+("C:\Program Files (x86)\MiKTex\tex\latex\psnfss\ot1phv.fd"
 File: ot1phv.fd 2001/06/04 scalable font definitions for OT1/phv.
 )
 LaTeX Font Info:    Font shape `OT1/phv/bx/n' in size <14.4> not available
@@ -210,45 +197,20 @@ LaTeX Font Info:    Font shape `OT1/phv/b/it' in size <8> not available
 (Font)              Font shape `OT1/phv/b/sl' tried instead on input line 73.
 LaTeX Font Info:    Font shape `OT1/phv/bx/n' in size <8> not available
 (Font)              Font shape `OT1/phv/b/n' tried instead on input line 73.
-[1{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}
+[1
 
 ]
-(C:\Users\Grzegorz\Desktop\L1Topo_Registers\sections/section1.tex
+(C:\Users\Paulek\Desktop\ProgramyPawel\XIL\ATLAS_repo\documents\L1Topo_Register
+s\sections/section1.tex
 LaTeX Font Info:    Font shape `OT1/phv/bx/n' in size <12> not available
 (Font)              Font shape `OT1/phv/b/n' tried instead on input line 58.
 LaTeX Font Info:    Try loading font information for OMS+ppl on input line 98.
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\omsppl.fd"
+("C:\Program Files (x86)\MiKTex\tex\latex\psnfss\omsppl.fd"
 File: omsppl.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ppl/m/n' in size <10> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 98.
-
-
-LaTeX Warning: File `/afs/cern.ch/user/e/esimioni/workspace/Talks/images/IPbus_
-errors.png' not found on input line 109.
-
-
-! Package pdftex.def Error: File `/afs/cern.ch/user/e/esimioni/workspace/Talks/
-images/IPbus_errors.png' not found.
-
-See the pdftex.def package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.109 .../workspace/Talks/images/IPbus_errors.png}
-                                                  
-Using draft setting for this image.
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 109.
-
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ot1pcr.fd"
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
-LaTeX Font Info:    Font shape `OT1/phv/bx/n' in size <10> not available
-(Font)              Font shape `OT1/phv/b/n' tried instead on input line 110.
  [2
 
 ]
@@ -258,29 +220,40 @@ ep-tion -> as-ser-tion of the rx[]axis[]mac[]tuser
  []
 
 [3]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [4]
 LaTeX Font Info:    Font shape `OT1/ppl/bx/it' in size <10> not available
 (Font)              Font shape `OT1/ppl/b/it' tried instead on input line 277.
+ [4] [5] [6] [7]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-[5] [6] [7] [8] [9] [10] [11]
-Overfull \hbox (9.64885pt too wide) in paragraph at lines 1184--1194
+ [8]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [9]
+[10] [11]
+Underfull \vbox (badness 1360) has occurred while \output is active []
+
+ [12]
+Overfull \hbox (9.64885pt too wide) in paragraph at lines 1202--1212
  [] 
  []
 
-[12]) [13] (C:\Users\Grzegorz\Desktop\L1Topo_Registers\sections/section2.tex
+[13]) [14]
+(C:\Users\Paulek\Desktop\ProgramyPawel\XIL\ATLAS_repo\documents\L1Topo_Register
+s\sections/section2.tex
 Overfull \hbox (29.81937pt too wide) in paragraph at lines 74--86
  [] 
  []
 
-[14
+[15
 
 
-] [15] [16] [17]
-(C:\Users\Grzegorz\Desktop\L1Topo_Registers\L1Topo_Registers.aux
-(C:\Users\Grzegorz\Desktop\L1Topo_Registers\sections/section1.aux)
-(C:\Users\Grzegorz\Desktop\L1Topo_Registers\sections/section2.aux))
+] [16] [17] [18]
+(C:\Users\Paulek\Desktop\ProgramyPawel\XIL\ATLAS_repo\documents\L1Topo_Register
+s\L1Topo_Registers.aux
+(C:\Users\Paulek\Desktop\ProgramyPawel\XIL\ATLAS_repo\documents\L1Topo_Register
+s\sections/section1.aux)
+(C:\Users\Paulek\Desktop\ProgramyPawel\XIL\ATLAS_repo\documents\L1Topo_Register
+s\sections/section2.aux))
 
 LaTeX Warning: There were undefined references.
 
@@ -291,27 +264,12 @@ LaTeX Warning: There were multiply-defined labels.
 (\end occurred when \iftrue on line 76 was incomplete)
 (\end occurred when \ifnum on line 76 was incomplete) 
 Here is how much of TeX's memory you used:
- 2186 strings out of 493921
- 29742 string characters out of 3144867
- 93047 words of memory out of 3000000
- 5434 multiletter control sequences out of 15000+200000
- 21577 words of font info for 42 fonts, out of 3000000 for 9000
+ 1542 strings out of 493922
+ 21501 string characters out of 3146499
+ 80882 words of memory out of 3000000
+ 4821 multiletter control sequences out of 15000+200000
+ 11261 words of font info for 29 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 46i,10n,35p,354b,269s stack positions out of 5000i,500n,10000p,200000b,50000s
-{C:/Program Files (x86)/Mi
-KTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Program Files (x86)/MiKTeX 2.9/fon
-ts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/
-type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type
-1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/
-urw/courier/ucrr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/helve
-tic/uhvb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/helvetic/uhvb
-o8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/helvetic/uhvr8a.pfb>
-<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/palatino/uplb8a.pfb><C:/Prog
-ram Files (x86)/MiKTeX 2.9/fonts/type1/urw/palatino/uplbi8a.pfb><C:/Program Fil
-es (x86)/MiKTeX 2.9/fonts/type1/urw/palatino/uplr8a.pfb>
-Output written on L1Topo_Registers.pdf (17 pages, 164932 bytes).
-PDF statistics:
- 98 PDF objects out of 1000 (max. 8388607)
- 0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 44i,10n,35p,354b,249s stack positions out of 5000i,500n,10000p,200000b,50000s
 
+Output written on L1Topo_Registers.dvi (18 pages, 74224 bytes).

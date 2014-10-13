@@ -104,12 +104,12 @@ General control register of the ControlFPGA.
 \subsection{SGMII\_Phy\_Error\_Counter}
 ErrorCounter for the SGMII Phy (errors in the 8b10b encoded data).
 %
-\begin{figure}[H]
-    \centering
-    \includegraphics[width = 0.45\textheight]{/afs/cern.ch/user/e/esimioni/workspace/Talks/images/IPbus_errors.png}
-    \caption{IPBus error counters}
-    \label{IPB_err}
-\end{figure}
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[width = 0.45\textheight]{/afs/cern.ch/user/e/esimioni/workspace/Talks/images/IPbus_errors.png}
+%    \caption{IPBus error counters}
+%    \label{IPB_err}
+%\end{figure}
 %
 \begin {table}[H]
 \begin{center}
@@ -264,7 +264,7 @@ Offset (hex)& Type & Register Name & Size(bytes)\\
 \hline
 0x00000036 & R & Slink\_Status & 4 \\
 \hline
-0x00000037 & R & Busy\_Idle\_Fr & 4 \\
+0x00000037-38 & R & Busy\_Idle\_Fr & 4 \\
 \hline
 0x00000038-3F & RW & Slink\_Reserved & unused \\
 \hline
@@ -687,7 +687,17 @@ Offset (hex)& Type & Register Name & Size(bytes)\\
 \hline
 7 & DDR Link 7 \\
 \hline
-8-31 & Reserved \\
+8 & DDR Link 8 \\
+\hline
+9 & DDR Link 9 \\
+\hline
+10 & DDR Link 10 \\
+\hline
+11 & DDR Link 11 \\
+\hline
+12 & DDR Link 12 \\
+\hline
+13-31 & Reserved \\
 \hline
 \end{tabular}
 \end{center}
@@ -711,35 +721,31 @@ Offset (hex)& Type & Register Name & Size(bytes)\\
 \hline
 0-4 & Delay value for Link 0 \\
 \hline
-5-7 & Reserved \\
+5-9 & Delay value for Link 1 \\
 \hline
-8-12 & Delay value for Link 1 \\
+10-14 & Delay value for Link 2 \\
 \hline
-13-15 & Reserved \\
+15-19 & Delay value for Link 3 \\
 \hline
-16-20 & Delay value for Link 2 \\
+20-24 & Delay value for Link 4 \\
 \hline
-21-23 & Reserved \\
+25-29 & Delay value for Link 5 \\
 \hline
-24-28 & Delay value for Link 3 \\
+30-34 & Delay value for Link 6 \\
 \hline
-29-31 & Reserved \\
+35-39 & Delay value for Link 7 \\
 \hline
-32-36 & Delay value for Link 4 \\
+40-44 & Delay value for Link 8 \\
 \hline
-37-39 & Reserved \\
+45-49 & Delay value for Link 9 \\
 \hline
-40-44 & Delay value for Link 5 \\
+50-54 & Delay value for Link 10 \\
 \hline
-45-47 & Reserved \\
+55-59 & Delay value for Link 11 \\
 \hline
-48-52 & Delay value for Link 6 \\
+60-64 & Delay value for Link 12 \\
 \hline
-53-55 & Reserved \\
-\hline
-56-60 & Delay value for Link 7 \\
-\hline
-61-63 & Reserved \\
+65-95 & Reserved \\
 \hline
 \end{tabular}
 \end{center}
@@ -760,21 +766,33 @@ Offset (hex)& Type & Register Name & Size(bytes)\\
 \hline
 \textbf{bit} & \textbf{Function} \\
 \hline
-0-3 & Synchronization status for Link 0 \\
+0 & Synchronization status for Link 0 \\
 \hline
-4-7 & Synchronization status for Link 1 \\
+1 & Synchronization status for Link 1 \\
 \hline
-8-11 & Synchronization status for Link 2 \\
+2 & Synchronization status for Link 2 \\
 \hline
-12-15 & Synchronization status for Link 3 \\
+3 & Synchronization status for Link 3 \\
 \hline
-16-19 & Synchronization status for Link 4 \\
+4 & Synchronization status for Link 4 \\
 \hline
-20-23 & Synchronization status for Link 5 \\
+5 & Synchronization status for Link 5 \\
 \hline
-24-27 & Synchronization status for Link 6 \\
+6 & Synchronization status for Link 6 \\
 \hline
-28-31 & Synchronization status for Link 7 \\
+7 & Synchronization status for Link 7 \\
+\hline
+8 & Synchronization status for Link 8 \\
+\hline
+9 & Synchronization status for Link 9 \\
+\hline
+10 & Synchronization status for Link 10 \\
+\hline
+11 & Synchronization status for Link 11 \\
+\hline
+12 & Synchronization status for Link 12 \\
+\hline
+13-31 & Reserved \\
 \hline
 \end{tabular}
 \end{center}
@@ -1074,9 +1092,9 @@ Offset (hex)& Type & Register Name & Size(bytes)\\
 \hline
 \textbf{bit} & \textbf{Function} \\
 \hline
-0-15 & ROS Slink Busy time Fraction \\
+0-31 & ROS Slink Busy time Fraction \\
 \hline
-16-31 & ROIB Slink Busy time Fraction \\
+32-63 & ROIB Slink Busy time Fraction \\
 \hline
 \end{tabular}
 \end{center}
