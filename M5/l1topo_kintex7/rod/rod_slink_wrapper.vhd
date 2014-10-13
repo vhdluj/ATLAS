@@ -35,12 +35,19 @@ port(
 --	SLINK_LFF_N_OUT : out std_logic;
 --	SLINK_DOWN_N_OUT : out std_logic;
 --	SLINK_FIFOFULL_OUT : out std_logic;
-   SLINK_STATUS_REG_OUT : out std_logic_vector(31 downto 0);
+    SLINK_STATUS_REG_OUT : out std_logic_vector(31 downto 0);
 	SLINK_BUSY_CNT_TIME_PERIOD_REG_IN : in std_logic_vector(31 downto 0);
 	SLINK_BUSY_CNT_REG_OUT : out std_logic_vector(31 downto 0);
 	SLINK_IDLE_CNT_REG_OUT : out std_logic_vector(31 downto 0);
 	SLINK_FORMAT_VERSION_ROS : in std_logic_vector(31 downto 0);
 	SLINK_FORMAT_VERSION_ROIB : in std_logic_vector(31 downto 0);
+	
+	RUN_NUMBER_IN : in std_logic_vector(23 downto 0);
+	RUN_TYPE_IN : in std_logic_vector(7 downto 0);
+	TRIGGER_TYPE_IN : in std_logic_vector(7 downto 0);
+	SUBDET_ID_IN : in std_logic_vector(7 downto 0);
+	MODULE_ID_IN : in std_logic_vector(15 downto 0);
+	ECR_IN : in std_logic_vector(7 downto 0);
 	
 	-- ttc inputs
 	L1A_IN : in std_logic;
@@ -167,24 +174,24 @@ GENERATE_OUPUT_SLINKS: for i in 0 to NUMBER_OF_OUTPUT_LINKS -1 generate
 		PAYLOAD_IN         => slink_data_out_a(i),
 		L1A_IN             => L1A_IN,
 		--header words (from IPBUS or TTCrc)
-		MODULE_ID           => x"0001",
-		RUN_TYPE            => x"0f",--0 = physics, 1 = Calibration, 2 = Cosmics, 15=test
-		RUN_NUMBER          => (others => '0'),
-		ECR_ID              => x"00",
+		MODULE_ID           => MODULE_ID_IN,
+		RUN_TYPE            => RUN_TYPE_IN,--0 = physics, 1 = Calibration, 2 = Cosmics, 15=test
+		RUN_NUMBER          => RUN_NUMBER_IN,
+		ECR_ID              => ECR_IN,
 		ROD_L1_ID           => EVTID_IN, --x"00_0000",
 		ROD_BCN             => BCID_IN, --x"000",
-		TRIGGER_TYPE        => x"00",
+		TRIGGER_TYPE        => TRIGGER_TYPE_IN,
+		SUB_DET_ID_IN       => SUBDET_ID_IN,
 		DETECTOR_EVENT_TYPE => x"0000_0000",
-		FORMAT_VERSION_IN => ros_roib_sel_table(i),--SLINK_FORMAT_VERSION_ROS, --!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! this hase to be changed - distinguish ROS ROIB
+		FORMAT_VERSION_IN   => ros_roib_sel_table(i),--SLINK_FORMAT_VERSION_ROS, --!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! this hase to be changed - distinguish ROS ROIB
 		
 		DEBUG_OUT           => dbg_slink,
 		LFF_N_OUT			=> SLINK_STATUS_REG_OUT(3*i+2),--link_lff_n(i),
 		LDOWN_N_OUT			=> SLINK_STATUS_REG_OUT(3*i+1),--slink_downt_n(i),
-	   FIFOFULL_OUT      => SLINK_STATUS_REG_OUT(3*i),--slink_fifo_full(i),
+	    FIFOFULL_OUT      => SLINK_STATUS_REG_OUT(3*i),--slink_fifo_full(i),
 		BUSY_CNT_TIME_PERIOD_IN => SLINK_BUSY_CNT_TIME_PERIOD_REG_IN,
 		BUSY_CNT_OUT => SLINK_BUSY_CNT_REG_OUT,
 		IDLE_CNT_OUT => SLINK_IDLE_CNT_REG_OUT,
-
 
 		--stat data
 		STAT_WORD1_IN       => (others => '0'),

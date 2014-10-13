@@ -34,7 +34,9 @@ port (
 	
 	DATA_OUT           : out std_logic_vector(AVAILABLE_LVDS_LINES * 8 - 1 downto 0);
 	DATA_VALID_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
-   DATA_KCTRL_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
+    DATA_KCTRL_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
+	DATA_CODE_ERR_OUT  : out std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
+	DATA_DISP_ERR_OUT  : out std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
     
         	-- debug ports:
 	DBG_STATE_OUT     : out std_logic_vector(AVAILABLE_LVDS_LINES * 4 - 1 downto 0);
@@ -60,6 +62,7 @@ signal local_data : std_logic_vector(AVAILABLE_LVDS_LINES * 8 - 1 downto 0);
 signal local_valid : std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
 signal local_ktrl : std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
 signal local_synced : std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
+signal local_code_err, local_disp_err : std_logic_vector(AVAILABLE_LVDS_LINES - 1 downto 0);
 
 begin
 
@@ -130,6 +133,8 @@ begin
 			DATA_KCTRL_OUT    => local_ktrl(i),
 			DATA_VALID_OUT    => local_valid(i),
 			SYNCED_OUT        => local_synced(i),
+			DATA_CODE_ERR_OUT => local_code_err(i),
+			DATA_DISP_ERR_OUT => local_disp_err(i),
                         
                         DBG_STATE_OUT     => DBG_STATE_OUT((i + 1) * 4 - 1 downto i * 4),
 			DBG_REG_DATA_OUT  => DBG_REG_DATA_OUT((i + 1) * 10 - 1 downto i * 10),
@@ -144,7 +149,9 @@ begin
                 
 		DATA_OUT((i + 1) * 8 - 1 downto i * 8) <= local_enc_data((i + 1) * 8 - 1 downto i * 8);
 		DATA_VALID_OUT(i) <= local_valid(i);
-                DATA_KCTRL_OUT(i) <= local_ktrl(i);
+        DATA_KCTRL_OUT(i) <= local_ktrl(i);
+        DATA_CODE_ERR_OUT(i) <= local_code_err(i);
+        DATA_DISP_ERR_OUT(i) <= local_disp_err(i);
                 
 	end generate lvds_gen;
 

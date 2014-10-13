@@ -26,6 +26,8 @@ port(
 	DATA_KCTRL_OUT    : out std_logic;
 	DATA_VALID_OUT    : out std_logic;
 	SYNCED_OUT        : out std_logic;
+	DATA_CODE_ERR_OUT : out std_logic;
+	DATA_DISP_ERR_OUT : out std_logic;
 	
 	-- debug ports:
 	DBG_STATE_OUT     : out std_logic_vector(3 downto 0);
@@ -58,6 +60,7 @@ signal state, state_q : std_logic_vector(3 downto 0);
 signal retry_ctr : std_logic_vector(7 downto 0);
 signal local_data : std_logic_vector(7 downto 0);
 signal local_kctrl, local_valid : std_logic;
+signal local_disp_err, local_code_err : std_logic;
 
 begin
 
@@ -230,12 +233,16 @@ begin
 		DATA_OUT          => local_data,
 		DATA_VALID_OUT    => local_valid,
 		DATA_KCTRL_OUT    => local_kctrl,
-		LINK_IS_SYNC      => '1'
+		LINK_IS_SYNC      => '1',
+		CODE_ERR_OUT      => local_code_err,
+		DISP_ERR_OUT      => local_disp_err
 	);
 
 	DATA_KCTRL_OUT <= local_kctrl;
 	DATA_VALID_OUT <= local_valid;
 	DATA_OUT       <= local_data;
+	DATA_CODE_ERR_OUT <= local_code_err;
+	DATA_DISP_ERR_OUT <= local_disp_err;
 	
 --ALIGN_MACHINE : process(align_current_state, registered_data, DELAY_LOAD_IN, CTRL_READY_IN, bitslips_ctr, previous_data, inc_ctr, step_ctr, pause_ctr, synced, check_done)
 --      begin

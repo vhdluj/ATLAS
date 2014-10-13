@@ -44,14 +44,14 @@ port(
 	TTC_RESET_OUT		: out std_logic;
 	TTC_EVT_H_STR_IN	: in std_logic;
 	TTC_L1A_IN			: in std_logic; -- line 43
-	TTC_BCNT_STR_IN	: in std_logic;
+	TTC_BCNT_STR_IN		: in std_logic;
 	TTC_EVT_L_STR_IN	: in std_logic;
 	TTC_BCNT_IN			: in std_logic_vector(11 downto 0);
-	TTC_EVTCNTRRST_IN : in std_logic; -- line 45
-	TTC_BCNRST_IN     : in std_logic; -- line 46
-	TTC_BRCST_IN      : in std_logic_vector(5 downto 0);
-	TTC_BCSTR1_IN     : in std_logic;
-	TTC_BCSTR2_IN     : in std_logic;
+	TTC_EVTCNTRRST_IN	: in std_logic; -- line 45
+	TTC_BCNRST_IN		: in std_logic; -- line 46
+	TTC_BRCST_IN		: in std_logic_vector(5 downto 0);
+	TTC_BCSTR1_IN		: in std_logic;
+	TTC_BCSTR2_IN		: in std_logic;
 	
 	TTC_U2_OUT_P, TTC_U2_OUT_N : out std_logic;
 
@@ -128,6 +128,8 @@ architecture rtl of top_L1TopoController is
 	signal ttc_l1a : std_logic;
 	signal ttc_bcid : std_logic_vector(11 downto 0);
 	signal ttc_evtid : std_logic_vector(23 downto 0);
+	signal ecr : std_logic_vector(7 downto 0);
+	signal bcn : std_logic_vector(11 downto 0);
 	
 	signal rod_dbg : std_logic_vector(255 downto 0);
 	
@@ -135,16 +137,18 @@ architecture rtl of top_L1TopoController is
 	
 	signal ttc_out : std_logic_vector(1 downto 0);
 	signal fakeTTCBroadcast : std_logic;
+	signal fake_l1a, l1a_from_ttc : std_logic;
+	signal l1a_frequency : integer range 0 to 16777214;  -- 24 bits
 	
 		---------REGISTER SIGNALS
 	--slink
 	signal slink_status_reg : std_logic_vector(31 downto 0);
-	signal  slink_format_verison_ros_reg : std_logic_vector(31 downto 0):= x"03011002";
-	signal  slink_format_verison_roib_reg : std_logic_vector(31 downto 0) := x"03011002";
-	signal  slink_busy_cnt_time_period_reg : std_logic_vector(31 downto 0);
-	signal  slink_busy_cnt_reg : std_logic_vector(31 downto 0);
-	signal  slink_idle_cnt_reg : std_logic_vector(31 downto 0);
-	signal  slink_disable_reg : std_logic_vector(31 downto 0);
+	signal slink_format_verison_ros_reg : std_logic_vector(31 downto 0):= x"03011002";
+	signal slink_format_verison_roib_reg : std_logic_vector(31 downto 0) := x"03011002";
+	signal slink_busy_cnt_time_period_reg : std_logic_vector(31 downto 0);
+	signal slink_busy_cnt_reg : std_logic_vector(31 downto 0);
+	signal slink_idle_cnt_reg : std_logic_vector(31 downto 0);
+	signal slink_disable_reg : std_logic_vector(31 downto 0);
 	--ddr
 	signal ddr_sync_status_reg : std_logic_vector(31 downto 0) := (others=>'0'); --status
 	signal ddr_rst_pulse_reg : std_logic_vector(31 downto 0) := (others=>'0');
@@ -153,6 +157,13 @@ architecture rtl of top_L1TopoController is
 	signal ddr_idelay_values_reg2 : std_logic_vector(31 downto 0) := (others=> '0');
 	signal ddr_idelay_values_reg3 : std_logic_vector(31 downto 0) := (others=> '0');
 	signal ddr_delay_load_pulse_reg : std_logic_vector(31 downto 0) := (others=> '0');
+	signal ddr_trans_ctr_reg, ddr_err_ctr_reg : std_logic_vector(127 downto 0);
+	-- run control
+	signal gen_1a : std_logic_vector(31 downto 0) := (others => '0');
+	signal run_type_nbr_reg : std_logic_vector(31 downto 0) := (others=> '0');
+	signal trg_type_reg : std_logic_vector(31 downto 0) := (others=> '0');
+	signal subdet_module_id_reg : std_logic_vector(31 downto 0) := (others=> '0');
+	
 
 	
 
@@ -274,6 +285,14 @@ port map(
 	BCID_IN          => ttc_bcid,
 	EVTID_IN         => ttc_evtid,
 	
+	RUN_NUMBER_IN    => run_type_nbr_reg(23 downto 0),
+	RUN_TYPE_IN      => run_type_nbr_reg(31 downto 24),
+	TRIGGER_TYPE_IN  => trg_type_reg(15 downto 8),
+	SUBDET_ID_IN     => subdet_module_id_reg(7 downto 0),
+	MODULE_ID_IN     => subdet_module_id_reg(31 downto 16),
+	ECR_IN           => ecr,
+	
+	
 	BUSY_FROM_U2_IN  => busy_from_u2,
 	DEBUG_OUT        => rod_dbg
 );
@@ -302,7 +321,7 @@ port map(
 		
 	--output signals
 	TTC_RESET_OUT		=> ttc_rst,
-	L1A_OUT				=> open, --ttc_l1a, --level 1 accepted. Main trigger
+	L1A_OUT				=> l1a_from_ttc, --level 1 accepted. Main trigger
 	BCID_OUT				=> ttc_bcid, --BCID is other name for BCN (bunch crossing number)
 	EVTID_OUT			=> open --ttc_evtid
 );
@@ -325,7 +344,7 @@ port map(
 process(gck2_clk40)
 begin
 	if rising_edge(gck2_clk40) then
-		if (clk_locked = '0') then
+		if (clk_locked = '0' or TTC_EVTCNTRRST_IN = '1') then
 			ttc_evtid <= (others => '0');
 		elsif (ttc_l1a = '1') then
 			ttc_evtid <= ttc_evtid + 1;
@@ -341,6 +360,32 @@ process(gck2_clk40)
 begin
 	if rising_edge(gck2_clk40) then
 		if (clk_locked = '0') then
+			ecr <= x"00";
+		elsif (TTC_EVTCNTRRST_IN = '1') then
+			ecr <= ecr + 1;
+		else
+			ecr <= ecr;
+		end if;
+	end if;
+end process;
+
+process(gck2_clk40)
+begin
+	if rising_edge(gck2_clk40) then
+		if (clk_locked = '0' or TTC_BCNRST_IN = '1') then
+			bcn <= x"000";
+		elsif (TTC_BCNT_STR_IN = '1') then
+			bcn <= bcn + 1;
+		else
+			bcn <= bcn;
+		end if;
+	end if;
+end process;
+
+process(gck2_clk40)
+begin
+	if rising_edge(gck2_clk40) then
+		if (clk_locked = '0') then
 			test_ctr <= (others => '0');
 		else
 			test_ctr <= test_ctr + x"1";
@@ -348,7 +393,8 @@ begin
 	end if;
 end process;
 
-ttc_l1a <= '1' when test_ctr(23 downto 0) = x"111111" else '0';
+l1a_frequency <= conv_integer(gen_1a(31 downto 8));
+ttc_l1a <= '1' when test_ctr(l1a_frequency) = '1' and gen_1a(0) = '1' else l1a_from_ttc;
 
 l1a_u2_buf : OBUFDS port map ( I => ttc_l1a, O => L1A_TO_U2_OUT_P, OB => L1A_TO_U2_OUT_N);
 
@@ -381,6 +427,9 @@ port map(
 	DELAY_LOAD_IN     	=> ddr_delay_load_pulse_reg(12 downto 0),
 	
 	DDR_SYNCED_OUT		=> ddr_synced_vector_u2,
+	
+	TRANSMITTED_BYTES_CTR_OUT	=> ddr_trans_ctr_reg,
+	INVALID_CHAR_CTR_OUT		=> ddr_err_ctr_reg,
 	
 	DEBUG_OUT		=> open	
 );

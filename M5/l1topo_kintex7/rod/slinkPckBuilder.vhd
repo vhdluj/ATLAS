@@ -69,6 +69,7 @@ entity slinkPckBuilder is
     ROD_L1_ID           : in std_logic_vector(23 downto 0);  --
     ROD_BCN             : in std_logic_vector(11 downto 0);  --
     TRIGGER_TYPE        : in std_logic_vector(7 downto 0);  --
+    SUB_DET_ID_IN       : in std_logic_vector(7 downto 0);  --
     DETECTOR_EVENT_TYPE : in std_logic_vector(31 downto 0);  --
 	 FORMAT_VERSION_IN : in std_logic_vector(31 downto 0);
 	 BUSY_CNT_TIME_PERIOD_IN : in std_logic_vector (31 downto 0); -- This input defines a time period in which information about component 	 or idle state is gathered. The value should come from ipbus register
@@ -100,7 +101,7 @@ architecture Behavioral of slinkPckBuilder is
   --constant majorFormatVersion : std_logic_vector(15 downto 0) := x"0301";
   constant HEADER_SIZE        : std_logic_vector(31 downto 0) := x"00000009";
   constant STAT_BLOCK_POS     : std_logic := '1';  --1 means data go first in payload, and after data status words
-  constant SUB_DET_ID         : std_logic_vector (7 downto 0) :=x"91";
+  --constant SUB_DET_ID         : std_logic_vector (7 downto 0) :=x"91";
   --constant MINOR_FORMAT_VER   : std_logic_vector(15 downto 0) :=x"1002";  -- format version
   constant NUMBER_OF_STAT_EL  : std_logic_vector(1 downto 0)  :="10";  --number of status words
                                                              
@@ -407,7 +408,7 @@ headerBuffering : entity work.slinkPckBuilder_headerBuffer_132b_1024w
     oh(1)  <= startOfHeader;--const
     oh(2)  <= HEADER_SIZE;  --const
     oh(3)  <= FORMAT_VERSION_IN;--this part of header is read from ipbus register --majorFormatVersion & MINOR_FORMAT_VER; --const
-    oh(4)  <= x"00" & SUB_DET_ID & savedHeader(131 downto 116);--x"00" & SUB_DET_ID & MODULE_ID;
+    oh(4)  <= x"00" & SUB_DET_ID_IN & savedHeader(131 downto 116);--x"00" & SUB_DET_ID & MODULE_ID;
     oh(5)  <= savedHeader(115 downto 84); --RUN_TYPE & RUN_NUMBER; 8 and 24 bits
     oh(6)  <= savedHeader(83 downto 52); --    ECR_ID & ROD_L1_ID; 8 and 24 bits
     oh(7)  <= x"00000" & savedHeader(51 downto 40); --ROD_BCN

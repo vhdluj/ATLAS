@@ -30,6 +30,9 @@ port(
 	DELAY_VALS_IN      : in std_logic_vector((LINES_ON_BANK18 +LINES_ON_BANK16) * 5 - 1 downto 0);
 	DELAY_LOAD_IN      : in std_logic_vector((LINES_ON_BANK18 +LINES_ON_BANK16)- 1 downto 0);
 	
+	TRANSMITTED_BYTES_CTR_OUT	: out std_logic_vector(127 downto 0);
+	INVALID_CHAR_CTR_OUT		: out std_logic_vector(127 downto 0);
+	
 	DDR_SYNCED_OUT : out std_logic_vector(7 downto 0);
 	
 	DEBUG_OUT : out std_logic_vector(63 downto 0)	
@@ -51,6 +54,14 @@ architecture rtl of ddr_u2_wrapper is
 	signal ddr_kctrl_from_bank18 : std_logic_vector(LINES_ON_BANK18 - 1 downto 0);
 	
 	signal links_synced_u2 : std_logic_vector(7 downto 0);
+	
+	type ctr_array is array(7 downto 0) of std_logic_vector(15 downto 0);
+	signal trans_bytes_array, invalid_char_array : ctr_array;
+	
+	signal data_dv : std_logic_vector(7 downto 0);
+	signal ddr_code_err_from_bank18, ddr_disp_err_from_bank18 : std_logic_vector(LINES_ON_BANK18 - 1 downto 0);
+	signal ddr_code_err_from_bank16, ddr_disp_err_from_bank16 : std_logic_vector(LINES_ON_BANK16 - 1 downto 0);
+	signal code_err, disp_err : std_logic_vector(7 downto 0);
 
 begin
 	
@@ -88,6 +99,8 @@ port map(
                 DATA_OUT           => ddr_data_from_bank18,
                 DATA_VALID_OUT     => ddr_dv_from_bank18,
                 DATA_KCTRL_OUT     => ddr_kctrl_from_bank18,
+                DATA_CODE_ERR_OUT  => ddr_code_err_from_bank18,
+                DATA_DISP_ERR_OUT  => ddr_disp_err_from_bank18, 
                 
                 DBG_STATE_OUT    => open,
                 DBG_REG_DATA_OUT => open,
@@ -128,6 +141,8 @@ port map(
                 DATA_OUT           => ddr_data_from_bank16,
                 DATA_VALID_OUT     => ddr_dv_from_bank16,
                 DATA_KCTRL_OUT     => ddr_kctrl_from_bank16,
+                DATA_CODE_ERR_OUT  => ddr_code_err_from_bank16,
+                DATA_DISP_ERR_OUT  => ddr_disp_err_from_bank16, 
                 
                 DBG_STATE_OUT    => open,
                 DBG_REG_DATA_OUT => open,
@@ -141,6 +156,42 @@ port map(
 --DDR_SYNCED_OUT <= '1' when (links_synced_u2 = ones) else '0'; --ps
 DDR_SYNCED_OUT <= links_synced_u2;
 
+
+-- #### debugging
+trans_ctrs_gen : for i in 0 to 7 generate
+process(GCK40_IN)
+begin
+	if rising_edge(GCK40_IN) then
+		if (DDR_RST_IN = '1') then
+			trans_bytes_array(i) <= (others => '0');
+		elsif (data_dv(i) = '1') then
+			trans_bytes_array(i) <= trans_bytes_array(i) + 1;
+		else
+			trans_bytes_array(i) <= trans_bytes_array(i);
+		end if;
+	end if;
+end process;
+
+TRANSMITTED_BYTES_CTR_OUT((i + 1) * 16 - 1 downto i * 16) <= trans_bytes_array(i);
+end generate trans_ctrs_gen;
+
+invalid_ctrs_gen : for i in 0 to 7 generate
+process(GCK40_IN)
+begin
+	if rising_edge(GCK40_IN) then
+		if (DDR_RST_IN = '1') then
+			invalid_char_array(i) <= (others => '0');
+		elsif (code_err(i) = '1' or disp_err(i) = '1') then
+			invalid_char_array(i) <= invalid_char_array(i) + 1;
+		else
+			invalid_char_array(i) <= invalid_char_array(i);
+		end if;
+	end if;
+end process;
+
+INVALID_CHAR_CTR_OUT((i + 1) * 16 - 1 downto i * 16) <= invalid_char_array(i);
+end generate invalid_ctrs_gen;
+
 --################### UGLY LINKS MAPPING
 
 DATA_OUT(1 * 8 - 1 downto 0 * 8) <= ddr_data_from_bank16(1 * 8 - 1 downto 0 * 8);
@@ -152,14 +203,23 @@ DATA_OUT(6 * 8 - 1 downto 5 * 8) <= ddr_data_from_bank18(6 * 8 - 1 downto 5 * 8)
 DATA_OUT(7 * 8 - 1 downto 6 * 8) <= ddr_data_from_bank18(7 * 8 - 1 downto 6 * 8);
 DATA_OUT(8 * 8 - 1 downto 7 * 8) <= ddr_data_from_bank18(8 * 8 - 1 downto 7 * 8);
  
-DATA_DV_OUT(0) <= ddr_dv_from_bank16(0);
-DATA_DV_OUT(1) <= ddr_dv_from_bank16(1);
-DATA_DV_OUT(2) <= ddr_dv_from_bank18(4);
-DATA_DV_OUT(3) <= ddr_dv_from_bank16(2);
-DATA_DV_OUT(4) <= ddr_dv_from_bank16(3);
-DATA_DV_OUT(5) <= ddr_dv_from_bank18(5);
-DATA_DV_OUT(6) <= ddr_dv_from_bank18(6);
-DATA_DV_OUT(7) <= ddr_dv_from_bank18(7);
+data_dv(0) <= ddr_dv_from_bank16(0);
+data_dv(1) <= ddr_dv_from_bank16(1);
+data_dv(2) <= ddr_dv_from_bank18(4);
+data_dv(3) <= ddr_dv_from_bank16(2);
+data_dv(4) <= ddr_dv_from_bank16(3);
+data_dv(5) <= ddr_dv_from_bank18(5);
+data_dv(6) <= ddr_dv_from_bank18(6);
+data_dv(7) <= ddr_dv_from_bank18(7);
+
+DATA_DV_OUT(0) <= data_dv(0);
+DATA_DV_OUT(1) <= data_dv(1);
+DATA_DV_OUT(2) <= data_dv(4);
+DATA_DV_OUT(3) <= data_dv(2);
+DATA_DV_OUT(4) <= data_dv(3);
+DATA_DV_OUT(5) <= data_dv(5);
+DATA_DV_OUT(6) <= data_dv(6);
+DATA_DV_OUT(7) <= data_dv(7);
 
 DATA_KCTRL_OUT(0) <= ddr_kctrl_from_bank16(0);
 DATA_KCTRL_OUT(1) <= ddr_kctrl_from_bank16(1);
@@ -178,6 +238,24 @@ links_synced_u2(4) <= ddr_receivers_synced_bank16(3);
 links_synced_u2(5) <= ddr_receivers_synced_bank18(5);
 links_synced_u2(6) <= ddr_receivers_synced_bank18(6);
 links_synced_u2(7) <= ddr_receivers_synced_bank18(7);
+
+code_err(0) <= ddr_code_err_from_bank16(0);
+code_err(1) <= ddr_code_err_from_bank16(1);
+code_err(2) <= ddr_code_err_from_bank18(4);
+code_err(3) <= ddr_code_err_from_bank16(2);
+code_err(4) <= ddr_code_err_from_bank16(3);
+code_err(5) <= ddr_code_err_from_bank18(5);
+code_err(6) <= ddr_code_err_from_bank18(6);
+code_err(7) <= ddr_code_err_from_bank18(7);
+
+disp_err(0) <= ddr_disp_err_from_bank16(0);
+disp_err(1) <= ddr_disp_err_from_bank16(1);
+disp_err(2) <= ddr_disp_err_from_bank18(4);
+disp_err(3) <= ddr_disp_err_from_bank16(2);
+disp_err(4) <= ddr_disp_err_from_bank16(3);
+disp_err(5) <= ddr_disp_err_from_bank18(5);
+disp_err(6) <= ddr_disp_err_from_bank18(6);
+disp_err(7) <= ddr_disp_err_from_bank18(7);
 
 --dbg_ddr_state_u2(3 downto 0)   <= dbg_ddr_state_from16(3 downto 0);
 --dbg_ddr_state_u2(7 downto 4)   <= dbg_ddr_state_from16(7 downto 4);
