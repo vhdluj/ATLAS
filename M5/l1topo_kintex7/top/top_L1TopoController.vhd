@@ -43,17 +43,10 @@ port(
 	-- ttcrx
 	TTC_RESET_OUT		: out std_logic;
 	TTC_EVT_H_STR_IN	: in std_logic;
-	TTC_L1A_IN			: in std_logic; -- line 43
+	TTC_L1A_IN			: in std_logic;
 	TTC_BCNT_STR_IN	: in std_logic;
 	TTC_EVT_L_STR_IN	: in std_logic;
 	TTC_BCNT_IN			: in std_logic_vector(11 downto 0);
-	TTC_EVTCNTRRST_IN : in std_logic; -- line 45
-	TTC_BCNRST_IN     : in std_logic; -- line 46
-	TTC_BRCST_IN      : in std_logic_vector(5 downto 0);
-	TTC_BCSTR1_IN     : in std_logic;
-	TTC_BCSTR2_IN     : in std_logic;
-	
-	TTC_U2_OUT_P, TTC_U2_OUT_N : out std_logic;
 
 	-- u2 diverse
 	DATA_U2_SYNC_OUT_P, DATA_U2_SYNC_OUT_N	: out std_logic;
@@ -84,6 +77,7 @@ architecture rtl of top_L1TopoController is
 	signal actual_bus_number_out_l          : bus_number_array;
 
 	signal ddr_synced_u2 : std_logic;
+	signal ddr_synced_vector_u2 : std_logic_vector(7 downto 0) := x"00";
 	signal ddr_data_u2 : std_logic_vector(LINKS_NUMBER * 8 - 1 downto 0);
 	signal ddr_dv_u2 : std_logic_vector(LINKS_NUMBER - 1 downto 0);
 	signal ones : std_logic_vector(LINKS_NUMBER - 1 downto 0);
@@ -106,7 +100,7 @@ architecture rtl of top_L1TopoController is
 	signal icon_control0, icon_control1 : std_logic_vector(35 downto 0);
 	signal ila_trg_0, ila_trg_1  : std_logic_vector(255 downto 0);
 	
-	signal ldown_n, lff_n : std_logic;
+	--signal ldown_n, lff_n, slinkFifoFull : std_logic;
 	
 	signal gck1, gck2 : std_logic;
 	signal mgt5_clk, mgt5_clk_buffered : std_logic;
@@ -119,6 +113,7 @@ architecture rtl of top_L1TopoController is
 	signal ctrlbus_u2_out : std_logic_vector(4 downto 0);
 	
 	signal slink_rst : std_logic;
+	signal slink_rst_vector, slink_rst_tmp : std_logic_vector(7 downto 0);
 	
 	signal dbg_txd, dbg_rxd : std_logic_vector(15 downto 0);
 	signal dbg_tx_en, dbg_tx_er, dbg_rx_dv, dbg_rx_er : std_logic;
@@ -129,11 +124,25 @@ architecture rtl of top_L1TopoController is
 	
 	signal rod_dbg : std_logic_vector(255 downto 0);
 	
-	signal test_ctr : std_logic_vector(31 downto 0);
 	
-	signal ttc_out : std_logic_vector(1 downto 0);
-	signal fakeTTCBroadcast : std_logic;
-	
+	---------REGISTER SIGNALS
+	--slink
+	signal slink_status_reg : std_logic_vector(31 downto 0);
+	signal  slink_format_verison_ros_reg : std_logic_vector(31 downto 0):= x"03011002";
+	signal  slink_format_verison_roib_reg : std_logic_vector(31 downto 0) := x"03011002";
+	signal  slink_busy_cnt_time_period_reg : std_logic_vector(31 downto 0);
+	signal  slink_busy_cnt_reg : std_logic_vector(31 downto 0);
+	signal  slink_idle_cnt_reg : std_logic_vector(31 downto 0);
+	signal  slink_disable_reg : std_logic_vector(31 downto 0);
+	--ddr
+	signal ddr_sync_status_reg : std_logic_vector(31 downto 0) := (others=>'0'); --status
+	signal ddr_rst_pulse_reg : std_logic_vector(31 downto 0) := (others=>'0');
+	signal ddr_disable_reg : std_logic_vector(31 downto 0) := (others=>'0');
+	signal ddr_idelay_values_reg1 : std_logic_vector(31 downto 0) := (others=> '0');
+	signal ddr_idelay_values_reg2 : std_logic_vector(31 downto 0) := (others=> '0');
+   signal ddr_idelay_values_reg3 : std_logic_vector(31 downto 0) := (others=> '0');
+	signal ddr_delay_load_pulse_reg : std_logic_vector(31 downto 0) := (others=> '0');
+
 
 begin
 
@@ -183,8 +192,8 @@ ila_trg_0(255 downto 252) <= std_logic_vector(lvl0_offset_out_l(0));
 
 ila_trg_0(232) <= TTC_L1A_IN;
 
-ila_trg_0(233) <= lff_n;
-ila_trg_0(234) <= ldown_n;
+ila_trg_0(233) <= slink_status_reg(0);--lff_n;
+ila_trg_0(234) <= slink_status_reg(1);--ldown_n;
 ila_trg_0(245 downto 235) <= (others => '0');
 
 ila_trg_1(0) <= clk_locked;
@@ -213,6 +222,8 @@ ila_trg_1(245 downto 6) <= (others => '0');
 
 --##################   ROD
 
+slink_rst_tmp <= x"ff" when slink_rst = '1' else x"ff"; --translating slink_reset into slink vector reset	
+slink_rst_vector <= slink_rst_tmp or slink_disable_reg(7 downto 0);	
 	
 SET_SIM_VALUES: if SIMULATION = TRUE generate
     clk_locked <= '1';
@@ -228,7 +239,7 @@ port map(
 	GCK_CLK80        => gck2_clk80,
 	MGT5_CLK         => MGT5_CLK,
 	ROD_RESET        => rod_rst,
-	SLINK_RESET      => slink_rst,
+	SLINK_RESET      => slink_rst_vector,
 	CLK_LOCKED_IN    => clk_locked,
 	
 	DDR_DATA_IN      => ddr_data_u2,
@@ -239,9 +250,16 @@ port map(
 	OPTO_KR1_P       => OPTO_KR1_P,
 	OPTO_KT1_N       => OPTO_KT1_N,
 	OPTO_KT1_P       => OPTO_KT1_P,
-	SLINK_LFF_N_OUT  => lff_n,
-	SLINK_DOWN_N_OUT => ldown_n,
-	
+	--SLINK_LFF_N_OUT  => lff_n,
+	--SLINK_DOWN_N_OUT => ldown_n,
+	--SLINK_FIFOFULL_OUT => slinkFifoFull,
+	SLINK_STATUS_REG_OUT => slink_status_reg,
+	SLINK_FORMAT_VERSION_ROS => slink_format_verison_ros_reg,
+	SLINK_FORMAT_VERSION_ROIB => slink_format_verison_roib_reg,
+	SLINK_BUSY_CNT_TIME_PERIOD_REG_IN => slink_busy_cnt_time_period_reg,
+	SLINK_BUSY_CNT_REG_OUT => slink_busy_cnt_reg,
+	SLINK_IDLE_CNT_REG_OUT => slink_idle_cnt_reg,
+		
 	L1A_IN           => ttc_l1a,
 	BCID_IN          => ttc_bcid,
 	EVTID_IN         => ttc_evtid,
@@ -274,23 +292,9 @@ port map(
 		
 	--output signals
 	TTC_RESET_OUT		=> ttc_rst,
-	L1A_OUT				=> open, --ttc_l1a, --level 1 accepted. Main trigger
+	L1A_OUT				=> ttc_l1a, --level 1 accepted. Main trigger
 	BCID_OUT				=> ttc_bcid, --BCID is other name for BCN (bunch crossing number)
 	EVTID_OUT			=> open --ttc_evtid
-);
-
-ttc: entity work.ttc_serializer
-port map(
-	sysclk40 => gck2_clk40,
-	sysclk80 => gck2_clk80,
-	ttc_L1Accept => TTC_L1A_IN,
-	ttc_EventCounterReset => TTC_EVTCNTRRST_IN,
-	ttc_BunchCounterReset => TTC_BCNRST_IN,
-	ttc_BroadcastStrobe1 => TTC_BCSTR1_IN,
-	ttc_BroadcastStrobe2 => TTC_BCSTR2_IN,
-	ttc_Broadcast => TTC_BRCST_IN,
-	fakeTTCBroadcast => fakeTTCBroadcast,
-	ttc_out => ttc_out
 );
 
 -- GK temporary fix of evtid 
@@ -309,26 +313,11 @@ end process;
 
 TTC_RESET_OUT <= ttc_rst;
 
-process(gck2_clk40)
-begin
-	if rising_edge(gck2_clk40) then
-		if (clk_locked = '0') then
-			test_ctr <= (others => '0');
-		else
-			test_ctr <= test_ctr + x"1";
-		end if;
-	end if;
-end process;
-
-ttc_l1a <= '1' when test_ctr(23 downto 0) = x"111111" else '0';
-
 l1a_u2_buf : OBUFDS port map ( I => ttc_l1a, O => L1A_TO_U2_OUT_P, OB => L1A_TO_U2_OUT_N);
-
-ttc_u2_buf : OBUFDS port map ( I  => ttc_out(1), O  => TTC_U2_OUT_P, OB => TTC_U2_OUT_N);
 
 --##################   DDR
 
-ddr_rst <= not locked;
+ddr_rst <= (not locked) or ddr_rst_pulse_reg(0) or ddr_disable_reg(0);
 
 ddr_u2 : entity work.ddr_u2_wrapper
 generic map(
@@ -348,14 +337,17 @@ port map(
 	DATA_OUT				=> ddr_data_u2,
 	DATA_DV_OUT			=> ddr_dv_u2,
 	DATA_KCTRL_OUT		=> ddr_kctrl_u2,
+
+	DELAY_VALS_IN     => ddr_idelay_values_reg1 & ddr_idelay_values_reg2 & ddr_idelay_values_reg3(0),
+	DELAY_LOAD_IN     => ddr_delay_load_pulse_reg(12 downto 0),
 	
-	DDR_SYNCED_OUT		=> ddr_synced_u2,
+	DDR_SYNCED_OUT		=> ddr_synced_vector_u2,
 	
 	DEBUG_OUT			=> open	
 );
-	
+ddr_synced_u2	<=  ddr_synced_vector_u2(0) and ddr_synced_vector_u2(1) and  ddr_synced_vector_u2(2) and  ddr_synced_vector_u2(3) and  ddr_synced_vector_u2(4) and  ddr_synced_vector_u2(5) and  ddr_synced_vector_u2(6) and  ddr_synced_vector_u2(7);
 vsyn_u2_buf : OBUFDS port map( I =>  ddr_synced_u2, O => DATA_U2_SYNC_OUT_P, OB => DATA_U2_SYNC_OUT_N);
-
+ddr_sync_status_reg <= x"000000" & ddr_synced_vector_u2;
 --##################   CLOCKING
 
 SIM_CLOCK: if SIMULATION generate
@@ -496,7 +488,7 @@ port map(
 	ctrlbus_u1_out => ctrlbus_u1_out,
 	ctrlbus_u2_out => ctrlbus_u2_out,
 	
-	fakeTTCBroadcast => fakeTTCBroadcast,
+	fakeTTCBroadcast => open,
 	
 	debugIPBus => open,
 	debugIPBusBridgeU2 => open
