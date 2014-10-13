@@ -163,6 +163,7 @@ architecture rtl of top_L1TopoController is
 	signal run_type_nbr_reg : std_logic_vector(31 downto 0) := (others=> '0');
 	signal trg_type_reg : std_logic_vector(31 downto 0) := (others=> '0');
 	signal subdet_module_id_reg : std_logic_vector(31 downto 0) := (others=> '0');
+	signal rod_sys_fw_ver_reg : std_logic_vector(31 downto 0) := x"0123_abcd";
 	
 
 	
