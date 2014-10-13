@@ -27,7 +27,10 @@ port(
 	DATA_DV_OUT		: out std_logic_vector(7 downto 0); 
 	DATA_KCTRL_OUT	: out std_logic_vector(7 downto 0);
 	
-	DDR_SYNCED_OUT : out std_logic;
+	DELAY_VALS_IN      : in std_logic_vector((LINES_ON_BANK18 +LINES_ON_BANK16) * 5 - 1 downto 0);
+	DELAY_LOAD_IN      : in std_logic_vector((LINES_ON_BANK18 +LINES_ON_BANK16)- 1 downto 0);
+	
+	DDR_SYNCED_OUT : out std_logic_vector(7 downto 0);
 	
 	DEBUG_OUT : out std_logic_vector(63 downto 0)	
 );
@@ -78,8 +81,8 @@ port map(
                 LINKS_SYNCED_OUT   => ddr_receivers_synced_bank18,
                 RESET_TRANS_OUT    => open,
                 
-                DELAY_VALS_IN      => (others => '0'),
-                DELAY_LOAD_IN      => (others => '0'),
+                DELAY_VALS_IN      => DELAY_VALS_IN(LINES_ON_BANK18*5 -1 downto 0),--(others => '0'),
+                DELAY_LOAD_IN      => DELAY_LOAD_IN(LINES_ON_BANK18 - 1 downto 0),--(others => '0'),
                 DELAY_VALS_OUT     => open,
                                
                 DATA_OUT           => ddr_data_from_bank18,
@@ -117,9 +120,9 @@ port map(
                
                 LINKS_SYNCED_OUT   => ddr_receivers_synced_bank16,
                 RESET_TRANS_OUT    => open,           
-                
-                DELAY_VALS_IN      => (others => '0'),
-                DELAY_LOAD_IN      => (others => '0'),
+               
+                DELAY_VALS_IN      => DELAY_VALS_IN((LINES_ON_BANK16+LINES_ON_BANK18)*5 -1 downto LINES_ON_BANK18*5),--(others => '0'),
+                DELAY_LOAD_IN      => DELAY_LOAD_IN((LINES_ON_BANK18+LINES_ON_BANK16) -1 downto LINES_ON_BANK18),--(others => '0'),
                 DELAY_VALS_OUT     => open,                    
                 
                 DATA_OUT           => ddr_data_from_bank16,
@@ -135,7 +138,8 @@ port map(
                 DBG_RETRY_OUT    => open
 );
 
-DDR_SYNCED_OUT <= '1' when (links_synced_u2 = ones) else '0';
+--DDR_SYNCED_OUT <= '1' when (links_synced_u2 = ones) else '0'; --ps
+DDR_SYNCED_OUT <= links_synced_u2;
 
 --################### UGLY LINKS MAPPING
 

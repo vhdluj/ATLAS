@@ -70,9 +70,15 @@ entity slinkPckBuilder is
     ROD_BCN             : in std_logic_vector(11 downto 0);  --
     TRIGGER_TYPE        : in std_logic_vector(7 downto 0);  --
     DETECTOR_EVENT_TYPE : in std_logic_vector(31 downto 0);  --
+	 FORMAT_VERSION_IN : in std_logic_vector(31 downto 0);
+	 BUSY_CNT_TIME_PERIOD_IN : in std_logic_vector (31 downto 0); -- This input defines a time period in which information about component 	 or idle state is gathered. The value should come from ipbus register
+	 BUSY_CNT_OUT : out std_logic_vector (31 downto 0); -- as long as ldown or lff is blocking transmission, this counter is incr.
+	 IDLE_CNT_OUT : out std_logic_vector (31 downto 0); -- as longas UWEN_N is set to 1 this counter is incremented.
 	 
-	 LFF_N_OUT : out std_logic;
-	 LDOWN_N_OUT : out std_logic;
+	 LFF_N_OUT : out std_logic;   -- link full flag 
+	 LDOWN_N_OUT : out std_logic; --link down
+	 FIFOFULL_OUT : out std_logic;
+	 
 	 
 	 DEBUG_OUT           : out std_logic_vector(47 downto 0);
 	 
@@ -91,11 +97,11 @@ architecture Behavioral of slinkPckBuilder is
   constant beginOfFrame       : std_logic_vector(31 downto 0) := x"B0F00000";
   constant endOfFrame         : std_logic_vector(31 downto 0) := x"E0F00000";
   constant startOfHeader      : std_logic_vector(31 downto 0) := x"EE1234EE";
-  constant majorFormatVersion : std_logic_vector(15 downto 0) := x"0301";
+  --constant majorFormatVersion : std_logic_vector(15 downto 0) := x"0301";
   constant HEADER_SIZE        : std_logic_vector(31 downto 0) := x"00000009";
   constant STAT_BLOCK_POS     : std_logic := '1';  --1 means data go first in payload, and after data status words
   constant SUB_DET_ID         : std_logic_vector (7 downto 0) :=x"91";
-  constant MINOR_FORMAT_VER   : std_logic_vector(15 downto 0) :=x"1002";  -- format version
+  --constant MINOR_FORMAT_VER   : std_logic_vector(15 downto 0) :=x"1002";  -- format version
   constant NUMBER_OF_STAT_EL  : std_logic_vector(1 downto 0)  :="10";  --number of status words
                                                              
   type   state_type is (starting, reseting, idle, sendingHeader, sendingTrailer, sendingData);
@@ -123,6 +129,9 @@ architecture Behavioral of slinkPckBuilder is
   signal oh : overhead;
   signal debug, debug_fsm : std_logic_vector(2 downto 0);
   signal busy_out_sgn_synch : std_logic :='0';
+  
+  signal busy_cnt_sgn,time_cnt_for_idle_busy,idle_cnt_sgn : UNSIGNED(31 downto 0);
+  
 begin
 	DEBUG_OUT(0) <= ureset_n_sgn;
 	DEBUG_OUT(1) <= uctrl_n_sgn;
@@ -225,7 +234,7 @@ headerBuffering : entity work.slinkPckBuilder_headerBuffer_132b_1024w
     wr_en => headerSave,
     rd_en => readFifo,
     dout => savedHeader,
-    full => open,
+    full => FIFOFULL_OUT,
     empty => fifo_empty
   );
 
@@ -397,7 +406,7 @@ headerBuffering : entity work.slinkPckBuilder_headerBuffer_132b_1024w
     oh(0)  <= beginOfFrame; --const
     oh(1)  <= startOfHeader;--const
     oh(2)  <= HEADER_SIZE;  --const
-    oh(3)  <= majorFormatVersion & MINOR_FORMAT_VER; --const
+    oh(3)  <= FORMAT_VERSION_IN;--this part of header is read from ipbus register --majorFormatVersion & MINOR_FORMAT_VER; --const
     oh(4)  <= x"00" & SUB_DET_ID & savedHeader(131 downto 116);--x"00" & SUB_DET_ID & MODULE_ID;
     oh(5)  <= savedHeader(115 downto 84); --RUN_TYPE & RUN_NUMBER; 8 and 24 bits
     oh(6)  <= savedHeader(83 downto 52); --    ECR_ID & ROD_L1_ID; 8 and 24 bits
@@ -432,6 +441,34 @@ begin
 	end if;
 end process;
 
+idle_cnt_process : process(sysClk,URESET_IN,uwen_allowed_n,BUSY_CNT_TIME_PERIOD_IN)
+begin
+	if (URESET_IN = '1' or time_cnt_for_idle_busy > unsigned(BUSY_CNT_TIME_PERIOD_IN)) then
+		idle_cnt_sgn <= (others => '0');
+		time_cnt_for_idle_busy <= (others=>'0');
+	elsif rising_edge(sysClk) then
+	time_cnt_for_idle_busy <= time_cnt_for_idle_busy + 1;
+		if(uwen_allowed_n = '1') then
+			idle_cnt_sgn <= idle_cnt_sgn + 1;
+		else
+			idle_cnt_sgn <= idle_cnt_sgn;
+		end if;
+	end if;
+end process;
+
+busy_cnt_process : process(sysClk,URESET_IN,uwen_allowed_n,BUSY_CNT_TIME_PERIOD_IN)
+begin
+	if (URESET_IN = '1'  or time_cnt_for_idle_busy > unsigned(BUSY_CNT_TIME_PERIOD_IN)) then
+		busy_cnt_sgn <= (others => '0');
+	elsif rising_edge(sysClk) then
+		if( busy_out_sgn = '1') then
+			busy_cnt_sgn <= busy_cnt_sgn + 1;
+		else
+			busy_cnt_sgn <= busy_cnt_sgn;
+		end if;
+	end if;
+end process;
+
 --one line signal assigment
   READY_OUT <= ready_out_l;
   l1a_sgn <= L1A_IN;
@@ -441,5 +478,7 @@ end process;
   readFifo  <= '1' when (readFifo_flag = '1' and readFifo_flag_q ='0') else '0';
   inputFifo <= MODULE_ID & RUN_TYPE & RUN_NUMBER & ECR_ID & ROD_L1_ID &
                ROD_BCN & TRIGGER_TYPE & DETECTOR_EVENT_TYPE;
+	BUSY_CNT_OUT <= std_logic_vector(busy_cnt_sgn);
+	IDLE_CNT_OUT <= std_logic_vector(idle_cnt_sgn);
 end Behavioral;
 

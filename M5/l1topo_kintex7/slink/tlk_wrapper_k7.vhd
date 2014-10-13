@@ -203,7 +203,7 @@ txusrclk  <= gtx_txusrclk2;
 
 
   rxrecclk_bufg1_i : BUFG
-    port map (I => gtx_txoutclk, --gtx_rxrecclk,
+	port map (I => gtx_txoutclk, --gtx_rxrecclk,
               O => gtx_rxusrclk2);
 
   
