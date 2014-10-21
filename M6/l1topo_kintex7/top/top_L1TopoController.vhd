@@ -27,8 +27,8 @@ port(
 	PHY_RESET_OUT_N 				: out std_logic;
 	
 	-- ros minipod fiber
-	OPTO_KT1_P, OPTO_KT1_N	: out std_logic; --mgtxtx0_117 minipod line 8  X0Y8
-	OPTO_KR1_P, OPTO_KR1_N	: in std_logic; --mgtxrx0_117 minipod line 8 X0Y8
+	OPTO_KT1_P, OPTO_KT1_N	: out std_logic_vector(11 downto 0); --(0,1,2,3)mgtxtx0_117 minipod line 8  X0Y8, (4,5,6,7) mgtxtx0_116, (8,9,10,11) mgtxtx0_115
+	OPTO_KR1_P, OPTO_KR1_N	: in std_logic_vector(11 downto 0);  --(0,1,2,3)mgtxrx0_117 minipod line 8  X0Y8, (4,5,6,7) mgtxrx0_116, (8,9,10,11) mgtxrx0_115
 	
 	-- ddr to u2
 	DATA_BANK18_IN_P, DATA_BANK18_IN_N : in std_logic_vector(7 downto 0);
@@ -52,6 +52,9 @@ port(
 	TTC_BRCST_IN		: in std_logic_vector(5 downto 0);
 	TTC_BCSTR1_IN		: in std_logic;
 	TTC_BCSTR2_IN		: in std_logic;
+	TTC_DOUT_STR_IN     : in std_logic;
+	TTC_DOUT_IN         : in std_logic_vector(7 downto 0);
+	TTC_SUBADDR_IN      : in std_logic_vector(7 downto 0);
 	
 	TTC_U2_OUT_P, TTC_U2_OUT_N : out std_logic;
 
@@ -120,7 +123,7 @@ architecture rtl of top_L1TopoController is
 	signal ctrlbus_u2_out : std_logic_vector(4 downto 0);
 	
 	signal slink_rst : std_logic;
-	signal slink_rst_vector, slink_rst_tmp : std_logic_vector(7 downto 0);
+	signal slink_rst_vector, slink_rst_tmp : std_logic_vector(11 downto 0);
 	
 	signal dbg_txd, dbg_rxd : std_logic_vector(15 downto 0);
 	signal dbg_tx_en, dbg_tx_er, dbg_rx_dv, dbg_rx_er : std_logic;
@@ -140,9 +143,13 @@ architecture rtl of top_L1TopoController is
 	signal fake_l1a, l1a_from_ttc : std_logic;
 	signal l1a_frequency : integer range 0 to 16777214;  -- 24 bits
 	
+	
+	signal orbit_ctr : std_logic_vector(23 downto 0);
+	signal detector_type : std_logic_vector(31 downto 0);
+	
 		---------REGISTER SIGNALS
 	--slink
-	signal slink_status_reg : std_logic_vector(31 downto 0);
+	signal slink_status_reg : std_logic_vector(63 downto 0);
 	signal slink_format_verison_ros_reg : std_logic_vector(31 downto 0):= x"03011002";
 	signal slink_format_verison_roib_reg : std_logic_vector(31 downto 0) := x"03011002";
 	signal slink_busy_cnt_time_period_reg : std_logic_vector(31 downto 0);
@@ -168,8 +175,18 @@ architecture rtl of top_L1TopoController is
 	signal ecrid_set_reg : std_logic_vector(31 downto 0) := (others => '0');
 	signal l1id_val_reg : std_logic_vector(31 downto 0) := (others => '0');
 	signal l1id_rst_reg : std_logic_vector(31 downto 0) := (others => '0');
+	signal trg_timeout_reg : std_logic_vector(31 downto 0) := (others => '0');
+	signal orbit_wrap_reg : std_logic_vector(31 downto 0) := (others => '0');
+	signal orbit_rst_reg : std_logic_vector(31 downto 0) := (others => '0');
+	signal orbit_val_reg : std_logic_vector(31 downto 0) := (others => '0');
+	signal seq_type_reg : std_logic_vector(31 downto 0) := (others => '0');
 	
-
+	
+    --rod registers
+    --type rod_rw_registers_array is array (0 to 63) of std_logic_vector(31 downto 0);
+    --signal rod_rw_registers : rod_rw_registers_array;
+    signal trigger_type : std_logic_vector(7 downto 0);
+    signal trg_timeout_ctr : std_logic_vector(31 downto 0) := (others => '0');
 	
 
 begin
@@ -250,8 +267,8 @@ ila_trg_1(245 downto 6) <= (others => '0');
 
 --##################   ROD
 
-slink_rst_tmp <= x"ff" when slink_rst = '1' else x"ff"; --translating slink_reset into slink vector reset	
-slink_rst_vector <= slink_rst_tmp or slink_disable_reg(7 downto 0);	
+slink_rst_tmp <= x"fff" when slink_rst = '1' else x"fff"; --translating slink_reset into slink vector reset	
+slink_rst_vector <= slink_rst_tmp or slink_disable_reg(11 downto 0);	
 	
 SET_SIM_VALUES: if SIMULATION = TRUE generate
     clk_locked <= '1';
@@ -259,13 +276,12 @@ end generate SET_SIM_VALUES;
 
 rod_with_slink : entity work.rod_slink_wrapper
 generic map(
-	NUMBER_OF_OUTPUT_LINKS => NUMBER_OF_OUTPUT_LINKS,
 	SIMULATION             => SIMULATION,
 	VIVADO                 => VIVADO)
 port map(
 	GCK_CLK40        => gck2_clk40,
 	GCK_CLK80        => gck2_clk80,
-	MGT5_CLK         => MGT5_CLK,
+	MGT5_CLK         => mgt5_clk_buffered, --MGT5_CLK,
 	ROD_RESET        => rod_rst,
 	SLINK_RESET      => slink_rst_vector,
 	CLK_LOCKED_IN    => clk_locked,
@@ -273,7 +289,9 @@ port map(
 	DDR_DATA_IN      => ddr_data_u2,
 	DDR_DV_IN        => ddr_dv_u2,
 	DDR_KCTRL_IN     => ddr_kctrl_u2,
-	
+
+    --ROD_RW_REG       => rod_rw_registers,
+        
 	OPTO_KR1_N       => OPTO_KR1_N,
 	OPTO_KR1_P       => OPTO_KR1_P,
 	OPTO_KT1_N       => OPTO_KT1_N,
@@ -292,17 +310,18 @@ port map(
 	
 	RUN_NUMBER_IN    => run_type_nbr_reg(23 downto 0),
 	RUN_TYPE_IN      => run_type_nbr_reg(31 downto 24),
-	TRIGGER_TYPE_IN  => trg_type_reg(15 downto 8),
+	TRIGGER_TYPE_IN  => trigger_type,
 	SUBDET_ID_IN     => subdet_module_id_reg(7 downto 0),
 	MODULE_ID_IN     => subdet_module_id_reg(31 downto 16),
 	ECR_IN           => ecr,
 	
 	
 	BUSY_FROM_U2_IN  => busy_from_u2,
+    L1_BUSY          => open,
 	DEBUG_OUT        => rod_dbg
 );
 
-rod_rst <= (not ddr_synced_u2) or not clk_locked;
+rod_rst <= (not ddr_synced_u2) or not clk_locked; -- or rod_rw_registers(0)(0);
 
 slink_rst <= not clk_locked;
 
@@ -327,7 +346,7 @@ port map(
 	--output signals
 	TTC_RESET_OUT		=> ttc_rst,
 	L1A_OUT				=> l1a_from_ttc, --level 1 accepted. Main trigger
-	BCID_OUT				=> ttc_bcid, --BCID is other name for BCN (bunch crossing number)
+	BCID_OUT			=> ttc_bcid, --BCID is other name for BCN (bunch crossing number)
 	EVTID_OUT			=> open --ttc_evtid
 );
 
@@ -345,7 +364,42 @@ port map(
 	ttc_out => ttc_out
 );
 
--- GK temporary fix of evtid 
+process(gck2_clk40)
+begin
+	if rising_edge(gck2_clk40) then
+		if (locked = '0') then
+			trigger_type <= (others => '0');
+		else
+			if (trg_type_reg(0) = '0') then
+				if ((trg_timeout_ctr  < trg_timeout_reg) or (trg_timeout_reg = x"0000_0000")) then
+					if (TTC_DOUT_STR_IN = '1' and TTC_SUBADDR_IN = x"00") then
+						trigger_type <= TTC_DOUT_IN;
+					else
+						trigger_type <= trigger_type;
+					end if;
+				else
+					trigger_type <= x"ff";
+				end if;
+			else
+				trigger_type <= trg_type_reg(15 downto 8);
+			end if;
+		end if;
+	end if;
+end process;
+
+process(gck2_clk40)
+begin
+	if rising_edge(gck2_clk40) then
+		if (clk_locked = '0' or ttc_l1a = '1') then
+			trg_timeout_ctr <= (others => '0');
+		elsif (TTC_DOUT_STR_IN = '1' and TTC_SUBADDR_IN = x"00") then
+			trg_timeout_ctr <= (others => '0');
+		else
+			trg_timeout_ctr <= trg_timeout_ctr + 1;
+		end if;
+	end if;
+end process;
+
 process(gck2_clk40)
 begin
 	if rising_edge(gck2_clk40) then
@@ -358,10 +412,28 @@ begin
 		end if;
 	end if;
 end process;
-l1id_val_reg(23 downto 0) <= ttc_evtid;
-l1id_val_reg(31 downto 0) <= x"00";
+l1id_val_reg(23 downto 0)  <= ttc_evtid;
+l1id_val_reg(31 downto 24) <= x"00";
 
 TTC_RESET_OUT <= ttc_rst;
+
+process(gck2_clk40)
+begin
+	if rising_edge(gck2_clk40) then
+		if (locked = '0' or orbit_ctr = x"010000" or orbit_ctr(15 downto 0) = orbit_wrap_reg(15 downto 0) or orbit_rst_reg(0) = '1') then
+			orbit_ctr <= (others => '0');
+		elsif (TTC_BCNRST_IN = '1') then
+			orbit_ctr <= orbit_ctr + 1;
+		else
+			orbit_ctr <= orbit_ctr;
+		end if;
+	end if;
+end process;
+orbit_val_reg(23 downto 0)  <= orbit_ctr;
+orbit_val_reg(31 downto 24) <= (others => '0');
+
+detector_type(15 downto 0)  <= seq_type_reg(15 downto 0);
+detector_type(31 downto 16) <= orbit_ctr(15 downto 0);
 
 process(gck2_clk40)
 begin

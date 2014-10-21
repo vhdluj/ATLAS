@@ -1,0 +1,177 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    19:32:50 02/12/2014 
+-- Design Name: 
+-- Module Name:    ctrlbus_ttc - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+library UNISIM;
+use UNISIM.VComponents.all;
+
+entity ctrlbus_ttc is port(
+		sysclk40_in: in std_logic;
+		sysclk80_in: in std_logic;
+		ttc_ctrl_in: in std_logic_vector(10 downto 0);
+		fakePlaybackSpyCounterReset_in: in std_logic;
+		ctrlbus_ttc_out: out std_logic_vector(1 downto 0)
+	);
+end ctrlbus_ttc;
+
+
+
+
+architecture Behavioral of ctrlbus_ttc is
+
+	signal ttc_l1accept: std_logic;
+	signal ttc_eventcounterreset: std_logic;
+	signal ttc_bunchcounterreset: std_logic;
+	signal ttc_broadcast: std_logic_vector(5 downto 0);
+	signal ttc_broadcaststrobe1, ttc_broadcaststrobe2: std_logic;
+	
+	signal PlaybackSpyCounterReset: std_logic;
+
+
+
+begin
+
+
+
+
+	ttc_l1accept				<= ttc_ctrl_in(0);
+	ttc_eventcounterreset	<= ttc_ctrl_in(1);		
+	ttc_bunchcounterreset		<= ttc_ctrl_in(2);
+	ttc_broadcast				<= ttc_ctrl_in(8 downto 3);
+	ttc_broadcaststrobe1		<= ttc_ctrl_in(9);
+	ttc_broadcaststrobe2		<= ttc_ctrl_in(10);
+	
+	PlaybackSpyCounterReset <= '1' when ((ttc_broadcast(5 downto 4)="01" and ttc_broadcaststrobe1='1') or (fakePlaybackSpyCounterReset_in='1')) else '0';
+
+
+
+
+
+U1_CTRLBUS_TTC_OSERDES : OSERDESE2
+   generic map (
+      DATA_RATE_OQ => "DDR",   -- DDR, SDR
+      DATA_RATE_TQ => "DDR",   -- DDR, BUF, SDR
+      DATA_WIDTH => 4,         -- Parallel data width (2-8,10,14)
+      INIT_OQ => '0',          -- Initial value of OQ output (1'b0,1'b1)
+      INIT_TQ => '0',          -- Initial value of TQ output (1'b0,1'b1)
+      SERDES_MODE => "MASTER", -- MASTER, SLAVE
+      SRVAL_OQ => '0',         -- OQ output value when SR is used (1'b0,1'b1)
+      SRVAL_TQ => '0',         -- TQ output value when SR is used (1'b0,1'b1)
+      TBYTE_CTL => "FALSE",    -- Enable tristate byte operation (FALSE, TRUE)
+      TBYTE_SRC => "FALSE",    -- Tristate byte source (FALSE, TRUE)
+      TRISTATE_WIDTH => 4      -- 3-state converter width (1,4)
+   )
+   port map (
+      OFB => open,             -- 1-bit output: Feedback path for data
+      OQ => ctrlbus_ttc_out(0),               -- 1-bit output: Data path output
+      -- SHIFTOUT1 / SHIFTOUT2: 1-bit (each) output: Data output expansion (1-bit each)
+      SHIFTOUT1 => open,
+      SHIFTOUT2 => open,
+      TBYTEOUT => open,   -- 1-bit output: Byte group tristate
+      TFB => open,             -- 1-bit output: 3-state control
+      TQ => open,               -- 1-bit output: 3-state control
+      CLK => sysclk80_in,             -- 1-bit input: High speed clock
+      CLKDIV => sysclk40_in,       -- 1-bit input: Divided clock
+      -- D1 - D8: 1-bit (each) input: Parallel data inputs (1-bit each)
+      D1 => '1',
+      D2 => ttc_l1accept,
+      D3 => ttc_bunchcounterreset,
+      D4 => PlaybackSpyCounterReset,
+      D5 => '0',
+      D6 => '0',
+      D7 => '0',
+      D8 => '0',
+      OCE => '1',             -- 1-bit input: Output data clock enable
+      RST => '0',             -- 1-bit input: Reset
+      -- SHIFTIN1 / SHIFTIN2: 1-bit (each) input: Data input expansion (1-bit each)
+      SHIFTIN1 => '0',
+      SHIFTIN2 => '0',
+      -- T1 - T4: 1-bit (each) input: Parallel 3-state inputs
+      T1 => '0',
+      T2 => '0',
+      T3 => '0',
+      T4 => '0',
+      TBYTEIN => '0',     -- 1-bit input: Byte group tristate
+      TCE => '0'              -- 1-bit input: 3-state clock enable
+   );
+	
+	
+	
+	
+	
+U2_CTRLBUS_TTC_OSERDES : OSERDESE2
+   generic map (
+      DATA_RATE_OQ => "DDR",   -- DDR, SDR
+      DATA_RATE_TQ => "DDR",   -- DDR, BUF, SDR
+      DATA_WIDTH => 4,         -- Parallel data width (2-8,10,14)
+      INIT_OQ => '0',          -- Initial value of OQ output (1'b0,1'b1)
+      INIT_TQ => '0',          -- Initial value of TQ output (1'b0,1'b1)
+      SERDES_MODE => "MASTER", -- MASTER, SLAVE
+      SRVAL_OQ => '0',         -- OQ output value when SR is used (1'b0,1'b1)
+      SRVAL_TQ => '0',         -- TQ output value when SR is used (1'b0,1'b1)
+      TBYTE_CTL => "FALSE",    -- Enable tristate byte operation (FALSE, TRUE)
+      TBYTE_SRC => "FALSE",    -- Tristate byte source (FALSE, TRUE)
+      TRISTATE_WIDTH => 4      -- 3-state converter width (1,4)
+   )
+   port map (
+      OFB => open,             -- 1-bit output: Feedback path for data
+      OQ => ctrlbus_ttc_out(1),               -- 1-bit output: Data path output
+      -- SHIFTOUT1 / SHIFTOUT2: 1-bit (each) output: Data output expansion (1-bit each)
+      SHIFTOUT1 => open,
+      SHIFTOUT2 => open,
+      TBYTEOUT => open,   -- 1-bit output: Byte group tristate
+      TFB => open,             -- 1-bit output: 3-state control
+      TQ => open,               -- 1-bit output: 3-state control
+      CLK => sysclk80_in,             -- 1-bit input: High speed clock
+      CLKDIV => sysclk40_in,       -- 1-bit input: Divided clock
+      -- D1 - D8: 1-bit (each) input: Parallel data inputs (1-bit each)
+      D1 => '1',
+      D2 => ttc_l1accept,
+      D3 => ttc_bunchcounterreset,
+      D4 => PlaybackSpyCounterReset,
+      D5 => '0',
+      D6 => '0',
+      D7 => '0',
+      D8 => '0',
+      OCE => '1',             -- 1-bit input: Output data clock enable
+      RST => '0',             -- 1-bit input: Reset
+      -- SHIFTIN1 / SHIFTIN2: 1-bit (each) input: Data input expansion (1-bit each)
+      SHIFTIN1 => '0',
+      SHIFTIN2 => '0',
+      -- T1 - T4: 1-bit (each) input: Parallel 3-state inputs
+      T1 => '0',
+      T2 => '0',
+      T3 => '0',
+      T4 => '0',
+      TBYTEIN => '0',     -- 1-bit input: Byte group tristate
+      TCE => '0'              -- 1-bit input: 3-state clock enable
+   );
+	
+
+
+end Behavioral;
+

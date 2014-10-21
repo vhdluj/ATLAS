@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/slaves
+END
+ipbusBridge.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/slaves/ipbusBridge.vhd
+END
+ipbus_slave_status.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/slaves/ipbus_slave_status.vhd
+END
+ipbusBridge_deserializer.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/slaves/ipbusBridge_deserializer.vhd
+END
+ipbus_ram.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/slaves/ipbus_ram.vhd
+END
+ipbus_slave_reg_pulse.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/slaves/ipbus_slave_reg_pulse.vhd
+END
+ipbusBridge_serializer.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/slaves/ipbusBridge_serializer.vhd
+END
+ipbus_fabric.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/slaves/ipbus_fabric.vhd
+END
+ipbus_slave_playbackspy128.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/slaves/ipbus_slave_playbackspy128.vhd
+END
+ipbus_slave_control.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/slaves/ipbus_slave_control.vhd
+END
+slaves.vhd
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/reps/atl1calo/!svn/ver/665/firmware/L1Topo/trunk/1_0/Controller/sources/slaves/slaves.vhd
+END

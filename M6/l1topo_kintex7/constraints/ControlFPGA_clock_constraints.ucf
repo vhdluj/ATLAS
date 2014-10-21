@@ -1,0 +1,49 @@
+NET "GCK2_IN_P" TNM_NET = "global_clock";
+NET "GCK2_IN_P" LOC = U27;
+NET "GCK2_IN_P" IOSTANDARD = LVDS_25;
+NET "GCK2_IN_N" LOC = U28;
+NET "GCK2_IN_N" IOSTANDARD = LVDS_25;
+
+NET "GCK1_IN_P" TNM_NET = "global_clock1";
+NET "GCK1_IN_P" LOC = T26;
+NET "GCK1_IN_P" IOSTANDARD = LVDS_25;
+NET "GCK1_IN_N" LOC = T27;
+NET "GCK1_IN_N" IOSTANDARD = LVDS_25;
+
+TIMESPEC TS_global_clock = PERIOD "global_clock" 24.95 ns;
+TIMESPEC TS_global_clock1 = PERIOD "global_clock1" 24.95 ns;
+
+#NET "rod_with_slink/GENERATE_OUPUT_SLINKS[0].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/gtx_txoutclk" TNM_NET = GENERATE_OUPUT_SLINKS[0].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/gtx_txoutclk;
+#TIMESPEC TS_GENERATE_OUPUT_SLINKS_0__SLINKPCKBUILDER_INST_CompInst_hola_inst_tlk_wrapper_k7_1_gtx_txoutclk = PERIOD "GENERATE_OUPUT_SLINKS[0].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/gtx_txoutclk" 8 ns HIGH 50%;
+
+NET "ipb/eth/eth_gt_txoutclk_unbuffered" TNM_NET = "eth_gt_txoutclk_tnm";
+TIMESPEC TS_txoutclk = PERIOD "eth_gt_txoutclk_tnm" 16 ns;
+
+NET "MGT5_CLK_P" TNM_NET = "gt_clk";
+NET "MGT5_CLK_P" LOC = C8;
+NET "MGT5_CLK_P" DIFF_TERM = "TRUE";
+NET "MGT5_CLK_N" LOC = C7;
+NET "MGT5_CLK_N" DIFF_TERM = "TRUE";
+
+TIMESPEC TS_gt_clk = PERIOD "gt_clk" 8 ns;
+
+NET "L1A_TO_U2_OUT_N" OFFSET = OUT 12 ns AFTER "GCK2_IN_N";
+NET "L1A_TO_U2_OUT_P" OFFSET = OUT 12 ns AFTER "GCK2_IN_N";
+
+INST "TTC_BCNT_IN<0>" TNM = ttc_time_group;
+INST "TTC_BCNT_IN<1>" TNM = ttc_time_group;
+INST "TTC_BCNT_IN<2>" TNM = ttc_time_group;
+INST "TTC_BCNT_IN<3>" TNM = ttc_time_group;
+INST "TTC_BCNT_IN<4>" TNM = ttc_time_group;
+INST "TTC_BCNT_IN<5>" TNM = ttc_time_group;
+INST "TTC_BCNT_IN<6>" TNM = ttc_time_group;
+INST "TTC_BCNT_IN<7>" TNM = ttc_time_group;
+INST "TTC_BCNT_IN<8>" TNM = ttc_time_group;
+INST "TTC_BCNT_IN<9>" TNM = ttc_time_group;
+INST "TTC_BCNT_IN<10>" TNM = ttc_time_group;
+INST "TTC_BCNT_IN<11>" TNM = ttc_time_group;
+INST "TTC_BCNT_STR_IN" TNM = ttc_time_group;
+INST "TTC_EVT_H_STR_IN" TNM = ttc_time_group;
+INST "TTC_EVT_L_STR_IN" TNM = ttc_time_group;
+INST "TTC_L1A_IN" TNM = ttc_time_group;
+TIMEGRP "ttc_time_group" OFFSET = IN 24 ns VALID 25 ns BEFORE "GCK2_IN_N" RISING;
