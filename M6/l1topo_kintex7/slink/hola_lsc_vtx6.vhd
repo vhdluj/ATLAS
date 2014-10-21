@@ -47,11 +47,6 @@ entity hola_lsc_vtx6 is
         LFF_N           : out std_logic;
         LRL             : out std_logic_vector(3 downto 0);
         LDOWN_N         : out std_logic;
-        -- SFP serial interface
-        TLK_SIN_P       : in std_logic;   -- GTX serial input 
-        TLK_SIN_N       : in std_logic;
-        TLK_SOUT_P      : out std_logic;  -- GTX serial output
-        TLK_SOUT_N      : out std_logic;
         -- LEDs
         TESTLED_N       : out std_logic;
         LDERRLED_N      : out std_logic;
@@ -59,7 +54,6 @@ entity hola_lsc_vtx6 is
         FLOWCTLLED_N    : out std_logic;
         ACTIVITYLED_N   : out std_logic;
         
-        GTX_RESETDONE_OUT : out std_logic;
         LSC_RST_N_OUT : out std_logic;
         TX_ER_OUT : out std_logic;
         --ps debugging
@@ -95,7 +89,6 @@ architecture structure of hola_lsc_vtx6 is
 
 
   signal LSC_RST_N     : std_logic;
-  signal GTX_RESETDONE : std_logic;
   signal TLK_GTXCLK    : std_logic;
   signal TLK_TXD       : std_logic_vector(15 downto 0);
   signal TLK_TXEN      : std_logic;
@@ -119,7 +112,6 @@ attribute keep of RX_cnt : signal is "true";
   
 begin  -- architecture structure
 
-GTX_RESETDONE_OUT <= GTX_RESETDONE;
 LSC_RST_N_OUT  <= LSC_RST_N;
 TX_ER_OUT  <= TLK_TXER;
 
@@ -128,7 +120,9 @@ TX_ER_OUT  <= TLK_TXER;
         GTX_TXRESETDONE_DEBUG  <= '0'; --GTX_TXRESETDONE_DEBUGsgn;
   		GTX_RESET_DEBUG  <= '0'; --GTX_RESET_DEBUGsgn;
   		GTX_CPLLOCK_DEBUG  <=  '0'; --GTX_CPLLOCK_DEBUGsgn;
+		
 		TLK_RXCLK <= TLK_RXCLK_sgn;
+		
   holalsc_core_1 : entity work.holalsc_core
     generic map (SIMULATION      => SIMULATION,
                  ALTERA_XILINX   => 0,    -- XILINX

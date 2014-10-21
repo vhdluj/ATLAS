@@ -260,17 +260,11 @@ GENERATE_OUPUT_SLINKS: for i in 0 to 11 generate
 	port map (
 		SYSCLK             => GCK_CLK40,
 		CLK_LOCKED_IN      => CLK_LOCKED_IN,
-		--!!! GK: clock distributed also to ipbus, only P is used with buffered clock !!!
-		GT_CLKP            => MGT5_CLK,
-		GT_CLKN            => '0',
+
 		URESET_IN          => SLINK_RESET(i),
 
 		SLINK_READY_OUT    => open, --slink_ready,
-
-		GT_RX_N          => OPTO_KR1_N(i),
-		GT_RX_P          => OPTO_KR1_P(i),
-		GT_TX_N          => OPTO_KT1_N(i),
-		GT_TX_P          => OPTO_KT1_P(i),
+		
 		--from parser to slink
 		ENABLE_IN          => '1', --slink_event_ready_out_l(i),
 		READY_OUT          => slink_ready_in_l(i),
@@ -291,7 +285,7 @@ GENERATE_OUPUT_SLINKS: for i in 0 to 11 generate
 		DEBUG_OUT           => open, --dbg_slink,
 		LFF_N_OUT			=> SLINK_STATUS_REG_OUT(3*i+2),--link_lff_n(i),
 		LDOWN_N_OUT			=> SLINK_STATUS_REG_OUT(3*i+1),--slink_downt_n(i),
-	   FIFOFULL_OUT      => SLINK_STATUS_REG_OUT(3*i),--slink_fifo_full(i),
+	    FIFOFULL_OUT      => SLINK_STATUS_REG_OUT(3*i),--slink_fifo_full(i),
 		BUSY_CNT_TIME_PERIOD_IN => SLINK_BUSY_CNT_TIME_PERIOD_REG_IN,
 		BUSY_CNT_OUT => open, --SLINK_BUSY_CNT_REG_OUT,
 		IDLE_CNT_OUT => open, --SLINK_IDLE_CNT_REG_OUT,

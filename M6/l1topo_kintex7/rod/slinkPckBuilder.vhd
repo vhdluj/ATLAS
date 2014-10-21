@@ -48,12 +48,6 @@ entity slinkPckBuilder is
     URESET_IN : in  std_logic;          -- user reset valid also for gtx.
 	 
 	 SLINK_READY_OUT : out std_logic;
-	 
-    --connection
-    GT_CLKP, GT_CLKN     : in  std_logic;  --gtx clock pins
-
-    GT_RX_N, GT_RX_P : in  std_logic;
-    GT_TX_N, GT_TX_P : out std_logic;
 
     --from parser to slink
     ENABLE_IN : in  std_logic;  -- static value on this line enables taking data from payload port and sending it. Another pulse ends data sending and starts trail sending.
@@ -170,7 +164,7 @@ begin
     hola_inst : entity work.hola_lsc_vtx6
       port map(
         TLK_RXCLK_IN  => TLK_RXCLK_IN,
-		  TLK_GTXCLK_IN => TLK_GTXCLK_IN,
+		TLK_GTXCLK_IN => TLK_GTXCLK_IN,
         SYS_RST       => link_rst,
         LSC_RESET_IN  => LSC_RESET_IN,
         CLK_LOCKED    => CLK_LOCKED_IN,
@@ -184,13 +178,7 @@ begin
         LFF_N         => LFF_N_sgn,
         LRL           => open,
         LDOWN_N       => LDOWN_N_sgn,
-        -- SFP serial interface
-        TLK_SIN_P     => GT_RX_P,
-        TLK_SIN_N     => GT_RX_N,
-        TLK_SOUT_P    => GT_TX_P,
-        TLK_SOUT_N    => GT_TX_N,
 		  
-		  GTX_RESETDONE_OUT => open,
         LSC_RST_N_OUT     => open,
         TX_ER_OUT         => open,
 		  
