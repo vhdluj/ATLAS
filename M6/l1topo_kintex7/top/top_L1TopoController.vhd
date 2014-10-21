@@ -199,25 +199,25 @@ ones <= (others => '1');
 
 LED_OUT <= (others => '0');
  
-icon : entity work.cs_icon
-PORT map(
-    CONTROL0 => icon_control0,
-    CONTROL1 => icon_control1
-);
- 
-ila0 : entity work.cs_ila
-PORT map(
-    CONTROL => icon_control0,
-    CLK     => sysclk200,
-    TRIG0   => ila_trg_0
-);
-
-ila1 : entity work.cs_ila
-PORT map(
-    CONTROL => icon_control1,
-    CLK     => sysclk200,
-    TRIG0   => ila_trg_1
-);
+--icon : entity work.cs_icon
+--PORT map(
+--    CONTROL0 => icon_control0,
+--    CONTROL1 => icon_control1
+--);
+-- 
+--ila0 : entity work.cs_ila
+--PORT map(
+--    CONTROL => icon_control0,
+--    CLK     => sysclk200,
+--    TRIG0   => ila_trg_0
+--);
+--
+--ila1 : entity work.cs_ila
+--PORT map(
+--    CONTROL => icon_control1,
+--    CLK     => sysclk200,
+--    TRIG0   => ila_trg_1
+--);
 
 ila_trg_0(0) <= ttc_l1a; 
 ila_trg_0(1) <= l1_busy_l;

@@ -1,18 +1,30 @@
 INST "ipb/eth/sgmiiphy/transceiver_inst/gtwizard_inst/gtwizard_v2_7_i/gt0_gtwizard_v2_7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y15";
 
-INST "rod_with_slink/GENERATE_OUPUT_SLINKS[0].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y11";
-INST "rod_with_slink/GENERATE_OUPUT_SLINKS[1].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y10";
-INST "rod_with_slink/GENERATE_OUPUT_SLINKS[2].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y9";
-INST "rod_with_slink/GENERATE_OUPUT_SLINKS[3].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y8";
-INST "rod_with_slink/GENERATE_OUPUT_SLINKS[4].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y7";
-INST "rod_with_slink/GENERATE_OUPUT_SLINKS[5].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y6";
-INST "rod_with_slink/GENERATE_OUPUT_SLINKS[6].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y5";
-INST "rod_with_slink/GENERATE_OUPUT_SLINKS[7].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y4";
-INST "rod_with_slink/GENERATE_OUPUT_SLINKS[8].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y3";
-INST "rod_with_slink/GENERATE_OUPUT_SLINKS[9].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y2";
-INST "rod_with_slink/GENERATE_OUPUT_SLINKS[10].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y1";
-INST "rod_with_slink/GENERATE_OUPUT_SLINKS[11].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y0";
+#INST "rod_with_slink/GENERATE_OUPUT_SLINKS[0].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y11";
+#INST "rod_with_slink/GENERATE_OUPUT_SLINKS[1].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y10";
+#INST "rod_with_slink/GENERATE_OUPUT_SLINKS[2].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y9";
+#INST "rod_with_slink/GENERATE_OUPUT_SLINKS[3].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y8";
+#INST "rod_with_slink/GENERATE_OUPUT_SLINKS[4].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y7";
+#INST "rod_with_slink/GENERATE_OUPUT_SLINKS[5].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y6";
+#INST "rod_with_slink/GENERATE_OUPUT_SLINKS[6].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y5";
+#INST "rod_with_slink/GENERATE_OUPUT_SLINKS[7].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y4";
+#INST "rod_with_slink/GENERATE_OUPUT_SLINKS[8].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y3";
+#INST "rod_with_slink/GENERATE_OUPUT_SLINKS[9].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y2";
+#INST "rod_with_slink/GENERATE_OUPUT_SLINKS[10].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y1";
+#INST "rod_with_slink/GENERATE_OUPUT_SLINKS[11].SLINKPCKBUILDER_INST/CompInst.hola_inst/tlk_wrapper_k7_1/hola_kin7_gtx_i/gt0_gtx_minipod_single_grefclk_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y0";
 
+INST "rod_with_slink/gtx_minipod_12x_k7_i/gt0_gtx_minipod_12x_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y0";
+INST "rod_with_slink/gtx_minipod_12x_k7_i/gt1_gtx_minipod_12x_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y1";
+INST "rod_with_slink/gtx_minipod_12x_k7_i/gt2_gtx_minipod_12x_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y2";
+INST "rod_with_slink/gtx_minipod_12x_k7_i/gt3_gtx_minipod_12x_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y3";
+INST "rod_with_slink/gtx_minipod_12x_k7_i/gt4_gtx_minipod_12x_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y4";
+INST "rod_with_slink/gtx_minipod_12x_k7_i/gt5_gtx_minipod_12x_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y5";
+INST "rod_with_slink/gtx_minipod_12x_k7_i/gt6_gtx_minipod_12x_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y6";
+INST "rod_with_slink/gtx_minipod_12x_k7_i/gt7_gtx_minipod_12x_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y7";
+INST "rod_with_slink/gtx_minipod_12x_k7_i/gt8_gtx_minipod_12x_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y8";
+INST "rod_with_slink/gtx_minipod_12x_k7_i/gt9_gtx_minipod_12x_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y9";
+INST "rod_with_slink/gtx_minipod_12x_k7_i/gt10_gtx_minipod_12x_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y10";
+INST "rod_with_slink/gtx_minipod_12x_k7_i/gt11_gtx_minipod_12x_k7_i/gtxe2_i" LOC="GTXE2_CHANNEL_X0Y11";
 
 NET "PHY_RESET_OUT_N" LOC = Y13;
 NET "PHY_RESET_OUT_N" IOSTANDARD = LVCMOS15;

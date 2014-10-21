@@ -1294,7 +1294,7 @@ end generate GENERATE_OUPUT_SLINKS;
     
     LINK_MANAGE_PROC_GEN : for i in 0 to 11 generate
 	 
-	 	txoutclk_bufg0_i : BUF port map (I => gtx_txoutclk(i), O => gtx_txusrclk2(i));
+	 	txoutclk_bufg0_i : BUFG port map (I => gtx_txoutclk(i), O => gtx_txusrclk2(i));
 		rxrecclk_bufg1_i : BUFH port map (I => gtx_txoutclk(i), --gtx_rxrecclk,
 												  O => gtx_rxusrclk2(i));
 												  
